@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>无标题文档</title>
+<style type="text/css">
+body{line-height:1.5}
+.blue{color:blue;}
+.bold{font-weight:700;}
+.italic{font-style:italic;}
+.red{color:red;}
+.ref{width:90%;margin:0 auto;}
+</style>
+</head>
+
+<body>
+<ul>
+两种错误处理方法：
+<li>BEGIN TRY<br />
+  END TRY<br />
+  //之间不能没有任何SQL编码。
+  <br />
+  BEGIN CATCH<br />
+  END CATCH
+  <br />
+  //捕捉严重级别超过10的错误消息，但如果一个错误造成数据库连接失败，即使错误的严重级别超过10，仍然不能被其捕获。
+  <br />
+</li>
+<li>使用系统变量@@ERROR:在引起错误的下一条SQL语句执行后将返回错误编号。或者当@@ERROR位于CATCH语句块中的第一句时，返回错误编号。如果@@ERROR前的SQL语句正确执行，则@@ERROR返回0.</li>
+</ul>
+<ul>
+可以用到的系统表，函数和过程
+<LI>sys.messages</LI>
+<LI>ERROR函数类</LI>
+<LI>ERROR_LINE()</LI>
+<LI>ERROR_....</LI>
+<LI>sp_addmessage</LI>
+<LI>sp_dropmessage</LI>
+</ul>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="编号处理">
+  <Items>
+    <LogicalFolder Name="连接" Type="2">
+      <Items>
+        <ConnectionNode Name="LWQ-PC:sa">
+          <Created>2012-01-24T17:59:03.8420166+08:00</Created>
+          <Type>SQL</Type>
+          <Server>LWQ-PC</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB />
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - 查询</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="查询" Type="0">
+      <Items>
+        <FileNode Name="自动编号.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>自动编号.sql</FullPath>
+        </FileNode>
+        <FileNode Name="最大值+1.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>最大值+1.sql</FullPath>
+        </FileNode>
+        <FileNode Name="按日期生成编号.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>按日期生成编号.sql</FullPath>
+        </FileNode>
+        <FileNode Name="独立编号表.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>独立编号表.sql</FullPath>
+        </FileNode>
+        <FileNode Name="独立表按日编号.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>独立表按日编号.sql</FullPath>
+        </FileNode>
+        <FileNode Name="数字随机编号.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>数字随机编号.sql</FullPath>
+        </FileNode>
+        <FileNode Name="字母随机编号.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>字母随机编号.sql</FullPath>
+        </FileNode>
+        <FileNode Name="大小字母随机编号.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>大小字母随机编号.sql</FullPath>
+        </FileNode>
+        <FileNode Name="具有补号处理的编号生成.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>具有补号处理的编号生成.sql</FullPath>
+        </FileNode>
+        <FileNode Name="排名应用.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>排名应用.sql</FullPath>
+        </FileNode>
+        <FileNode Name="使用临时表实现编号重排.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>使用临时表实现编号重排.sql</FullPath>
+        </FileNode>
+        <FileNode Name="使用UPDATE模拟游标实现编号重排.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>使用UPDATE模拟游标实现编号重排.sql</FullPath>
+        </FileNode>
+        <FileNode Name="使用UPDATE结合子查询实现编号重排.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>使用UPDATE结合子查询实现编号重排.sql</FullPath>
+        </FileNode>
+        <FileNode Name="已用编号分布查询.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>已用编号分布查询.sql</FullPath>
+        </FileNode>
+        <FileNode Name="缺号分布查询.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>缺号分布查询.sql</FullPath>
+        </FileNode>
+        <FileNode Name="生成已用编号和缺号分布字符串.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>生成已用编号和缺号分布字符串.sql</FullPath>
+        </FileNode>
+        <FileNode Name="缺勤天数统计.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>缺勤天数统计.sql</FullPath>
+        </FileNode>
+        <FileNode Name="自增列.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>自增列.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="杂项" Type="3">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>

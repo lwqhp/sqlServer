@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="数据库">
+  <Items>
+    <LogicalFolder Name="连接" Type="2">
+      <Items>
+        <ConnectionNode Name="LWQ-PC:sa">
+          <Created>2012-01-07T22:13:46.1739028+08:00</Created>
+          <Type>SQL</Type>
+          <Server>LWQ-PC</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB />
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - 查询</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="查询" Type="0">
+      <Items>
+        <FileNode Name="数据库环境.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>数据库环境.sql</FullPath>
+        </FileNode>
+        <FileNode Name="数据库状态.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>数据库状态.sql</FullPath>
+        </FileNode>
+        <FileNode Name="数据库优化1.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>数据库优化1.sql</FullPath>
+        </FileNode>
+        <FileNode Name="死锁.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>死锁.sql</FullPath>
+        </FileNode>
+        <FileNode Name="约束.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>约束.sql</FullPath>
+        </FileNode>
+        <FileNode Name="安装.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>安装.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解表结构信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解表结构信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解表索引信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解表索引信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解模块对象信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解模块对象信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解外键约束信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解外键约束信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解对象依赖关系信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解对象依赖关系信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解表空间信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解表空间信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解数据库空间信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解数据库空间信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解磁盘空间信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解磁盘空间信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解进程序信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解进程序信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解进程阻塞信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解进程阻塞信息.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="杂项" Type="3">
+      <Items>
+        <FileNode Name="精妙sql语句.htm">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>精妙sql语句.htm</FullPath>
+        </FileNode>
+        <FileNode Name="sql中的保留关键字.txt">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>sql中的保留关键字.txt</FullPath>
+        </FileNode>
+        <FileNode Name="DBA手则.html">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>DBA手则.html</FullPath>
+        </FileNode>
+        <FileNode Name="access移到sql注意问题.txt">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>access移到sql注意问题.txt</FullPath>
+        </FileNode>
+        <FileNode Name="Perfmon.msc.doc">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Perfmon.msc.doc</FullPath>
+        </FileNode>
+        <FileNode Name="SQLSERVER学习笔记.txt">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>SQLSERVER学习笔记.txt</FullPath>
+        </FileNode>
+        <FileNode Name="SQL事件探查器使用介绍.doc">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>SQL事件探查器使用介绍.doc</FullPath>
+        </FileNode>
+        <FileNode Name="服务器性能监视报告.xls">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>服务器性能监视报告.xls</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>

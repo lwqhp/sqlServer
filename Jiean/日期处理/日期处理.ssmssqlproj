@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="日期处理">
+  <Items>
+    <LogicalFolder Name="连接" Type="2">
+      <Items>
+        <ConnectionNode Name="LWQ-PC:sa">
+          <Created>2012-01-18T17:47:01.00239+08:00</Created>
+          <Type>SQL</Type>
+          <Server>LWQ-PC</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB />
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - 查询</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="查询" Type="0">
+      <Items>
+        <FileNode Name="日期类型.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>日期类型.sql</FullPath>
+        </FileNode>
+        <FileNode Name="日期格式样式.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>日期格式样式.sql</FullPath>
+        </FileNode>
+        <FileNode Name="日期基本操作.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>日期基本操作.sql</FullPath>
+        </FileNode>
+        <FileNode Name="日期推算.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>日期推算.sql</FullPath>
+        </FileNode>
+        <FileNode Name="日期时间段加减.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>日期时间段加减.sql</FullPath>
+        </FileNode>
+        <FileNode Name="查询指定日期过生日的人员.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>查询指定日期过生日的人员.sql</FullPath>
+        </FileNode>
+        <FileNode Name="指定日期段内的工作日天数.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>指定日期段内的工作日天数.sql</FullPath>
+        </FileNode>
+        <FileNode Name="指定日期增加指定工作天数后的日期.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>指定日期增加指定工作天数后的日期.sql</FullPath>
+        </FileNode>
+        <FileNode Name="计算工作时间.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>计算工作时间.sql</FullPath>
+        </FileNode>
+        <FileNode Name="日期处理总结.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>日期处理总结.sql</FullPath>
+        </FileNode>
+        <FileNode Name="日期格式处理.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>日期格式处理.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="杂项" Type="3">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>

@@ -1,0 +1,37 @@
+完全备份exec sp_Full_back
+
+差异备份
+DECLARE @week_day varchar(10),@DATE VARCHAR(10),@databasename varchar(50)
+SET @DATE=CONVERT(VARCHAR(10),GETDATE(),112)
+set @week_day=cast(datepart(w,dateadd(d,-1,getdate())) as varchar(1))
+set @databasename='i:\back\'+@DATE+'_dif_RuvarOA'++'_week_'+@week_day+'.bak'
+backup database RuvarOA to DISK=@databasename
+WITH DIFFERENTIAL
+
+RuvarOA重建索引exec sp_rebuildindex
+RuvarOA2重建索引exec [sp_rebuildindex]
+人资系统的职位同步exec sp_get_userpos_from_psn
+标题显示异常DELETE FROM office_missive_fields_show
+WHERE 1=1
+AND isnull(field_name,'') = '' 
+重新创建(办结表单)的视图exec sp_rebuild_office_finish_view
+处理离职人员表单exec sp_stopOffice_foroutperson 30
+处理异常单(当前处理人为未知)EXEC sys_workflow_DealException
+RuvarOA_do_out_personexec dbo.out_users_deleted
+OA转PERSON请假奖罚exec RuvarOA.dbo.sp_syn_psn_bdm
+转移数据(RuvarOA To RuvarOA2)exec sp_movedata_tobakdb
+Ruvar_OABACKUP LOG RuvarOA WITH NO_LOG
+清除临时垃圾数据exec Sys_Clear_flow_tempData
+
+exec sp_move_rebackerp
+转移日志exec sp_move_sys_log
+完全备份IF datepart(weekday,getdate())=1
+BEGIN
+    exec sp_Full_back
+END
+差异备份DECLARE @week_day varchar(10),@DATE VARCHAR(10),@databasename varchar(50)
+SET @DATE=CONVERT(VARCHAR(10),GETDATE(),112)
+set @week_day=cast(datepart(w,dateadd(d,-1,getdate())) as varchar(1))
+set @databasename='i:\back\'+@DATE+'_dif_RuvarOA'++'_week_'+@week_day+'.bak'
+backup database RuvarOA to DISK=@databasename
+WITH DIFFERENTIAL

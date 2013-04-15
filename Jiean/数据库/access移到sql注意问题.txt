@@ -1,0 +1,8 @@
+注意自动编号的字段
+1.在程序里所有使用到了日期的比较的地方，日期的引用在ACCESS里为“#”，SQL Server则不同。 
+2.涉及到money型变量的时候，ACCESS数据库会自动将字符串形式输入的金额转换成money型变量；而在SQL Server里，money型变量不能作为字符串处理，其前后不能添加单引号。
+1、注意时间，在查询中ACCESS用NOW（）在SQL中用GETDATE（） 
+2、注意保留字，要用[]括起来，例如KEY，在ACCESS中没问题，在SQL中要用[key]
+
+数据导入sql
+用sqlserver的数据转换工具，选择导入数据，选择原数据源drive do microsoft access(*.mdb) 点击新建，选择2，选择drive do microsoft access(*.mdb) ，选择具体的access数据，选择下一步，选择默认，挑选sqlserver数据库，点击下一步。。。。。。。

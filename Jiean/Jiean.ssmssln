@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Jiean", "Jiean\Jiean.ssmssqlproj", "{76A2FEC5-C11D-4ED0-B4AA-3E8B73480C0A}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "数据库", "数据库\数据库.ssmssqlproj", "{85367E33-26C9-4DB5-8D13-EC23C11CCD1D}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "日期处理", "日期处理\日期处理.ssmssqlproj", "{D3BF58EA-7B1C-4E26-8777-0E9959102314}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "字符处理", "字符处理\字符处理.ssmssqlproj", "{D9608C7F-3077-4AAC-979E-388590073FEF}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "编号处理", "编号处理\编号处理.ssmssqlproj", "{CFBBA0D2-9A5A-42DB-BFEB-603C3A5CFF08}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "数据统计和汇总", "数据统计和汇总\数据统计和汇总.ssmssqlproj", "{B9A7F849-8E67-49CD-B35E-38FBF8E923EA}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "数据统计和汇总实例", "数据统计和汇总实例\数据统计和汇总实例.ssmssqlproj", "{00AB0F18-544C-4F33-835D-B808FC314530}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "分页", "分页\分页.ssmssqlproj", "{1402F9CA-2813-41C1-90AE-6F46C8AE2C30}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "单编号处理", "单编号处理\单编号处理.ssmssqlproj", "{BCFA0F8F-A2CB-419F-994C-59BE4128974F}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "双编号处理", "双编号处理\双编号处理.ssmssqlproj", "{194399C4-AADA-4A15-AB09-FDF6EF9434F7}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "数据导入导出", "数据导入导出\数据导入导出.ssmssqlproj", "{820D478D-3E73-40B3-AEFB-8FF8447AD5F2}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "数据筛选", "数据筛选\数据筛选.ssmssqlproj", "{D38DBD72-2DE1-4671-9D7A-5A815B5784EB}"
+EndProject
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "存贮过程", "存贮过程\存贮过程.ssmssqlproj", "{4C5D0871-5D09-4186-8FBF-EC5E99354BD9}"
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
