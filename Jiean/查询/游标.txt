@@ -1,0 +1,19 @@
+DECLARE @i INT
+SET @i=''
+DECLARE @dbName varchar(50)
+DECLARE db_cur CURSOR FOR
+SELECT name FROM sys.databases WHERE database_id >4
+
+OPEN db_cur
+FETCH NEXT FROM db_cur INTO @dbName
+WHILE @@FETCH_STATUS =0
+BEGIN 
+	PRINT @dbName
+	SET @i=@i+1
+
+FETCH NEXT FROM db_cur INTO @dbName
+END
+CLOSE db_cur
+DEALLOCATE db_cur
+
+PRINT @i
