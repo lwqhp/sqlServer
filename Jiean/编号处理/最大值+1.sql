@@ -1,6 +1,15 @@
 
+--两种取最大值的方法
+SELECT Substring(Cast(10000+A.TransSequence As varchar(5)),2,4)
+
+--单据流水号取最大值
+set @sql = 'Select @MaxNo = cast(isnull(max(right(rtrim(BillNo),3)),0) as int) from sd_inv_TransMaster where CompanyID='''+@CompanyID+''' And BillNo like '''+ @PrefixRP + '%'''
+exec sp_executesql @sql,N'@MaxNo INT OUTPUT',@MaxNo OUTPUT
+
+-------------------------------------------------------------------------
 /*
-缺点：为了保证生成的编号不重复，必须使用锁定提示来阻止在生成编号后，保存数据之前，其它用户对表的访问，不管用户的访问是正常取数据，还是用于生成编号的目的，都会受到锁的影响。
+缺点：为了保证生成的编号不重复，必须使用锁定提示来阻止在生成编号后，保存数据之前，其它用户对表的访问，
+不管用户的访问是正常取数据，还是用于生成编号的目的，都会受到锁的影响。
 */ 
  
 USE tempdb

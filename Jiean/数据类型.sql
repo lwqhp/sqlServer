@@ -1,3 +1,4 @@
+/*
 sysname
 sysname 数据类型用于表列、变量以及用于存储对象名的存储过程参数。sysname 的精确定义与标识符规则有关。因此，
 它可能会因 SQL Server 实例的不同而有所不同。除了 sysname 在默认情况下为 NOT NULL 之外，sysname 的功能
@@ -10,3 +11,18 @@ sysname 数据类型用于表列、变量以及用于存储对象名的存储过程参数。sysname 的精确定
 table_name、column_name等可以是由用户自己输入的符合sysname类型的的数据，说明这些名称是sysname类型的，
 因此，这些名称你可以使用nvarchar(128)的任意字符串；而数据类型（如column1_datatype）、
 主键标示（如columns_in_primary_key）等就不是sysname类型的，区别就在这里。（帮助理解的句子，外引，自注！）
+
+
+大值类型
+varchar(max) == text
+nvarchar(max) == ntext
+varbinary(max)== image
+
+操作行为和varchar(n)是一样的，可以存储2^30-1个字节,支持查找，支持触发器
+
+
+整型int *1.0后会转成浮点型 float
+
+DECIMAL和numric 的区别
+
+*/
