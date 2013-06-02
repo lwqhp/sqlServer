@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Jiean">
+  <Items>
+    <LogicalFolder Name="连接" Type="2">
+      <Items>
+        <ConnectionNode Name="LWQ-PC:sa">
+          <Created>2012-02-03T02:43:02.8659636+08:00</Created>
+          <Type>SQL</Type>
+          <Server>LWQ-PC</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB />
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - 查询</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="查询" Type="0">
+      <Items>
+        <FileNode Name="sql测试.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>sql测试.sql</FullPath>
+        </FileNode>
+        <FileNode Name="了解SQLServer信息.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>了解SQLServer信息.sql</FullPath>
+        </FileNode>
+        <FileNode Name="数据类型.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>数据类型.sql</FullPath>
+        </FileNode>
+        <FileNode Name="条件,循环.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>条件,循环.sql</FullPath>
+        </FileNode>
+        <FileNode Name="系统表.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>系统表.sql</FullPath>
+        </FileNode>
+        <FileNode Name="一些灵感.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:LWQ-PC:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>LWQ-PC</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>一些灵感.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="杂项" Type="3">
+      <Items>
+        <FileNode Name="常见问题解决.html">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>常见问题解决.html</FullPath>
+        </FileNode>
+        <FileNode Name="基本概念.html">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>基本概念.html</FullPath>
+        </FileNode>
+        <FileNode Name="权限.txt">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>权限.txt</FullPath>
+        </FileNode>
+        <FileNode Name="数据类型.html">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>数据类型.html</FullPath>
+        </FileNode>
+        <FileNode Name="索引原理.html">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>索引原理.html</FullPath>
+        </FileNode>
+        <FileNode Name="锁.txt">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>锁.txt</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>
