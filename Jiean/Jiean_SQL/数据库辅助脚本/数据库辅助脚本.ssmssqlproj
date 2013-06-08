@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="数据库辅助脚本">
+  <Items>
+    <LogicalFolder Name="连接" Type="2" Sorted="true">
+      <Items>
+        <ConnectionNode Name="HKGZ-RD03\mssqllwq:sa">
+          <Created>2012-09-13T11:47:51.7279535+08:00</Created>
+          <Type>SQL</Type>
+          <Server>HKGZ-RD03\mssqllwq</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB>master</InitialDB>
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - 查询</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="查询" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="自动生成Insert.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>自动生成Insert.sql</FullPath>
+        </FileNode>
+        <FileNode Name="有关排序.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>有关排序.sql</FullPath>
+        </FileNode>
+        <FileNode Name="重建索引.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>重建索引.sql</FullPath>
+        </FileNode>
+        <FileNode Name="收缩日志.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>收缩日志.sql</FullPath>
+        </FileNode>
+        <FileNode Name="数据库同步.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>数据库同步.sql</FullPath>
+        </FileNode>
+        <FileNode Name="捕获数据库操作.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>捕获数据库操作.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="杂项" Type="3" Sorted="true">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>

@@ -1,0 +1,43 @@
+sql下用了判断各种资源是否存在的代码，很实用。需要的朋友可以参考下。sql判断是否存在
+--判断数据库是否存在
+if exists(select * from master..sysdatabases where name=N'库名')
+print 'exists'
+else
+print 'not exists'
+---------------
+-- 判断要创建的表名是否存在
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[表名]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+-- 删除表
+drop table [dbo].[表名]
+GO
+---------------
+--判断要创建临时表是否存在
+If Object_Id('Tempdb.dbo.#Test') Is Not Null
+Begin
+print '存在'
+End
+Else
+Begin
+print '不存在'
+End
+---------------
+-- 判断要创建的存储过程名是否存在
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[存储过程名]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+-- 删除存储过程
+drop procedure [dbo].[存储过程名]
+GO
+---------------
+-- 判断要创建的视图名是否存在
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[视图名]') and OBJECTPROPERTY(id, N'IsView') = 1)
+-- 删除视图
+drop view [dbo].[视图名]
+GO
+---------------
+-- 判断要创建的函数名是否存在
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[函数名]') and xtype in (N'FN', N'IF', N'TF'))
+-- 删除函数
+drop function [dbo].[函数名]
+GO
+if col_length('表名', '列名') is null
+print '不存在'
+select 1 from sysobjects where id in (select id from syscolumns where name='列名') and name='表名'

@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="数据库设计规范">
+  <Items>
+    <LogicalFolder Name="连接" Type="2" Sorted="true">
+      <Items>
+        <ConnectionNode Name="10.20.30.202\prodsqlserver:testuser">
+          <Created>2012-09-05T13:52:20.0252741+08:00</Created>
+          <Type>SQL</Type>
+          <Server>10.20.30.202\prodsqlserver</Server>
+          <UserName>testuser</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB>HK_ALL_patty</InitialDB>
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - 查询</ApplicationName>
+        </ConnectionNode>
+        <ConnectionNode Name="HKGZ-RD03\mssqllwq:sa">
+          <Created>2012-09-04T15:27:05.8534504+08:00</Created>
+          <Type>SQL</Type>
+          <Server>HKGZ-RD03\mssqllwq</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB>master</InitialDB>
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - 查询</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="查询" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="01数据库设计规范.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>01数据库设计规范.sql</FullPath>
+        </FileNode>
+        <FileNode Name="02命名.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>02命名.sql</FullPath>
+        </FileNode>
+        <FileNode Name="03约束.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>03约束.sql</FullPath>
+        </FileNode>
+        <FileNode Name="04注释.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>04注释.sql</FullPath>
+        </FileNode>
+        <FileNode Name="06表设计.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>06表设计.sql</FullPath>
+        </FileNode>
+        <FileNode Name="自动编号.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:HKGZ-RD03\mssqllwq:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>HKGZ-RD03\mssqllwq</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>自动编号.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="杂项" Type="3" Sorted="true">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>
