@@ -18,6 +18,8 @@ ALTER TABLE 表名
  ALTER TABLE  m_bas_subType ADD CONSTRAINT m_subTypeID UNIQUE(m_subTypeID)
  
  ALTER TABLE m_bas_subDes ADD CONSTRAINT PK_subDesID UNIQUE(m_subDesID)
+ 
+ ALTER TABLE m_bas_subdes ADD CONSTRAINT m_subtypeid DEFAULT(0) FOR(m_subTypeID)
 
 --创建索引
 /*

@@ -28,15 +28,102 @@ BEGIN
 END
 ELSE
 	BEGIN
+	
 	end	
+IF @a>0
+BEGIN ...END
+ELSE IF @a<0 
+BEGIN ...END
+ELSE
+begin ...END 	
 
 循环语句
 WHILE @var IS NOT NULL 
 BEGIN
+	赋值区别：SELECT 和 set ：如果没有记录，SELECT 中的变量赋值语句是不执行，还是原来的值，SET，则会返回null值给变量
+	
 	关键点：开始前，先给@var赋一个值，以判断是否要进入循环
 		
 	执行完后，重新取值给@var，否则会死循环
 END 
+
+/*
+各语句块之间的承接
+*/
+--上面的执行控制下面块的选择
+DECLARE @id INT=@@ROWCOUNT;
+IF @id >0 
+
+--中间调用存储过程，返回值
+	--返回表
+	INSERT INTO #tb
+	EXEC spBC_MergeOrder 'A','B'
+	
+	--返回值和执行状态，控制下面块的选择
+	DECLARE @RetVal TINYINT  --返回值   
+	DECLARE @billno VARCHAR(20) --返回值  单号
+	declare @FormLang Varchar(2) = 'CN'
+	
+	EXEC spBC_MergeOrder @RetVal   Output,   @FormLang , @RetBillNo   Output  
+	
+	IF @RetVal=0 
+	BEGIN ...END
+	ELSE IF @RetVal=-1 
+	BEGIN ...END
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+--抛出错语
+ RaisError(N'没有用户ID，请先到系统参数设置,才能使用自动合并功能', 16, 1,N'错误')
+ 
+ BEGIN TRY
+ --正常语句
+ END TRY
+ begin CATCH
+	--执行出错
+		Set @RetBillNo = ''	--A)设数据为空
+ 	    Set  @RetVal = -1	--B)设条件号为-1
+ 	     Select @Msg = ERROR_MESSAGE() ;	--C)获取错语信息
+ 	    INSERT INTO  [BC_Bas_MargeOrderLog]	--D)写表
+ END CATCH 
+ 
+ --使用系统表处理
+ RaisError(100016, 16, 1,@CheckBillNo)  	  
+ Set Language @Lang --E)还原语言 
+ Set @RetVal = -1 	  
+ return --F)退出
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 	
 用于控制条件分支，选择的方法
 
