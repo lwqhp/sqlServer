@@ -1,17 +1,27 @@
 
 /*
+合计行的排序
+增加排序列,s1:总计行，s2:排序列，s3:小记行
+s1,s2,s3
+0,'A',0
+0,'A',1--A列合计行
+1,'A',0--最后的总计行
+
+*/
+/*
 把复杂的汇总分级分层处理，再用union 汇总
 */
 -- 示例数据
-DECLARE @t TABLE(
+create table  #t (
 	Item varchar(10),
 	Color varchar(10),
 	Quantity int)
-INSERT @t SELECT 'Table', 'Blue', 124
+INSERT #t SELECT 'Table', 'Blue', 124
 UNION ALL SELECT 'Table', 'Red',  -23
 UNION ALL SELECT 'Chair', 'Blue', 101
 UNION ALL SELECT 'Chair', 'Red',  -90
 
+select * from #t
 -- 统计
 SELECT Item,Color,Quantity
 FROM(
@@ -21,7 +31,7 @@ FROM(
 		Color,
 		Quantity = SUM(Quantity),
 		s1=0, s2=Item, s3=0  -- 用于排序的列
-	FROM @t
+	FROM #t
 	GROUP BY Item, Color
 	UNION ALL
 	-- 各Item合计
@@ -30,7 +40,7 @@ FROM(
 		Color = Item + ' sub total',
 		Quantity = SUM(Quantity),
 		s1=0,s2=Item,s3=1  -- 用于排序的列
-	FROM @t
+	FROM #t
 	GROUP BY Item
 	UNION ALL
 	-- 总计
@@ -39,7 +49,7 @@ FROM(
 		Color = '',
 		Quantity = SUM(Quantity),
 		s1=1, s2 = '', s3=1 -- 用于排序的列
-	FROM @t
+	FROM #t
 )A
 ORDER BY s1, s2, s3
 /*--结果

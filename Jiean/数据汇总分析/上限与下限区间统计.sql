@@ -8,16 +8,18 @@
 则对上限使用null值，如果不限制下限，则对下限使用null值，然后关联基础数据表进行记录数统计处理
 */
 -- 测试数据
-DECLARE @t TABLE(
+create TABLE #t (
 	ID int PRIMARY KEY,
 	col decimal(10,2)
 )
-INSERT @t SELECT 1 ,26.21
+INSERT #t SELECT 1 ,26.21
 UNION ALL SELECT 2 ,88.19
 UNION ALL SELECT 6 ,53.01
 UNION ALL SELECT 7 ,18.55
 UNION ALL SELECT 8 ,84.90
 UNION ALL SELECT 9 ,95.60
+
+select * from #t
 
 -- 统计
 -- a. 统计需求字符串
@@ -26,11 +28,12 @@ DECLARE
 SET @areas = '50, 75, 95'
 
 -- b. 拆分统计需求字符串, 生成上/下限定义表
-DECLARE @tb_area TABLE(
+declare  @tb_area TABLE(
 	min_limit decimal(10, 2),
 	max_limit decimal(10, 2),
 	name varchar(20)
 )
+
 DECLARE
 	@value_pre int,
 	@value int
@@ -57,13 +60,19 @@ INSERT @tb_area(
 	min_limit, max_limit, name)	
 SELECT
 	@value, NULL, '>= ' + RTRIM(@value)
+select * from @tb_area
+
+--select *
+--FROM #t A, @tb_area B
+--WHERE (B.min_limit IS NULL OR A.col >= B.min_limit)
+--	AND ( B.max_limit IS NULL OR A.col < B.max_limit)
 
 -- c. 统计
 SELECT
 	area = B.name,
 	rows = COUNT(*),
 	sums = SUM(A.col)
-FROM @t A, @tb_area B
+FROM #t A, @tb_area B
 WHERE (B.min_limit IS NULL OR A.col >= B.min_limit)
 	AND ( B.max_limit IS NULL OR A.col < B.max_limit)
 GROUP BY B.name
@@ -77,8 +86,8 @@ area                    rows       sums
 --*/
 
 
-DECLARE @t TABLE(ID int PRIMARY KEY,col decimal(10,2))
-INSERT @t SELECT 1 ,26.21
+create TABLE #t1 (ID int PRIMARY KEY,col decimal(10,2))
+INSERT #t1 SELECT 1 ,26.21
 UNION ALL SELECT 2 ,88.19
 UNION ALL SELECT 3 , 4.21
 UNION ALL SELECT 4 ,76.58
@@ -88,6 +97,7 @@ UNION ALL SELECT 7 ,18.55
 UNION ALL SELECT 8 ,84.90
 UNION ALL SELECT 9 ,95.60
 
+select * from #t1
 --统计
 SELECT a.Description,
 	Record_count=COUNT(b.ID),
@@ -103,11 +113,11 @@ FROM(
 	SELECT sid=3,a=60  ,b=75  ,Description='>=60 and <75' UNION ALL
 	SELECT sid=4,a=75  ,b=95  ,Description='>=75 and <95' UNION ALL
 	SELECT sid=5,a=95  ,b=NULL,Description='>=95' 
-)a LEFT JOIN @t b 
+)a LEFT JOIN #t1 b 
 	ON (b.col<a.b OR a.b IS NULL)
 		AND(b.col>=a.a OR a.a IS NULL)
 	CROSS JOIN(
-		SELECT COUNTS=COUNT(*) FROM @t
+		SELECT COUNTS=COUNT(*) FROM #t1
 	)c
 GROUP BY a.Description,a.sid,c.COUNTS
 ORDER BY a.sid

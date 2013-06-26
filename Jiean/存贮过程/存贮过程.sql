@@ -1,22 +1,22 @@
 
-1,创建
+--1,创建
 CREATE PROCEDURE proName(
 @sqlParam nvarchar(100)
 ,@param2 int
 )
 AS
 
-定义变量
+--定义变量
 DECLARE @varName int
 DECLARE @varName2 nvarchar(1000)
 DECLARE @sql nvarchar(4000)
 
-打印结果和执行语句,退出
+--打印结果和执行语句,退出
 PRINT @varName
 EXECUTE(@sql)
 RETURN 
 
-给变量赋值
+--给变量赋值
 SET @varName = 'a'
 SELECT @varName = filed FROM tableName
 
@@ -37,7 +37,7 @@ BEGIN ...END
 ELSE
 begin ...END 	
 
-循环语句
+--循环语句
 WHILE @var IS NOT NULL 
 BEGIN
 	赋值区别：SELECT 和 set ：如果没有记录，SELECT 中的变量赋值语句是不执行，还是原来的值，SET，则会返回null值给变量
@@ -60,7 +60,7 @@ IF @id >0
 	EXEC spBC_MergeOrder 'A','B'
 	
 	--返回值和执行状态，控制下面块的选择
-	DECLARE @RetVal TINYINT  --返回值   
+	DECLARE @RetVal TINYINT =0 --返回值   
 	DECLARE @billno VARCHAR(20) --返回值  单号
 	declare @FormLang Varchar(2) = 'CN'
 	

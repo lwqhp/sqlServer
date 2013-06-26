@@ -250,3 +250,28 @@ b          1,2,3
 c          3
 --*/
 GO
+create table Test(colum1 varchar(10),colum2 varchar(10))
+insert into Test
+select '1','A' union all 
+select '1','b' union all 
+select '1','c' union all 
+select '2','A' union all 
+select '2','b' 
+
+select * from test
+;with roy as
+(select colum1,colum2,row=row_number()over(partition by colum1 order by colum1) from Test),
+Roy2 as
+	(select colum1,cast(colum2 as nvarchar(100))colum2,row from Roy where row=1 
+	union all 
+	select a.colum1,cast(b.colum2+','+a.colum2 as nvarchar(100)),a.row 
+	from Roy a 
+	join Roy2 b on a.colum1=b.colum1 and a.row=b.row+1
+	)
+--select * from roy2 order by colum1
+select colum1,colum2 from Roy2 a 
+where row=(select max(row) from roy where colum1=a.colum1) 
+order by colum1 
+option (MAXRECURSION 0) 
+
+

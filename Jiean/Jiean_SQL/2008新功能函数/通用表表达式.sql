@@ -192,3 +192,52 @@ DROP TABLE Dept
 SELECT * FROM t    
 OPTION(MAXRECURSION 0)  
 --更多见：http://topic.csdn.net/u/20100330/23/b2f663b1-0edf-4847-857e-e75640c90c1a.html
+
+
+
+比如有张表,结构如下:
+
+Example(ID int,ParentID int)
+
+取其某个ID为父节点的树结构的SQL如下：
+
+WITH Example_Table(ID,ParentID)
+
+AS
+
+(
+
+        --取根节点放入临时表
+
+        SELECT ID,ParentID FROM Example WHERE ID = @ID
+
+        --根据已取到的数据递归取其字节点的数据
+
+        UNION ALL
+
+        SELECT ID,ParentID FROM Example A INNER JOIN Example_Table B --循环从这里开始
+		ON A.ParentID = B.ID
+
+)
+
+SELECT * FROM Example_Table
+
+--测试
+drop table #ta
+create table #ta(id int,parentID int)
+insert into #ta
+select 1,0 union all
+select 2,1 union all
+select 3,2
+
+select * from #ta
+
+;with reta as(
+	select id,parentID from #ta where parentID=0
+	union all
+	select a.id,a.parentID from #ta a inner join reta b on a.parentID= b.id
+)
+select * from reta OPTION(MAXRECURSION 2)  
+
+关键点在这里: select * from #ta 是对#ta表的遍历，取每一条记录与右边连inner join 运算,右边reta递归
+第一次时只有parentid=0记录，第一次循环后有两条，第三次有三条，而左表遍历定位到的记录去reata找是否符合a.parentID= b.id

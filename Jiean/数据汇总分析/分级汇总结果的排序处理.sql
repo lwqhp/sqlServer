@@ -1,14 +1,21 @@
-DECLARE @t TABLE(
+
+/*
+使用rollup的排序
+利用grouping()返回0,1
+*/
+
+create TABLE #t (
 	Groups char(2),
 	Item varchar(10),
 	Color varchar(10),
 	Quantity int)
-INSERT @t SELECT 'aa', 'Table', 'Blue',  124
+INSERT #t SELECT 'aa', 'Table', 'Blue',  124
 UNION ALL SELECT 'bb', 'Table', 'Red',   -23
 UNION ALL SELECT 'bb', 'Cup'  , 'Green', -23
 UNION ALL SELECT 'aa', 'Chair', 'Blue',  101
 UNION ALL SELECT 'aa', 'Chair', 'Red',   -90
 
+select * from  #t
 -- 统计及显示
 SELECT
 	Groups = CASE 
@@ -26,13 +33,16 @@ SELECT
 			THEN Item + N' 小计'
 		ELSE '' END,
 	Quantity=SUM(Quantity)
-FROM @t
+FROM #t
 GROUP BY Groups, Item, Color
 	WITH ROLLUP
 ORDER BY 
-	GROUPING(Groups), CASE WHEN GROUPING(Groups) = 1 THEN '' ELSE Groups END DESC,
-	GROUPING(Item), CASE WHEN GROUPING(Item) = 1 THEN '' ELSE Item END DESC,
-	GROUPING(Color), CASE WHEN GROUPING(Color)=1 THEN '' ELSE Color END DESC,
+	GROUPING(Groups), 
+	CASE WHEN GROUPING(Groups) = 1 THEN '' ELSE Groups END DESC,
+	GROUPING(Item), 
+	CASE WHEN GROUPING(Item) = 1 THEN '' ELSE Item END DESC,
+	GROUPING(Color), 
+	CASE WHEN GROUPING(Color)=1 THEN '' ELSE Color END DESC,
 	Quantity DESC
 
 /*--结果
