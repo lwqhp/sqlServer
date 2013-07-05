@@ -275,3 +275,25 @@ order by colum1
 option (MAXRECURSION 0) 
 
 
+--×Ô¼ºµÄÁ·Ï°
+create table #t(id int ,val varchar(20))
+
+insert into #t
+select 1,'a' union all
+select 1,'b' union all
+select 2,'a' union all
+select 2,'b' union all
+select 2,'c' 
+
+select * from #t
+
+;with rstult1 as(
+select *,ROW_NUMBER() over(partition by id order by id) as num from #t),
+result2 as(
+	select id,cast(val as varchar(100)) as val,num from rstult1 where num=1
+	union all
+	select a.id,val=cast(b.val+','+a.val as varchar(100)),a.num from rstult1 a 
+	inner join result2 b on a.id = b.id and a.num-1= b.num
+)
+select id,max(val) as val from result2 group by id 
+
