@@ -298,22 +298,37 @@ BEGIN
 END
 GO
 
+select @@DATEFIRST
 ---给一个日期,生成本周的日期列表:
 declare @date datetime
-set @date='20090423'
-select dateadd(dd,a.number,@date+2-datepart(dw,@date))
+set @date=getdate()
+select @date+1-datepart(dw,@date) --取指定日期所在周的星期一,默认星期日是一周的第一天
+
+select dateadd(dd,a.number,DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-2)%7-1,GETDATE()))
 from master..spt_values a
 where type='p'
     and number<=6
 
+
 declare @d datetime
 set @d = getdate()
 select dateadd(d,n,@d) as t
-from (select -1 as n union select -2 union select -3 union select -4 union select -5 union select -6 union
-      select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 0) t
+from (select -1 as n union all select -2 union all select -3 union all select -4 union all select -5 union all select -6 union all
+      select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 0) t
 where datepart(wk,@d)=datepart(wk,dateadd(d,n,@d)) 
 
 
+DECLARE @dt datetime
+SET @dt=GETDATE()
+ 
+DECLARE @number int
+SET @number=3 --指定星期几
+--指定日期所在周的任意星期几
+--A.  星期天做为一周的第1天
+SELECT DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-1)%7,GETDATE())
+ 
+--B.  星期一做为一周的第1天
+SELECT DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-2)%7-1,GETDATE())
 /*
 生成月份列表
 实现统计每个月份的money合计，对于没有数据的月份，显示为0，在统计中，为了补齐缺少的月份，使用select

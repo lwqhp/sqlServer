@@ -1,0 +1,28 @@
+IO系统:等待队列时间，访问频率。辅助：读,写的平均时间，速率
+
+Avg.Disk queue length :指读取和写入请求(为所选磁盘在实例间隔中列队的)的平均数.
+	简单的说：就是请求(读取或写入)等待队列的指数，值越高，说明在这一点上等待越长，这包括，磁盘的读写数据量大，磁盘读写消耗时间多，
+	正常值<0.5,此值长时间过大>2,则说明操作数据量过大，或磁盘IO太慢，需要优化或更换更快的磁盘。
+	计算：平均值/磁盘数.
+
+% Disk Time : 指磁盘忙于为读，写请求提供服务所占用的时间比,也就是磁盘访问的频率.一般<10,如果越过大，说明耗费太多时间来访问磁盘，可考虑增加内
+	存，更换更快的硬盘，优化读写数据的算法。若数值持续超过80(此时处理器及网络连接并没有饱和),则可能是内存泄漏了。
+
+辅助参考计数器
+Avg.Disk sec/Read 和Avg.Disk sec/Write :磁盘读，写的平均时间，10ms内是很好的表现，20ms以下还能接受，再高就说明有问题了.
+
+Disk Reads/Sec 和Disk Writes/Sec ：磁盘的读，写速率.这两个值应该小于磁盘能力的85%,如果大于，则说明了磁盘访问时间持续过长，可考虑增加磁盘
+	减轻负载。
+
+RAID配置建议：
+raid 0: i/o per disk = (reads+writes)/number of disks
+raid 1: i/o per disk = (reads+writes*2)/2
+raid 5: i/o per disk = (reads+writes*4)/number of disks
+raid 10: i/o per disk = (reads+writes*2)/number of disks
+
+比如单磁盘：
+Read/sec =19
+Write/sec = 110
+计算：19+110= 129
+
+对不上
