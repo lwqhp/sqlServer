@@ -13,7 +13,7 @@ UNION ALL SELECT 2,'11,3,4'
 UNION ALL SELECT 2,'1,33,4'
 UNION ALL SELECT 3,'1,3,4'
 GO
-
+select * from tb
 -- 合并数据项的处理函数
 CREATE FUNCTION dbo.f_mergSTR(
 	@ID int
@@ -46,7 +46,7 @@ BEGIN
 			AND SUBSTRING(',' + A.col, B.ID, 1) = ','
 		GROUP BY SUBSTRING(A.col, B.ID, CHARINDEX(',', A.col + ',', B.ID) - B.ID)
 		-- 如果分拆后的数据项的个数与该组记录数相同, 则数据数据项在该组的所有记录中存在, 则保留此记录
-		HAVING COUNT(*) = (SELECT COUNT(*) FROM tb WHERE ID = @ID)
+		HAVING COUNT(*) = (SELECT COUNT(*) FROM tb WHERE ID = @ID) --这个有约定，单条记录里不会出现重复值
 	)A
 	ORDER BY s -- 排序生成的结果中的数据项位置(如果要按数字排序, 则需要做数据类型转换)
 

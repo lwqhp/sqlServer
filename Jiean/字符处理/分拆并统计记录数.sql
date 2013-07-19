@@ -14,7 +14,7 @@ UNION ALL SELECT 4, 'dd,ccc,c', 30
 UNION ALL SELECT 5, 'ddaa,ccc', 40
 UNION ALL SELECT 6, 'eee,ee,c', 50
 GO
-
+select * from tb
 -- 分拆处理需要的辅助表的记录数(由于是直接处理,所以根据col1列中最大的数据长度来创建)
 DECLARE
 	@len int
@@ -36,6 +36,15 @@ ALTER TABLE # ADD
 	PRIMARY KEY(
 		ID)
 SET ROWCOUNT 0
+
+select * from #
+
+--select data=substring(a.col,b.id,charindex(',',a.col+',',b.id)-b.id), 
+--	show_count=count(0),
+--	row_count=count(distinct a.id)
+--from tb a ,# b
+--where b.id<=len(a.col) and substring(','+a.col,b.id,1) = ','
+--group by substring(a.col,b.id,charindex(',',a.col+',',b.id)-b.id)
 
 --统计处理
 SELECT

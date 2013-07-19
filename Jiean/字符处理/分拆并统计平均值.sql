@@ -49,6 +49,8 @@ INTO #t FROM tb A, # B
 WHERE b.ID <= LEN(A.col)
 	AND SUBSTRING(',' + A.col, B.ID,1) = ','
 
+select * from #t 
+
 SELECT
 	A.data,
 	AVG_num = CAST(
