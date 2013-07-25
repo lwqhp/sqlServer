@@ -8,7 +8,7 @@ SET NOCOUNT ON
 -- 参数检查
 IF ISNULL(OBJECTPROPERTY(OBJECT_ID(@TableName), N'IsUserTable'), 0) = 0
 BEGIN
-	RAISERROR(N'"%s"不存在,或者不是用户表', 16, 1, @TableName)
+	RAISERROR(N'"%s"不存在,或者不是用户表', 16, 1, @TableName) --累子
 	RETURN
 END
 

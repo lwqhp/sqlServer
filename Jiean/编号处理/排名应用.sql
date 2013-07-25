@@ -11,6 +11,7 @@ UNION ALL SELECT 'gg', 78
 UNION ALL SELECT 'ff', 50
 GO
 
+select *,place=dense_rank() over(order by score desc) from tb 
 -- 名次生成方式1 : Score 重复时合并名次
 SELECT
 	*,

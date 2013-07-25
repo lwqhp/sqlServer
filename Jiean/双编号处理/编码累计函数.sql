@@ -1,3 +1,4 @@
+
 CREATE TABLE tb(
 	ID int
 		PRIMARY KEY,
@@ -15,6 +16,8 @@ UNION ALL SELECT 8, 7   , 800
 UNION ALL SELECT 9, 7   , 900
 GO
 
+select * from tb
+select * from dbo.f_id()
 -- 得到每个结点的编码累计
 CREATE FUNCTION dbo.f_id()
 RETURNS @t TABLE(
@@ -59,6 +62,16 @@ WHERE A.ID = A1.ID
 	AND B.ID = B1.ID
 	AND B1.SID LIKE A1.SID + '%'
 GROUP BY A.ID, A.PID, A.Num
+
+;with tmp as(
+	select a.id,a.pid,a.num,b.Level,b.SID from tb a
+	inner join dbo.f_id() b on a.id = b.id
+)
+select a.id,a.pid,a.num,sum(b.num) as sum_num from tmp a
+inner join tmp b on b.sid like a.sid+'%'
+group by a.id,a.pid,a.num
+
+
 /*--结果
 ID          PID         Num         SUM_Num
 ----------- ----------- ----------- -----------
