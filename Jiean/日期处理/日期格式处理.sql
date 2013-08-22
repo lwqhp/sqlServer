@@ -1,20 +1,6 @@
 
 
-/*
- SQL Server 中的日期类型包括datetime 和smalldatetime，仅能处理可以识别为 1753年--9999年间的日期的值，没有单独的日期型或时间型。
- 
- datetime:类型处理从1753年1月1日-9999年12月31日的日期和时间数据，精确度为百分之三秒。
-			存储长度为8字节，日期和时间各用4个字节存储。
- smalldatetime:类型处理从1900年1月1日-2079年6月6日的时期和时间数据。精确到分钟。
-			存储长度为4字节。
-			
-SqlServer语言环境对日期格式的影响
 
-SET LANGUAGE 指定SqlServer语言
-SET DATEFIRST {number | @number_var} 设置一周的第一天是星期几，对所有用户均有效。
-	1~表示一周的第一天是星期一，7~表示一周的第一天对应为星期日。
-*/
- SELECT * FROM syslanguages
  
  
 
@@ -299,6 +285,9 @@ END
 GO
 
 select @@DATEFIRST
+
+set datefirst 1
+
 ---给一个日期,生成本周的日期列表:
 declare @date datetime
 set @date=getdate()
@@ -334,6 +323,19 @@ SELECT DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-2)%7-1,GETDATE())
 实现统计每个月份的money合计，对于没有数据的月份，显示为0，在统计中，为了补齐缺少的月份，使用select
 配合union all语句构造一个包含1-12共12条记录的虚拟表
 */
+select @@datefirst
+set datefirst 1
+
+/*
+查询给定日期是当月的第几周
+给定日期是当年的第几周-给定日期所在月第一天是当年的第几周
+跟一周的开始是周日还是周一，不影响
+*/
+declare @date datetime;
+set @date = getdate()
+
+select datepart(week,@date)-datepart(week,dateadd(month,datediff(month,0,@date),0))+1 
+select datepart(week,@date)-datepart(week,dateadd(day,1-datepart(day,@date),@date))+1 
 
 SELECT a.[month],[month]=isnull(b.[monty],0)
 FROM (

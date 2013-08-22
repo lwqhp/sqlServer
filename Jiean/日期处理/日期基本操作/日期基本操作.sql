@@ -1,5 +1,19 @@
 
 /*日期信息*/
+/*
+ SQL Server 中的日期类型包括datetime 和smalldatetime，仅能处理可以识别为 1753年--9999年间的日期的值，没有单独的日期型或时间型。
+ 
+ datetime:类型处理从1753年1月1日-9999年12月31日的日期和时间数据，精确度为百分之三秒。
+			存储长度为8字节，日期和时间各用4个字节存储。
+ smalldatetime:类型处理从1900年1月1日-2079年6月6日的时期和时间数据。精确到分钟。
+			存储长度为4字节。
+			
+SqlServer语言环境对日期格式的影响
+
+SET LANGUAGE 指定SqlServer语言
+SET DATEFIRST {number | @number_var} 设置一周的第一天是星期几，对所有用户均有效。
+	1~表示一周的第一天是星期一，7~表示一周的第一天对应为星期日。
+*/
 
 --取当前日期
 SELECT getdate()
@@ -64,3 +78,5 @@ SELECT DATEADD(dd,DATEDIFF(dd,0,getdate()), 0)
 --获取本月的第一天，然后加一个月，然后用下一个月的第一天减去1天即可。
 select dateAdd(month,1,dateAdd(day,1-datepart(day,GETDATE()),GETDATE()))-1
 SELECT DATEADD(day,1-datepart(day,GETDATE()),GETDATE())-1
+
+select dateadd(mm,1,dateadd(day,-day('2013-08-31'),'2013-08-31'))

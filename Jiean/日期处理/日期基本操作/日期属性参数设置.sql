@@ -11,12 +11,14 @@ Y--年
 --（2）日期环境设定
 
 --SQL SERVER 语言，确定了一种日期解释方法
-SELECT * FROM syslanguages
+SELECT * FROM sys.syslanguages
 
 -->A.设置默认语言
 USE master
 EXEC sp_configure 'default language',[langid]
 RECONFIGURE WITH override
+
+
 --在任何应用程序中临时进程设定
 SET LANGUAGE
 
@@ -118,7 +120,7 @@ SET dateFormat --仅用在将字符串转换为日期值时有用，它对日期值的显示没有影响
 		
 -->C.设置一周的第一天是星期几
 
-set dateFirst -- 对所有用户有效，除非再次修改，否则该设置将一直保留
+set dateFirst 7-- 对所有用户有效，除非再次修改，否则该设置将一直保留
 
 select @@DateFirst
 
