@@ -160,7 +160,7 @@ NT Authority\System £º±¾µØÏµÍ³ÕÊºÅµÇÂ½Ê¹ÓÃµÄµÇÂ½Ãû£¬Èç¹ûsqlserver·şÎñÊÇÒÔ¡°±¾µØÏ
 ·şÎñÆ÷¼¶¿ÉÒÔÉèÖÃµÄ°²È«¶ÔÏó£º¶Ëµã£¬µÇÂ½Ãû£¬·şÎñÆ÷
 
 
-·şÎñÆ÷½ÇÉ«
+·şÎñÆ÷½ÇÉ«(7)+2
 bulkadmin : administer bulk operations
 dbcreator : create database
 diskadmin : alter resources
@@ -170,16 +170,21 @@ serveradmin : alter any endpoint ,alter resources,alter server state,alter setti
 setupadmin : alter any linked server
 sysadmin : control server
 
+public½ÇÉ«£º·şÎñÆ÷Ä¬ÈÏ½ÇÉ«£¬ËùÓĞµÇÂ½Ãû¶¼»áÊôÓÚÕâ¸ö½ÇÉ«£¬publicÖ»ÓĞ view any databaseµÄÈ¨ÏŞ
+(Èç¹ûÄãÔÚ·şÎñÆ÷½ÇÉ«ÖĞÃ»ÓĞ¿´µ½public£¬ÄÇÃ´ºÜ¿ÉÄÜÊÇÒòÎªÄãÃ»ÓĞ°²×°sql serverµÄ×îĞÂ²¹¶¡°ü£¨sql server 2005 sp2)µÄÎÊÌâ)
+
 */
 
 
 
---È¨ÏŞ¿ØÖÆ
+--È¨ÏŞ¿ØÖÆ----------------------------------------------------------------------------------------
 /*
 ½ÇÉ«£º·şÎñÆ÷¹Ì¶¨½ÇÉ«ºÍÊı¾İ¿â¹Ì¶¨½ÇÉ«
-¹Ì¶¨½ÇÉ«ÊÇ²»ÄÜ×Ô¶¨ÒåµÄ£¬½ÇÉ«¶¨ÒåºÃÁË¶Ô°²È«¶ÔÏó²Ù×÷µÄ·¶Î§£¬ÓÃ»§·ÖÅäËùÊôµÄ½ÇÉ«
+¹Ì¶¨½ÇÉ«ÊÇ²»ÄÜ×Ô¶¨ÒåµÄ£¬½ÇÉ«¶¨ÒåÁË¶Ô°²È«¶ÔÏó²Ù×÷µÄ·¶Î§£¬ÓÃ»§·ÖÅäËùÊôµÄ½ÇÉ«
 
-ÔÚÊı¾İ¿âÖĞÄÜ½øĞĞÄÇĞ©²Ù×÷£¬ÓÉÊı¾İ¿âµÄÓÃ»§È¨ÏŞÏŞÖÆ
+ Ä¬ÈÏ¹Ì¶¨½ÇÉ«ÒÑÊÚÓÚ·şÎñÆ÷¼¶ËùÓĞÊı¾İ¿â
+
+ÔÚÊı¾İ¿âÖĞÄÜ½øĞĞÄÇĞ©²Ù×÷£¬ÓÉÊı¾İ¿âµÄÓÃ»§È¨ÏŞÏŞÖÆ(ÔÚÊı¾İ¿â¼¶±ğ£¬Ö÷ÌåÊÇÓÃ»§ºÍ½ÇÉ«)
 
 1£¬ÓĞÄÇĞ©ÄÚÖÃÓÃ»§
 Dbo : Êı¾İ¿âµÄÄ¬ÈÏÓÃ»§£¬²»ÄÜÉ¾³ı
@@ -189,8 +194,11 @@ INFORMATION_SCHEMAÓÃ»§ºÍsysÓÃ»§ÓµÓĞÏµÍ³ÊÓÍ¼£¬ÕâÁ½¸öÊı¾İ¿âÓÃ»§²»ÄÜ±»É¾³ı
 2,ËùÊôÄÇĞ©½ÇÉ«
 Public½ÇÉ«: ÓµÓĞµÄÈ¨ÏŞ×Ô¶¯±»ÈÎºÎÖ÷Ìå¼Ì³Ğ£¬ËùÒÔ¶ÔÓÚPublic½ÇÉ«µÄÈ¨ÏŞĞŞ¸ÄÒª¸ñÍâĞ¡ĞÄ
 
-Êı¾İ¿â¹Ì¶¨½ÇÉ«
-db_accessadmin alter any user,create schema
+Êı¾İ¿â¹Ì¶¨½ÇÉ«(8)+2
+db_owner :¿ÉÒÔÖ´ĞĞÊı¾İ¿âµÄËùÓĞÅäÖÃºÍÎ¬»¤»î¶¯
+
+
+db_accessadmin alter any user,create schema ·ÃÎÊÊÚÈ¨¹ÜÀíÔ±
 db_accessadmin :connect
 db_backupoperator : backup datebase,backuplog ,checkpoint
 db_datereader : select
@@ -200,14 +208,19 @@ db_securityadmin : alter any application role,alter any role,create schema,view 
 dB_denydatareader : ¾Ü¾ø select 
 db_denydatawrite :  ¾Ü¾ø delete ,insert,update
 
+*/
+--Ã¿Ò»¸öµÇÂ½Ãû¶¼»áÔÚÕâĞ´ÈëÒ»Ìõ¼ÇÂ¼
+select * from sys.sql_logins
 
+
+/*
 ¼Ü¹¹
 
 Àí½âÎªÃüÃû¿Õ¼ä£¬
-*/
+
 
 --ÊÚÈ¨
-/*
+
 ¶ÔÓÚ¸¸°²È«¶ÔÏóÉÏÉèÖÃµÄÈ¨ÏŞ£¬»á±»×Ô¶¯¼Ì³Ğµ½×Ó°²È«¶ÔÏóÉÏ¡£
  ±ÈÈç£¬ÎÒ¸øÓèÖ÷ÌåCareySon(µÇÂ¼Ãû)¶ÔÓÚ°²È«¶ÔÏóCareySon-PC(·şÎñÆ÷)µÄSelect(È¨ÏŞ),
  ÄÇÃ´CareySonÕâ¸öÖ÷Ìå×Ô¶¯ÓµÓĞCareySon-PC·şÎñÆ÷ÏÂËùÓĞµÄÊı¾İ¿âÖĞ±íºÍÊÓÍ¼µÈ×Ó°²È«¶ÔÏóµÄSELECTÈ¨ÏŞ
@@ -252,4 +265,14 @@ revoke select--È¨ÏŞ
   to careyson--Ö÷Ìå
 
 
+/*
+×÷Òµ
 1,Çå³ş¹Ì¶¨½ÇÉ«µÄ×÷ÓÃºÍ·¶Î§
+*/
+---Ğ¡½á
+
+--
+DENY VIEW any DATABASE to PUBLIC;
+
+--È»ºó¸øBest¿âµÄBestÓÃ»§Ö´ĞĞ£º
+ALTER AUTHORIZATION ON DATABASE::Best TO Best
