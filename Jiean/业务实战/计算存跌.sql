@@ -23,18 +23,24 @@ from #inInv
 
 ;with tmp as(
 	select id,a.batchno,a.materialID,a.indate,a.inqty,
-	case when a.inqty-b.outqty<=0 then 0 else a.inqty-b.outqty end as NewInqty,
-	case when b.outqty-a.inqty <=0 then 0 else b.outqty-a.inqty end as diff from #inInv2 a 
+	CASE WHEN a.inqty-b.outqty<=0 THEN 0 ELSE a.inqty-b.outqty end as NewInqty,
+	CASE WHEN b.outqty-a.inqty<=0 THEN 0 ELSE b.outqty-a.inqty END as diff 
+	from #inInv2 a 
 	inner join #outInv b on a.materialID = b.materialID
 	where id = 1 
 
 	union all
 
-	select b.id,b.batchno,a.materialID,a.indate,b.inqty,
-	case when b.inqty-a.diff<=0 then 0 else b.inqty-a.diff end as NewInqty,
-	case when a.diff-b.inqty <=0 then 0 else a.diff-b.inqty  end as diff
-	from tmp a
-	inner join #inInv2 b on a.materialID = b.materialID and b.id = a.id+1
+	select a.id,a.batchno,a.materialID,b.indate,a.inqty,
+	CASE WHEN a.inqty-b.diff<=0 THEN 0 ELSE a.inqty-b.diff END  as NewInqty,
+	CASE WHEN b.diff-a.inqty<=0 THEN 0 ELSE b.diff-a.inqty END as diff
+	from #inInv2 a
+	INNER  join tmp b on a.materialID = b.materialID and a.id = b.id+1 
+	WHERE b.diff>0
 	
 )
 select * from tmp where NewInqty>0
+
+005	M00B	2013-09-01 00:00:00.000	20	5	0
+031	M00B	2013-09-01 00:00:00.000	10	10	0
+056	M00A	2013-09-01 00:00:00.000	5	5	0
