@@ -164,6 +164,64 @@ windows里面有两块重要的交换区(pool),如果这两块内存出现泄漏，或者空间用尽，window
 memory:pool Nonpaged bytes(非页交换区) 
 Memory:Pool paged resident Bytes(页交换区)
 
+--单个proecss 进程的使用情况
+当Available MBytes看出服务器的内存基本用尽，但是从Memory:Cache Bytes 的值看，window自己没有使用多少，现在就要分析
+到底是哪些个应用进程把物理内存都占用了。
+
+Process:%processor Time 指的是目标进程消耗的cpu资源数，包括用户态和核心态的时间,也就是处理器用来执行非闲置线程时间
+的百分比。
+
+Process:Page Faults/sec 指的是目标进程上发生的Page Faults的数目。
+
+Process:Handle Count 指的是目标进程Handle(指向object的指针)数目。如果进程内部有对象老是创建，不及时回收，就会发生Handle Leak.
+
+Process:Thread Count 指的是目标进程的线程数目。如果进程总是创建新线程，不释放老线程，就会发生Thread Leak.
+
+Process:Pool Paged Bytes 指的是目标进程所使用的Paged Pool 大小.
+
+Process:Pool Nonpaged Bytes 指的是目标进程所使用的Non-Paged Pool 大小.
+
+
+Process:Working Set :某个进程的地址空间中，存放在物理内存的那一部份。
+Process: Virtual Bytes:某个进程所申请的虚拟地址空间大小，包括reserved  Memory和Committed Memory.
+Process:Private Bytes:某个进程的提交了的地址空间(committed Memory)中，非共享的部份。
+
+目标：
+使用内存最多的进程
+内存使用量在不断增长的进程
+出现问题的那个时间段里，内存使用数量发生过突变的进程.
+
+
+SqlServer内存使用特性
+
+默认最大的用户态地址空间是2GB,如果使用了/3GB参数或开启了 AWE，或者是在64位的机器上，sqlserver可以
+使用更多的内存，sqlserver是个很喜欢内存资源的程序，它的理想状态，就是把所有可能会用到的数据和结构
+都缓存在物理内存里，以达到最优的性能。
+
+默认情况下，建议sqlServer 动态使用内存，它会定期查询系统以确定可用物理内存量
+
+
+释放内存机制
+Total Server Memory :SqlServer 自己分配的Buffer Pool 内存总和
+Target Server Memory : sqlServer在理论上能够使用的最多的内存数目。
+
+当sqlserver启动的时候，它会检查一下自己的虚拟地址空间，是否开启了AWE,sp_configure里的"max Server Memory"值，以及当
+前服务器的可用物理内存数，其中取一个最小值，作为自己的Target server memory值。
+
+在sqlServer运行的过程中，如果它感知到windows层面的内存压力，就会降低Target ServerMemory的大小，而sql Server又会定期
+比较TotalServerMemory和TargetServerMemory两个值.
+
+当Total Server Memory小于TargetServerMemory时，sqlserver知道系统还有足够的内存，所以在须要缓存任何新的数据时，就会分配新
+的内存地址空间。从计数器上看，totalServerMemory的值会不断变大.
+
+当Total Server Memory等于TargetServerMemory时，sqlServer 知道自己已经用足了系统能够给予的内存空间，如果需要缓存任何新的数
+据，它不会再去分配新的内存空间，反过来，它会在自己现在的内存空间里清理动作，腾出空间来给新的数据使用。
+
+当sqlServer收到windows内存压力信号，调小target ServerMemory值，使得Total Server Memory大于target Server Memory时，sqlserver
+开始内存清理动作，调小自己的地址空间大小，释放内存。
+
+-----------内存分类---------------------------------------
+
 */
 
 
