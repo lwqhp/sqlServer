@@ -379,5 +379,125 @@ sqlServer 从数据文件读取的数据量，可以被其跟踪下来，正常的sqlserver,这个计数器的
 
 4,sqlServer:Buffer Manager - Stolen Pages
 相对于数据页面，sqlServer 会比较优先的清除内存里地执行计划。所以当Buffer Pool发生内存压力的时候，也会看到Stolen pages
-降低。反过来，如果Stolen pages 的数目没什么变化，一般来讲，就意味着sqlServer 还有足够的内存存放
+降低。反过来，如果Stolen pages 的数目没什么变化，一般来讲，就意味着sqlServer 还有足够的内存存放database  pages(但是请注
+意，并不一定意味着buffer pool里的stolen 内存和multi-page 内存没有问题)
+
+5，sys.sysprocesses 动态管理视图中出现一些连接等待i/0完成的现象。
+当sqlserver出现database page内顾瓶颈的时候，往往会伴随着发生硬盘瓶颈问题。这是因为
+1）sqlserver数据页paging 动作会带来大量的硬盘读写，使得硬盘跟着忙碌起来，
+2）如果一个连接要等sqlserer从硬盘上读数据，这个等待会比从内存里读要长得多，时间花费不在一个数量级上。哪怕硬盘再
+快，也比不上内存。所以从连接的等待状态来持，它们会经常等硬盘。
+
+---确定压力来源和解决办法
+
+1,外部压力
+当window层面出现内存不够的时候，sqlserver会压缩自己的内丰使用，这时间database pages 会首当其冲，被压缩，所以自己
+然会发生内存瓶颈。这时候压力来自 sqlServer的外部
+
+a,sqlserverMemory Manager  - Total Server Memory 有没有被压缩
+b,memory:available mbytes 有没有下降一一个比较低的值
+c,如果sqlServer没有使用AWE或lock page in memory技术，process 上的内存计数器还是准的，可以看看process:private bytes-sqlserver
+和process:working Set -sqlservr的值是不是也有了急剧的下降。
+
+解决办法
+即然压力来自sqlserer 之外，那管理员就要做出选反，是给sqlserver多一点内存资源呢，还是让sqlserver自己节衣缩食，多留一些内存给系统,
+这个调整可以通过设置sqlserver的max server memory值做到。
+
+2，来自sqlserver自身database page使用需求的压力
+sqlserver的totalserver memory已经到达了用户设定的max servermemory上限，或者sqlserver已经没有办法从windows那里再申请到新内存，而
+用户经常访问的数据量又远大于物理内存用来存放数据页面的大小，迫使sqlserver不断地将内存里的数据page out 又page in,以完成眼前用户请求
+
+主要表现在
+1)sqlServer:memory manager-Total Server Memory 一直维持在一个比较高的值，和sqlserver memory manager-target server memory相等。不会
+有total server memory 大于target server memory的现象。
+这一点是区别内部压力和外部压力的最明显差别.
+
+2,其它共同特征
+sqlserver:buffer manager - lazy writes/sec : 经常出现不为0.
+....page Life expectancy:经常有显著下降
+....page reads/sec : 经常不为0
+....Stolen pages :维持在一个比较低的水平，应该比database page 要小很多。
+sys.sysprocesses 动态管理视图中出现一些连接等待i/o完成的现象。
+
+解决办法
+即然sqlserver自己没有足哆的内存空间放database pages,那解决问题的思路有两个：或者想办法给sqlserverg更多的内存，
+或得想办法让sqlserver少用一点内存。
+a,在32位服务器上开启awe功能，扩展使用4G以上内存。
+b,如果sql已经充分使用了服务器的内存，便不是不够，增加内存。
+c,如果scale up不容易，可以考虑scale out,分数据库到其它服务器上。
+d,跟踪sqlserver的运行，找到读取数据页最多的语句进行评估。如果这些语句天生就要读很多数据，那就要和应用开发人员商量，
+为什么每次要从sqlserver上读取这么多数据，是否有这个必要。如果语句只是要返回部份数据，但是因为表格上没有合适的索引，
+使得sql选择了一个表扫描的执行计划，事实上很多数据是没必要读的，那就要优化数据库它引的设计，以估化语句的执行，减少
+内存使用。
+
+3，来自buffer pool里的stolen memory的压力
+正常情况下，buffer pool里的stolen memory 是不应该给database pages 造成太大的压力的，因为如果database pages 有压力，
+就会触发lazy writes,同时sql也会清除stolen 内存的执行计划缓存部份。所以在一个buffer pool有内存压力的sqlserver上，是不
+有太多的stolen memory的，但是在有些sqlserver上，用户可能开启了一些sqlserver对象而没有及时关闭，例如，声明了很多游档，
+用宛了以后不关，或者prepare 了很多执行计划但是不un-prepare,这些对象绝大部份是放在buffer pool里的，如果用户始终不释放
+它们，也不登出sqlserver,那这部份内存就永锭放不掉，当这部份内存涨到足够大时，会反过来压缩database page 的使用。
+
+4，来自multi-page（memtoleave）的压力
+由于 multi-page和buffer pool共享sqlserve的虚拟地址空间，如果multi-page使用得太多，buffer pool的地址空间就小了，这也会
+压缩database page的大小，由于sqlserver使用multi-page的量一般不大，所以这种问题比较少发生。
+
+如何发现内存使用比较多的语句
+
+1,使用DMV分析sqlserver启动以皇粮做read最多的语句
+sys.dm_exec_query_stats :返回缓存查询计划的聚合性能统计信息。
+*/
+SELECT * FROM sys.dm_exec_query_stats
+
+--按照物理读的页面数排序
+SELECT TOP 50 
+qs.total_physical_reads,qs.execution_count,
+qs.total_physical_reads/qs.execution_count as [avg IO],
+substring(qt.text,qs.statement_start_offset/2,(
+case when qs.statement_end_offset = -1 then len(convert(nvarchar(max),qt.text))*2
+else qs.statement_end_offset end -qs.statement_start_offset)/2) as query_text,
+qt.dbid,dbname=DB_NAME(qt.dbid),
+qt.objectid,
+qs.sql_handle,
+qs.plan_handle
+ FROM sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
+order by qs.total_physical_reads DESC
+
+--按照逻辑读的页面数排序
+SELECT TOP 50 
+qs.total_logical_reads,qs.execution_count,
+qs.total_logical_reads/qs.execution_count as [avg IO],
+substring(qt.text,qs.statement_start_offset/2,(
+case when qs.statement_end_offset = -1 then len(convert(nvarchar(max),qt.text))*2
+else qs.statement_end_offset end -qs.statement_start_offset)/2) as query_text,
+qt.dbid,dbname=DB_NAME(qt.dbid),
+qt.objectid,
+qs.sql_handle,
+qs.plan_handle
+ FROM sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
+order by qs.total_logical_reads DESC
+
+/*
+从这两个查询，可以大致知道sqlserver里喜欢读数据的语句是哪些了.
+
+这个视图里每一个语句记录的生存期与执行计划本身相关联，如果sqlserver有内存压力，把一部份执行计划从级存中删除时，这些
+记录也会从该视图中删除。
+
+视图里的是历史信息，反映不出在某个时间段调用得比较频繁，针对性不是很强。
+
+如果要准确知道在某个时间段里，哪些语句比较耗内存资源，sqlserver日志文件上场。
+
+
+----Stolen Memory缓存压力分析
+在sqlServer 里，除了dataBase Pages,其它的内存分配基本都不是遵从先reserve,再commit的方法，而是直接从地址空间里申请
+所以这些内存基本都是Stolen Memory.对一般的SqlServer,Stolen 内存也主要以8KB为单位分配，分布在BUffer Pool 里
+
+如果一个sqlServer能够缓存这么多不同的执行计划，说明它内部运行的大多数是动态t-sql语句，很少能重用。
+
+
+CMEMthREAD(0x00B9)等待 sys.sysprocesses.waittype
+高并发sqlserer,同时申请的人太多，而这些并发的连接，在大量地使用需要每次都做编译的动态t-sql语句。解决方法不是增加内存，
+而是修改客户的连接行为，尽可能更多地使用存储过程，或者使用参数化的t-sql语句调用，减少语句编译量，增加执行计划的重用。
+避免大量连接同时申请内存做语句编译的现象。
 */
