@@ -1,17 +1,13 @@
+
+--Apply ±íÔËËã·û
+
 /*
-Ê×ÏÈInner joinÊÇ±íºÍ±íµÄÁª½Ó²éÑ¯£¬¶øCross applyÊÇ±íºÍ±íÖµº¯ÊıµÄÁª½Ó²éÑ¯¡£ ¿ÉÄÜÍ¨¹ıinner joinÊµÏÖÏàÍ¬µÄcross apply²éÑ¯¡£
-Ö´ĞĞ¹ı³Ì£º
-Cross applyÊ×ÏÈÖ´ĞĞTVF£¨table-valued functions£©£¬È»ºó¶Ô±íStudnet½øĞĞÈ«±íÉ¨Ãè£¬½Ó×ÅÍ¨¹ı±éÀúsID²éÕÒÆ¥ÅäÖµ¡£
+apply±íÔËËã·û°ÑÓÒ±í±í´ïÊ½Ó¦ÓÃµ½×ó±í±í´ïÊ½ÖĞµÄÃ¿Ò»ĞĞ£¬Ëü²»ÏñÁª½ÓÄÇÑùÏÈ¼ÆËãÄÄ¸ö±í±í´ïÊ½¶¼¿ÉÒÔ£¬apply±ØĞëÏÈÂß¼­µØ¼ÆËã×ó±í±í´ïÊ½£¬°Ñ
+×ó±íÖĞµÄÃ¿Ò»Ìõ¼ÇÂ¼´úÈëÓÒ±í±í´ïÊ½£¬Í¨¹ı¶ÔÓÒÊäÈëÇóÖµÀ´»ñµÃ×óÊäÈëÃ¿Ò»ĞĞµÄ¼ÆËã½á¹û£¬Éú³ÉµÄĞĞ±»×éºÏÆğÀ´×÷Îª×îÖÕÊä³ö.
 
 Inner join¶Ô±íStudentºÍApply½øĞĞÈ«±íÉ¨Ãè£¬È»ºóÍ¨¹ı¹şÏ£Æ¥Åä²éÕÒÆ¥ÅäµÄsIDÖµ¡£
 Èç¹û±íµÄÊı¾İÁ¿ºÜ´ó£¬ÄÇÃ´Inner joinµÄÈ«±íÉ¨ÃèºÄ·ÑÊ±¼äºÍCPU×ÊÔ´¾ÍÔö¼ÓÁË
 ËäÈ»´ó¶àÊı²ÉÓÃCross applyÊµÏÖµÄ²éÑ¯£¬¿ÉÒÔÍ¨¹ıInner joinÊµÏÖ£¬µ«Cross apply¿ÉÄÜ²úÉú¸üºÃµÄÖ´ĞĞ¼Æ»®ºÍ¸ü¼ÑµÄĞÔÄÜ£¬ÒòÎªËü¿ÉÒÔÔÚÁª½ÓÖ´ĞĞÖ®Ç°ÏŞÖÆ¼¯ºÏ¼ÓÈë¡£ 
-
-SQL Server 2005 ĞÂÔö cross apply ºÍ outer apply Áª½ÓÓï¾ä£¬Ôö¼ÓÕâÁ½¸ö¶«¶«ÓĞÉ¶×÷ÓÃÄØ£¿ 
- 
-ÎÒÃÇÖªµÀÓĞ¸ö SQL Server 2000 ÖĞÓĞ¸ö cross join ÊÇÓÃÓÚ½»²æÁª½ÓµÄ¡£
-Êµ¼ÊÉÏÔö¼Ó cross apply ºÍ outer apply ÊÇÓÃÓÚ½»²æÁª½Ó±íÖµº¯Êı£¨·µ»Ø±í½á¹û¼¯µÄº¯Êı£©µÄ£¬ 
-¸üÖØÒªµÄÊÇÕâ¸öº¯ÊıµÄ²ÎÊıÊÇÁíÒ»¸ö±íÖĞµÄ×Ö¶Î¡£Õâ¸ö½âÊÍ¿ÉÄÜÓĞĞ©º¬»ì²»Çë£¬Çë¿´ÏÂÃæµÄÀı×Ó£º 
 
 cross applyÊÇ¿ÉÒÔÁ¬½Ó±íÖµº¯ÊıµÄ ¶øinner join²»¿ÉÒÔ Õâ¸ö¾ÍÊÇÇø±ğ µ±È»Á½±ßÁ¬½ÓµÄ²»ÊÇº¯ÊıµÄÊ±ºò cross apply ¿ÉÒÔÄ£Äâinner join 
  */
@@ -45,6 +41,7 @@ select *
   from TABLE_1 T1
  outer apply FN_TableValue(T1.column_a)
  
+ /*
 cross apply ºÍ outer apply ¶ÔÓÚ T1 ÖĞµÄÃ¿Ò»ĞĞ¶¼ºÍÅÉÉú±í£¨±íÖµº¯Êı¸ù¾İT1µ±Ç°ĞĞÊı¾İÉú³ÉµÄ¶¯Ì¬½á¹û¼¯£©
  ×öÁËÒ»¸ö½»²æÁª½Ó¡£cross apply ºÍ outer apply µÄÇø±ğÔÚÓÚ£º 
  Èç¹û¸ù¾İ T1 µÄÄ³ĞĞÊı¾İÉú³ÉµÄÅÉÉú±íÎª¿Õ£¬cross apply ºóµÄ½á¹û¼¯ ¾Í²»°üº¬ T1 ÖĞµÄÕâĞĞÊı¾İ£¬
@@ -54,98 +51,7 @@ cross apply ºÍ outer apply ¶ÔÓÚ T1 ÖĞµÄÃ¿Ò»ĞĞ¶¼ºÍÅÉÉú±í£¨±íÖµº¯Êı¸ù¾İT1µ±Ç°ĞĞÊı¾
  
 ×¢Òâ outer apply ½á¹û¼¯ÖĞ¶à³öµÄ×îºóÒ»ĞĞ¡£ µ± Departments µÄ×îºóÒ»ĞĞÔÚ½øĞĞ½»²æÁª½ÓÊ±£ºdeptmgrid Îª NULL£¬fn_getsubtree(D.deptmgrid) Éú³ÉµÄÅÉÉú±íÖĞÃ»ÓĞÊı¾İ£¬µ« outer apply ÈÔ»á°üº¬ÕâÒ»ĞĞÊı¾İ£¬Õâ¾ÍÊÇËüºÍ cross join µÄ²»Í¬Ö®´¦¡£ 
  
-
- ----------------------------------------------------------------------------------------------------
--- create Employees table and insert values
-IF OBJECT_ID('Employees') IS NOT NULL
- DROP TABLE Employees
-GO
-CREATE TABLE Employees
-(
- empid INT NOT NULL,
- mgrid INT NULL,
- empname VARCHAR(25) NOT NULL,
- salary MONEY NOT NULL
-)
-GO
-IF OBJECT_ID('Departments') IS NOT NULL
- DROP TABLE Departments
-GO
--- create Departments table and insert values
-CREATE TABLE Departments
-(
- deptid INT NOT NULL PRIMARY KEY,
- deptname VARCHAR(25) NOT NULL,
- deptmgrid INT
-)
-GO
-
-select * from Departments
-select * from Employees
-
- 
--- fill datas
-INSERT  INTO employees VALUES  (1,NULL,'Nancy',00.00)
-INSERT  INTO employees VALUES  (2,1,'Andrew',00.00)
-INSERT  INTO employees VALUES  (3,1,'Janet',00.00)
-INSERT  INTO employees VALUES  (4,1,'Margaret',00.00)
-INSERT  INTO employees VALUES  (5,2,'Steven',00.00)
-INSERT  INTO employees VALUES  (6,2,'Michael',00.00)
-INSERT  INTO employees VALUES  (7,3,'Robert',00.00)
-INSERT  INTO employees VALUES  (8,3,'Laura',00.00)
-INSERT  INTO employees VALUES  (9,3,'Ann',00.00)
-INSERT  INTO employees VALUES  (10,4,'Ina',00.00)
-INSERT  INTO employees VALUES  (11,7,'David',00.00)
-INSERT  INTO employees VALUES  (12,7,'Ron',00.00)
-INSERT  INTO employees VALUES  (13,7,'Dan',00.00)
-INSERT  INTO employees VALUES  (14,11,'James',00.00)
- 
-INSERT  INTO departments VALUES  (1,'HR',2)
-INSERT  INTO departments VALUES  (2,'Marketing',7)
-INSERT  INTO departments VALUES  (3,'Finance',8)
-INSERT  INTO departments VALUES  (4,'R&D',9)
-INSERT  INTO departments VALUES  (5,'Training',4)
-INSERT  INTO departments VALUES  (6,'Gardening',NULL)
-GO
---SELECT * FROM departments
- 
--- table-value function
-IF OBJECT_ID('fn_getsubtree') IS NOT NULL
- DROP FUNCTION  fn_getsubtree
-GO
-CREATE  FUNCTION dbo.fn_getsubtree(@empid AS INT) 
-RETURNS TABLE 
-AS 
-RETURN(
-  WITH Employees_Subtree(empid, empname, mgrid, lvl)
-  AS 
-  (
-    -- Anchor Member (AM)
-    SELECT empid, empname, mgrid, 0
-    FROM employees
-    WHERE empid = @empid   
-    UNION ALL
-    -- Recursive Member (RM)
-    SELECT e.empid, e.empname, e.mgrid, es.lvl+1
-    FROM employees AS e
-       join employees_subtree AS es
-          ON e.mgrid = es.empid
-  )
-    SELECT * FROM Employees_Subtree
-)
-GO
- 
--- cross apply query
-SELECT  *
-FROM Departments AS D
-    CROSS APPLY fn_getsubtree(D.deptmgrid) AS ST
- 
- 
- 
--- outer apply query
-SELECT  *
-FROM Departments AS D
-    OUTER APPLY fn_getsubtree(D.deptmgrid) AS ST
+ */
     
     
 ---------------------------------------------------------------------------------------------------------
@@ -167,10 +73,7 @@ insert into #T2 values(NULL , 'ÊıÑ§' , 50)
 --drop table #t,#T2
 go
  
-select 
-    * 
-from 
-    #T a
+select   * from   #T a
 cross apply
     (select ¿Î³Ì,·ÖÊı from #t2 where ĞÕÃû=a.ĞÕÃû) b
  
@@ -185,10 +88,7 @@ cross apply
  
 */
  
-select 
-    * 
-from 
-    #T a
+select     * from     #T a
 outer apply
     (select ¿Î³Ì,·ÖÊı from #t2 where ĞÕÃû=a.ĞÕÃû) b
 /*
