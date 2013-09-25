@@ -6,7 +6,7 @@
 如果客户端是在另一台机器上，那么连接要通过网络层。
 
 连接建立后，客户端需要告诉sqlServer自己是谁，sqlserver需要认证是否为合法的sqlserver用户，从面赋预它预先设置好的
-权力，这些工作由客户端数据驱动程序(ODBC,OLE DB Native Client JDBC等)和sqlserver交互完成，成功扣客户端用户才能开始
+权力，这些工作由客户端数据驱动程序(ODBC,OLE DB Native Client JDBC等)和sqlserver交互完成，成功后客户端用户才能开始
 访问数据。
 
 下面重点了解客户端和sqlServre 建立连接过程
