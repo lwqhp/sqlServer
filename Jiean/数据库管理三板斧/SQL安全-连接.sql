@@ -63,32 +63,13 @@ SSB的权限有：
 5，作为服务登录
 6，读取和写入与网络通信相关的sqlServer注册表项。
 
----------------第三层--服务器端配置----------------------------------------------
-启用或禁止相关的网络协议：
-SqlServer配置管理器-->SqlServer网络配置
-注册表：HKEY_LOCAL_MACHINE\SHOTWARE\Microsoft\Microsoft SqlServer\MSSQL.X\SMSQLServer
-\SuperSocketNetLib下的各个项目里。
 
-
-检查是否成功启动:
-成功连接后，查看sql日志：源：服务器
-1,Shared Memory正常启动信息：
-Server local connection provider is ready to accept connection on [ \\.\pipe\SQLLocal\SQL2008 ].
-
-2，Named Pipe正常启动信息：
-Server named pipe provider is ready to accept connection on [ \\.\pipe\MSSQL$SQL2008\sql\query ].
-
-3，TCP/IP正常启动信息，可以看到SqlServer实例 在侦听的IP地址和端口号：
-Server is listening on [ 'any' <ipv4> 52604]. //侦听所有IP地址的52604端口
-Server is listening on [ 127.0.0.1 <ipv4> 52605]. //侦听本机的52604端口
-
-SqlServer Bowroer服务
 
 
 ---------------第四层--客户端连接----------------------------------------------
 1，客户端使用与服务器端交集的协议进行连接请求
 
-TCP/命名通道设置：
+	TCP/命名通道设置：
 a,MDAC数据库接口 ：运行cliconfg.exe
 
 b,SqlServer配置管理器-->Sql Native Client 10.0配置--启用客户端使用的协议
