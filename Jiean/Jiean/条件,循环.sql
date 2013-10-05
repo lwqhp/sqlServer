@@ -13,6 +13,7 @@ WHILE (@id IS NOT NULL)
 BEGIN
 	
 	DELETE # FROM id = @id
+	SET @id = NULL
 	SET @id = SELECT TOP 1 id FROM #
 END 
 
