@@ -39,6 +39,7 @@ VIA : 和VIA硬件一同使用的协议，默认关闭。
 
 2,SQL Servr Native Client
 这个基于OLEDB 和ODBC的独立数据访问应用程序编程接口(API),包含sql2005,2008中引入的新功能。
+主要用于客户端工具连接到sqlServer网络库，仅影响跟随sqlserver 一起启动的客户端工具和依赖于sqlServer工具之类的应用程序
 
 3，Microsoft JDBC Provider
 专门供JAva应用程序使用的数据接口。
