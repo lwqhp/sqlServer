@@ -1,5 +1,8 @@
 
 --测试数据
+USE AdventureWorks
+go
+
 DROP TABLE SalesOrderHeader_test
 SELECT * 
 INTO dbo.SalesOrderHeader_test
@@ -232,7 +235,7 @@ sqlserver:sql statistics
 有两种方式可以查询到语句的执行计划
 1)在语句前打开些开关，把语句的结束集和预估执行计划或实际执行计划同时显示出来
 set showplan_all on --在找到可用的执行计划后输出，语句不执行
-set showplan_xml on 
+set showplan_xml off 
 set statistics profile on --发生在语句执行之后，实际的执行计划
 2)另一种在sql Trace里用事件来跟踪语句的执行计划
 showplan all --事件发生在语句开始之前
