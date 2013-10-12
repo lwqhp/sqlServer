@@ -36,7 +36,7 @@
 
 不同的数据类型之间的转换可能会出现一些错误情况
 
-a,两种数据类型不兼容，这是我法转换的
+a,两种数据类型不兼容，这是无法转换的
 b,两种数据类型兼容，但需要显式的转换
 c,根据转换规则，转换可能会出现有损转换或转换失败。
 
@@ -127,3 +127,11 @@ SELECT 0 WHERE @a = N'a'
   |--Compute Scalar(DEFINE:([Expr1000]=(0)))
        |--Filter(WHERE:(STARTUP EXPR(CONVERT_IMPLICIT(nvarchar(20),[@a],0)=N'a')))
             |--Constant Scan
+
+--类型不相同的记录插入,则隐式把数据类型转成目标表类型
+create table #tmp(cardid varchar(30),cardcode nvarchar(80))
+create table #tmp2(cardid varchar(30),cardcode varchar(80))
+insert into #tmp2
+select * from #tmp
+|--Compute Scalar(DEFINE:([Expr1008]=CONVERT_IMPLICIT(varchar(80),[tempdb].[dbo].[#tmp].[cardcode],0)))
+    |--Table Scan(OBJECT:([tempdb].[dbo].[#tmp]))
