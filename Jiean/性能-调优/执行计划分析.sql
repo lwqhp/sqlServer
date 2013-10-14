@@ -40,6 +40,9 @@ SET STATISTICS PROFILE OFF
 3，更细一步查看查找方式是index seek 还是table Scan 。
 seek 和scan，一般seek要比scan要快，但如果返回的是表格中的大部份数据，那么，索引上的seek就不会有什么帮助，甚至直接用scan可能
 还会更快一些。所以关键要看EstimateRows和Rows的大小
+
+如果用的是table scan 或者是index scan ,再比较它返回的行数和表格实际行数，如果返回行数远小于实际行数，那就说明sqlServer没有
+合适的索引供它做seek,这时候加索引就是一个比较好的选择。
 */
 
 
@@ -87,3 +90,5 @@ SARG运算符包括：= ，>,<,>=,<=,in,between, like(左前缀匹配)，AND
 对于不使用SARG运算符的表达式，索引是没有用的，包括：NOT ,<>,not exists,not in,not like 和内部函数
 
 */
+
+
