@@ -22,8 +22,26 @@ try..catch 可捕捉所有严重级别大于10但不终止数据库连接的错误.严重级别0`10的错误是
 
 */
 --1)RaisError可用抛出用户指定编号的错误信息或动态的构建错误信息给客户端。
-RaisError(N'没有用户ID，请先到系统参数设置,才能使用自动合并功能', 16, 1,N'错误')
+RaisError(N'没有用户ID，请先到系统参数设置,才能使用自动合并功能', --自定义错误信息或者是消息ID
+	16, --严重级别
+	1,	--代码中发生错误位置的标识码
+	N'错误' --代入错误的动态参数(%1,%2) 
+	)
+
+declare @CheckBillNo varchar(30)
+set @CheckBillNo='222'
 RaisError(100016, 16, 1,@CheckBillNo)  	
+
+begin try
+	raiserror('xxx',12,3)
+	with log --保存到window日志
+	 ,nowait --错误发送到客户端
+	 ,seterror --将@@error值和error_number值设置为<消息ID>或50000
+end try
+begin catch
+	select ERROR_MESSAGE(),error_state(),ERROR_SEVERITY()
+end catch
+
 
 --2)当begin try 捕捉到错误时,会转到begin catch模块，这里可以做事务回滚，抛出错误，错误写日志
 begin catch
@@ -68,6 +86,24 @@ END CATCH
 
 --自定义错误信息
 --可以使用sp_addmessage将严重级别为1`25的用户定义错误消息添加到 "sys.messages"目录视图中。这些用户定义的错误消息可供RaisError使用.
+
+/*
+定义：
+用户自定义错误消息的ID必须大于50000
+首先要添加一个英文版本的错误消息，然后才能添加其他语言的版本，如果没有指定语言，则使用默认的语言
+*/
+exec sp_addmessage 500001,--错误消息ID
+	15,	--指定严重级别
+	N'XXX',--错误信息
+	us_english --语言
+
+--修改
+exec sp_altermessage 500001, --ID
+	'WITH_LOG', --写入window日志
+	'true'	--是否写入
+
+exec sp_dropmessage 500001,--id
+	'all' --全部
 
 --权限要求具有 sysadmin 和 serveradmin 固定服务器角色的成员身份
 Exec sp_AddMessage 80002, 16, N'The bill', N'us_english',False,Replace
