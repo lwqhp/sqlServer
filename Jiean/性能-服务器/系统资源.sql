@@ -191,7 +191,7 @@ windows里面有两块重要的交换区(pool),如果这两块内存出现泄漏，或者空间用尽，window
 memory:pool Nonpaged bytes(非页交换区) 
 Memory:Pool paged resident Bytes(页交换区)
 
---单个proecss 进程的使用情况
+--单个proecss 进程的使用情况(查看每个进程process的内存使用情况)
 当Available MBytes看出服务器的内存基本用尽，但是从Memory:Cache Bytes 的值看，window自己没有使用多少，现在就要分析
 到底是哪些个应用进程把物理内存都占用了。
 
@@ -209,14 +209,32 @@ Process:Pool Paged Bytes 指的是目标进程所使用的Paged Pool 大小.
 Process:Pool Nonpaged Bytes 指的是目标进程所使用的Non-Paged Pool 大小.
 
 
-Process:Working Set :某个进程的地址空间中，存放在物理内存的那一部份。
+Process:Working Set :某个进程的地址空间中，存放在物理内存的那一部份。包含shared memory 和private memory
 Process: Virtual Bytes:某个进程所申请的虚拟地址空间大小，包括reserved  Memory和Committed Memory.
-Process:Private Bytes:某个进程的提交了的地址空间(committed Memory)中，非共享的部份。
+Process:Private Bytes:某个进程的提交了的地址空间(committed Memory)中，非共享的部份。除去shared memory以外的committed memory
 
 目标：
 使用内存最多的进程
 内存使用量在不断增长的进程
 出现问题的那个时间段里，内存使用数量发生过突变的进程.
+
+
+总结：
+内存不足，会引起服务器做大量的paging动作，从而也影响了其他系统资源，所以内存资源是第一个需要检查的系统资源。
+从磁盘的繁忙程序，确认这个繁忙是否是和内存paging有关系。
+从cpu的核心态，用户态时间，确认是否是因为系统做paging动作，频繁怕磁盘io动作造成的核心态时间过高。
+
+1，首先确认服务器是32位还是64位，sqlserver是32位还是64位
+2，观察计数值的趋势和相互之间的关系，切忌用一两个值就做出结论
+3，分析从检查内存使用开始
+4，别忘记了检查window系统自己的内存使用
+5，观察应用进程的内存使用
+	a)是不是private BYTES 一直往上涨
+	b)是不是working SET 一直往上涨
+	c)是不是也有handle leak 或 thread leak 的现象
+	d)上涨是否引起了其他进程或系统的内存使用缩减
+	e)它的使用量涨和系统所遇到的问题有没有关系？时间上是否能匹配？
+6，分析内存使用对cpu和io使用的影响
 
 
 SqlServer内存使用特性
@@ -246,6 +264,21 @@ Target Server Memory : sqlServer在理论上能够使用的最多的内存数目。
 
 当sqlServer收到windows内存压力信号，调小target ServerMemory值，使得Total Server Memory大于target Server Memory时，sqlserver
 开始内存清理动作，调小自己的地址空间大小，释放内存。
+
+total SERVER memory 和target SERVER memory都是指逻辑上的内存空间大小，而不是物理内存空间大小。数据是放在物理内
+存还是放在page file里，sqlserver把这个决定权交给了windows.
+
+合理分配sqlserver内存
+1）WINDOWS系统和其他关键应用服务要有足够的内存，不要在运行过程中因为内存不足，而来抢sqlserver已经申请到的内存
+这种情况在errorlog中会有这样的擎告信息：working SET (KB):3343434,COMMITTED(KB):232354,memory utilization:50%
+注：这里的workingset代表os层面的workingset（就是性能日志监视器当中的那个值 ）+AWE分配的内存+通过大内丰面的方式分配的内存
+
+2)安装64位操作系统，如果是32位系统，务必将awe打开，但是不要再使用/3gb开关。
+3）尽量使用服务器专门供数据库使用，不要将其他服务(iis,中间层应用服务)安装在同一台机器上。
+4）建议设置sqlserver MAX SERVER memory,确保window有足哆的内存供系统本身使用，如果是一台8GB机器，建议预留2gb,ymc 
+置sqlmax SERVER memory 为6G，大于8G，预留3-4G,小于8G的，预留1G
+5)赋给sqlserver启动帐号lock pages IN memory的权限。
+6）SET working SET size这个sql系统参数在现在的window上不能起到固定sqlserver物理内存的作用，请永远不要使用。
 
 -----------内存分类---------------------------------------
 
