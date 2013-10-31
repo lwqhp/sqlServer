@@ -163,6 +163,15 @@ telnet 169.254.217.132 1433
 特殊：
 在ssms中指定连接的协议和端口
 tcp:if-pc\sql2008,26052
+
+
+---------------检查服务器端配置的设置----------------------------------------------
+启用或禁止相关的网络协议：
+SqlServer配置管理器-->SqlServer网络配置，端口设置
+
+注册表：HKEY_LOCAL_MACHINE\SHOTWARE\Microsoft\Microsoft SqlServer\MSSQL.X\SMSQLServer
+\SuperSocketNetLib下的各个项目里。
+
 */
 
 
