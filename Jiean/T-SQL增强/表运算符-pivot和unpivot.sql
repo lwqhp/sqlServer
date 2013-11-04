@@ -116,3 +116,15 @@ UNPIVOT(
 */
 
 看t-sql p369 ,找脚本
+*/
+
+--加一种行转列写法
+;with tmp as(
+select CompanyID,stuff(
+	(select ','+sysparaid 
+	from Sys_ParameterDetail 
+	where companyID = a.companyID and sysparaid in('0015','0019') for xml path('')),1,1,'') as sysparaid
+from Sys_ParameterDetail a where SysParaID in('0015','0019')
+)
+select * from tmp where charindex('0015',sysparaid)>0
+	and charindex('0019',sysparaid)=0
