@@ -35,7 +35,7 @@ VALUES('PT','PT0001',NULL),('PT','PT0002',NULL),('PT','PT0003','PT0001'),('PT','
 
 --添加一个节点
 INSERT INTO Bas_InterCompany(CompanyID,vendcustID,ParentID)
-SELECT 'PT','PT0009','PT0003'
+SELECT 'PT','PT0007','PT0003'
 
 --移动一个节点
 UPDATE Bas_InterCompany SET parentID ='PT0001' WHERE vendCustID = 'PT0004'
@@ -100,7 +100,7 @@ FROM Bas_InterCompany a
 CROSS APPLY dbo.fn_GetParentIDs(a.vendCustID) b
 WHERE a.ParentID is null
 
---删除节点同样也需要借助深度遍历函数
+--删除移动节点同样也需要借助深度遍历函数
 delete a
 FROM Bas_InterCompany a
 CROSS APPLY dbo.fn_GetParentIDs(a.vendCustID) b
@@ -121,21 +121,29 @@ begin
 		from Bas_InterCompany
 		group by CompanyID
 		
-	declare @level int
+	declare @level INT
+	DECLARE @maxnode INT 
+	DECLARE @curnode INT
 	set @level =0
+	SET @curnode=0
 	insert into @t
 	select @id as OldID,@newid as VendcustID,replace(@pid,CompanyID,'') as ParentID,@level  from Bas_InterCompany where vendcustID=@id
 	
-	while @@ROWCOUNT>0
+	IF @@ROWCOUNT >0 SET @maxnode=@newid
+	
+	while @maxnode>@curnode
 	begin 
 		set @level= @level+1
+		SET @curnode=@maxnode
 		insert into @t
-		select a.vendcustID,row_number() over(order by a.vendCustID)+(select max(VendcustID) from @t),
+		select a.vendcustID,@curnode+row_number() over(order by a.vendCustID),
 		b.VendcustID as ParentID,
 		@level 
 		from Bas_InterCompany a
 		inner join @t b on a.ParentID = b.oldID
 		where b.level=@level-1
+		SET @maxnode = @curnode+@@rowcount
+		
 	end
 	--失败,花了两小时在这钻牛角
 	--;with tmp as(
@@ -165,4 +173,51 @@ cross apply fn_CopyNodes(a.vendcustID,'PT0006',null) b
 where a.vendcustID='PT0003'
 
 
-SET STATISTICS PROFILE OFF 
+/*
+可见，单纯的父子双节点树，在操作一个棵树的时候，是很复杂的，但如果只是获取一个给定节点的直接父子节点，删除插入
+一个新节点，这种结构是很方便的。
+
+为满足业务需求，往往需要给双节点树进行扩展，以简化操作
+*/
+
+--A)增加深度字段[level]
+ALTER TABLE dbo.Bas_InterCompany ADD [level] INT 
+
+--SELECT * FROM Bas_InterCompany
+
+;WITH tmp AS(
+	SELECT CompanyID,vendcustID,0 [level] FROM Bas_InterCompany WHERE ParentID IS NULL
+	UNION ALL 
+	SELECT a.CompanyID,a.vendcustID,b.level+1 [level] FROM Bas_InterCompany a
+	INNER JOIN tmp b ON a.ParentID = b.vendcustID
+)
+--SELECT * 
+UPDATE a SET a.LEVEL = b.level
+FROM Bas_InterCompany a
+INNER JOIN  tmp b ON a.CompanyID = b.CompanyID AND a.vendcustID = b.vendcustID
+
+/**/
+
+--B)增加路径字段
+ALTER TABLE Bas_InterCompany ADD [path] VARCHAR(1000)
+
+;WITH tmp AS(
+	SELECT CompanyID,vendcustID,CAST(vendcustID AS  varchar) [path] FROM Bas_InterCompany WHERE ParentID IS NULL
+	UNION ALL 
+	SELECT a.CompanyID,a.vendcustID,CAST(b.[path]+'.'+a.vendcustID AS  varchar) FROM Bas_InterCompany a
+	INNER JOIN tmp b ON a.ParentID = b.vendcustID
+)
+--SELECT * FROM tmp
+UPDATE a SET a.[path] = b.[path]
+FROM Bas_InterCompany a
+INNER JOIN  tmp b ON a.CompanyID = b.CompanyID AND a.vendcustID = b.vendcustID
+
+/*
+增加了节点的节点路径后，祖先节点和后代节点的查找变得非常的方便。
+*/
+
+--查找一个节点的所有祖先节点
+SELECT * FROM Bas_InterCompany WHERE 'PT0001.PT0003.PT0004' LIKE [path]+'%'
+
+--查找一个节点的所有后代节点
+SELECT * FROM Bas_InterCompany WHERE [path] LIKE 'PT0001.PT0003.PT0004%'
