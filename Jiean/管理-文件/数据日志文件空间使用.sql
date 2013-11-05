@@ -8,6 +8,15 @@
 --主要针对普通数据库，不能保证实时更新空间使用统计信息，对tempdb数据库里存储的一些系统临时数据对象，无法统计
 sp_spaceused 
 
+/*
+unallocated space：未分配使用空间
+reserved:被用过但后来释放的空间
+data:不是数据文件，而是表里的数据占用的空间
+unused : 没被用过的空间
+
+重建聚集索引，可以释放reserved空间
+*/
+
 --sqlServer自带报表
 
 
