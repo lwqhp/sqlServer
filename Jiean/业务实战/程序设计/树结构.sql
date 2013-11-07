@@ -100,6 +100,18 @@ FROM Bas_InterCompany a
 CROSS APPLY dbo.fn_GetParentIDs(a.vendCustID) b
 WHERE a.ParentID is null
 
+--查找节点PT0008的所有祖先节点
+;WITH tmp AS(
+	SELECT CompanyID,vendCustID,ParentID,0 'level' FROM Bas_InterCompany WHERE vendcustID ='PT0008'
+	UNION ALL
+	SELECT a.CompanyID,a.vendCustID,a.ParentID,b.level+1 as 'level' FROM Bas_InterCompany a
+	INNER JOIN tmp b ON a.companyID = b.companyID AND a.vendcustID = b.ParentID
+)
+SELECT * FROM tmp
+go
+
+
+
 --删除移动节点同样也需要借助深度遍历函数
 delete a
 FROM Bas_InterCompany a

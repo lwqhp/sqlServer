@@ -11,6 +11,8 @@ UNION  ALL  SELECT 5, N'E物料', 0.03
 UNION  ALL  SELECT 6, N'F物料', 0.01
 UNION  ALL  SELECT 7, N'G配件', 0.02
 
+select * from Item
+select * from Bom
 CREATE TABLE Bom(
 	ItemID int,
 	ChildId int
@@ -21,7 +23,7 @@ UNION  ALL SELECT 2, 1
 UNION  ALL SELECT 2, 6
 UNION  ALL SELECT 2, 7   -- B 产品由 F 物料及 G 配件组成
 UNION  ALL SELECT 4, 5
-UNION  ALL SELECT 4, 6    -- D 配件由 F 物料组成
+UNION  ALL SELECT 4, 6    -- D 配件由 E 物料和 F 物料组成
 UNION  ALL SELECT 3 ,2
 UNION  ALL SELECT 3, 1    -- C 产品由 A 产品和 B 产品组成
 GO
