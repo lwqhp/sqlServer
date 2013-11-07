@@ -6,10 +6,10 @@
 只是粗略的了解数据文件和日志文件的使用空间
 */
 --主要针对普通数据库，不能保证实时更新空间使用统计信息，对tempdb数据库里存储的一些系统临时数据对象，无法统计
-sp_spaceused 
+sp_spaceused @updateusage ='true'
 
 /*
-unallocated space：未分配使用空间
+unallocated space：未分配使用空间(?)
 reserved:被用过但后来释放的空间
 data:不是数据文件，而是表里的数据占用的空间
 unused : 没被用过的空间
@@ -25,8 +25,12 @@ unused : 没被用过的空间
 --按区统计
 DBCC showfilestats
 /*
-这个命令能直接从GAM和SGAM这样的系统分配页面上面读取区分配信息，直接算出数据库文件里有多少区已被分配。
-能够快速准确地计算出一个数据库数据文件区的总数和已使用过的区的数目。
+这个命令直接从系统分配页面上面读取区分配信息，能够快速准确地计算出一个数据库数据文件区的总数和已使用过的区的数目，
+而系统分配页上的信息永远是实时更新的，所以这种统计方法比较准确可靠。在服务器负载很高的情况下也能安全执行，
+不会增加额外系统负担。所以看数据库数据文件级的使用情况，它是个比较好的选择。
+
+TotalExtents :当前数据库下所有数据文件里有多少个区
+UsedExtents :使用过了的区
 */
 
 --按页统计
@@ -41,12 +45,42 @@ SUM(CASE WHEN p.index_id<2 THEN row_count ELSE 0 end) AS RowCounts
 INNER JOIN sys.objects o ON p.object_id = o.object_id
 GROUP BY o.name
 
---了解每个页，区的使用情况，碎片程度
+/*
+外键
+partition_id  分区 ID。 在数据库中是唯一的。 它的值与 sys.partitions 目录视图中的 partition_id 值相同。 
+object_id 该分区的表或索引视图的对象 ID。
+index_id 该分区的堆或索引的 ID  0 = 堆 1 = 聚集索引。> 1 = 非聚集索引 
+
+reserved_page_count 为分区保留的总页数。 计算方法为 in_row_reserved_page_count + lob_reserved_page_count + row_overflow_reserved_page_count。 
+used_page_count 用于分区的总页数。 计算方法为 in_row_used_page_count + lob_used_page_count + row_overflow_used_page_count。 
+
+http://technet.microsoft.com/zh-cn/library/ms187737.aspx
+
+SQL Server在使用数据页的时候，为了提高速度，会先把一些页面一次预留”reserve”给表格，然后真正有数据插入的时候，
+再使用。所以这里有两列，Reserved_page_count和Used_page_count。两列的结果相差一般不会很多。
+所以粗略来讲，Reserved_page_count*8K，就是这张表格占用的空间大小。
+
+DataPages是这张表数据本身占有的空间。因此，（Used_page_count – DataPages）就是索引所占有的空间。
+索引的个数越多，需要的空间也会越多。
+
+RowCounts，是现在这个表里有多少行数据
+*/
+
+--精确地统计出某张表格的空间使用量,了解每个页，区的使用情况，碎片程度
 DBCC SHOWCONTIG
-SELECT * FROM sys.dm_db_index_physical_stats()
+SELECT * FROM sys.dm_db_index_physical_stats(
+DB_ID(N'HK_ERP_HP'), OBJECT_ID(N'sd_pos_saledetail'), NULL, NULL , 'DETAILED'
+)
+
+/*
+http://technet.microsoft.com/zh-cn/library/ms188917.aspx
+
+SQL Server从整体性能的角度出发，不可能一直维护这样底层的统计信息。为了完成这个命令，
+SQL Server必须要对数据库进行扫描。所以说，这种方式虽然精确，但是在数据库处于工作高峰时，还是需要避免使用。
+*/
 
 
---日志文件的使用情况 
+--日志文件的使用情况 ---------------------------------------------------------------------------
 DBCC SQLPERF(LOGSPACE)
 
 --TempDB的空间使用---------------------------
@@ -58,7 +92,7 @@ temdb保存的对象
 	系统表和索引
 	全局临时表和索引
 	局部临时表和索引
-	table变量
+	@table变量
 	表值函数中返回的表
 
 2）内部对象
