@@ -7,7 +7,7 @@
 
 优点：即包含数据的层次关系又摆脱树结构单一的拓扑结构，表现了层级多对多的复杂关系。
 
-链结构有两种设计方案
+链结构有三种设计方案
 2.1）闭包链：链表包含了所有节点的祖先-后代关系（节点自身指向自己）。    
 */
 
@@ -73,27 +73,5 @@ WHERE superNode.rightNode = 'PT0004' AND subNode.leftNode = 'PT0007'
 闭包链的缺点是增加多余的链接，不能反映出节点层递关系，查找子父节点困难。
 */
 -----------------
---2.2）环链
-/*
-主要反映两个节点间的父子关系，对比树结构，支持多对多节点拓扑。这种递增链用在工作流设计比较多,操作多在父子节点间进行。
-*/
-DROP TABLE TreePaths
-CREATE TABLE TreePaths(companyID VARCHAR(20),leftNode VARCHAR(20),rightNode VARCHAR(20) )
-go
-INSERT INTO TreePaths(leftNode,rightNode)
-SELECT 'PT0001','PT0003' UNION ALL
-SELECT 'PT0003','PT0004' UNION ALL
-SELECT 'PT0003','PT0007' UNION ALL
-SELECT 'PT0004','PT0005' UNION ALL
-SELECT 'PT0004','PT0007' UNION ALL
-SELECT 'PT0007','PT0004' UNION ALL
-SELECT 'PT0005','PT0007' 
 
-SELECT * FROM TreePaths
---UPDATE TreePaths SET companyID = 'PT'
-
---链结构特殊应用
-/*
-由于链上的两个节点在同一条记录上，把数列转成链后，可以在两个数列之间作运算
-*/
 

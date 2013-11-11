@@ -3,11 +3,9 @@ CREATE FUNCTION dbo.f_NextBH()
 RETURNS char(8)
 AS
 BEGIN
-	DECLARE
-		@r char(8)
+	DECLARE	@r char(8)
 	
-	SELECT
-		@r = 'BH' + RIGHT(1000001 + MIN(BH), 6)
+	SELECT @r = 'BH' + RIGHT(1000001 + MIN(BH), 6)
 	FROM(
 		SELECT
 			BH = RIGHT(BH, 6)
@@ -46,7 +44,7 @@ VALUES(
 	3)
 
 DELETE FROM dbo.tb
-WHERE col = 2
+WHERE col = 4
 
 INSERT dbo.tb(
 	col)
@@ -66,5 +64,3 @@ GO
 -- É¾³ý²âÊÔ»·¾³
 DROP TABLE dbo.tb
 DROP FUNCTION dbo.f_NextBH
-
- 

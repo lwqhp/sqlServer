@@ -12,7 +12,7 @@ BEGIN
 	DECLARE @id varchar(10)
 	SELECT @id = cast(max(cast(id AS int)+1) AS varchar)
 	FROM @tb
-	RETURN isnull(@id,'id1')	
+	RETURN isnull(@id,'1')	
 END 
 
 

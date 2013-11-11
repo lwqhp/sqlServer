@@ -1,9 +1,44 @@
 
 
---文件增长定位
+
+--日志文件的使用情况 ---------------------------------------------------------------------------
+DBCC SQLPERF(LOGSPACE)
+
+--TempDB的空间使用---------------------------
+/*
+temdb保存的对象
+1）用户对象
+由用户显式创建，在用户会话中创建，或者是在用户例程(存储过程，触发器和用户定义函数)中创建，这些对象包含 ：
+	用户定义的表和索引
+	系统表和索引
+	全局临时表和索引
+	局部临时表和索引
+	@table变量
+	表值函数中返回的表
+
+2）内部对象
+ sqlserver用于处理sqlserver语句而创建的对象，包含：
+	用于游标或假脱机操作以及临时大型对象(LOB)存储的工作表。
+	用于哈希连接或哈希聚合操作的工作文件
+	用于创建或重新生成索引等操作(如果指定了sort_in_tempdb)的中间排序结果，或者某些group by ,order by ，union 查询的中间排序结果。
+	
+每个内部对象致少使用9页，一个IAM页，8个页的区。
+
+3）版本存储区
+版本存储区是数据页的集合，它包含支持使用行版本控制的功能所需的数据行，主要用来支持快照事务隔离级别，以及一些
+其它提高数据库并发度的新功能。
+*/
+
+--返回所有做过空间申请的会话信息
+SELECT * FROM sys.dm_db_file_space_usage
+
+--tempdb空间的总体分配
+SELECT * FROM sys.dm_db_session_space_usage t1,sys.dm_exec_sessions t3
+WHERE t1.session_id = t3.session_id
+
 
 /*
-通过观察分析了解系统的空间使用需求，提前规划并引导数据的流向，尽量避免空间用尽面使得sqlserver不得不自动增长的现
+通过观察分析 了解系统的空间使用需求，提前规划并引导数据的流向，尽量避免空间用尽面使得sqlserver不得不自动增长的现
 象发生同是要确保每一次自动增长能够在可接受的时间内完成，及时满足用户端的应用需求。
 
 数据库创建之初，定义数据文件的初始大小，是否自动增长及最大值。当数据文件写满以后，会按自动增长的比例增加文件的大小。
@@ -76,6 +111,13 @@ name,recovery_model_desc,log_reuse_wait,log_reuse_wait_desc--反映sqlserver认为的
  谁申请的
  */
  
+ --返回正在运行并且做过空间申请的会话正在运行的语句
+SELECT * FROM sys.dm_db_session_space_usage t1,
+sys.dm_exec_requests t4
+CROSS APPLY sys.dm_exec_sql_text(t4.sql_handle) st
+WHERE t1.session_id = t4.session_id
+AND t1.session_id>50
+
  DBCC OPENTRAN
  GO
  SELECT * FROM sys.dm_exec_sessions t2,sys.dm_exec_connections t1
@@ -83,6 +125,18 @@ name,recovery_model_desc,log_reuse_wait,log_reuse_wait_desc--反映sqlserver认为的
  WHERE t1.session_id = t2.security_id
  AND t1.session_id >50
  
+
+
  /*
  再次运行dbcc opentran,命令会返回下一个最久未提交的事务，直到所有的事务被提交或回滚完毕为止。
  */
+ 
+ /*
+分析日志使用
+1，设置tempdb的自动增长
+2，模拟各个单独的查询或工作任务，同时临视tempdb 空间使用
+3，模拟执行一些系统维护操作，例如重新生成索引，同时临视tempdb空间
+4，使用2,3中tempdb空间使用值 来预测总的工作负荷下，会使用多少空间，并针对计划的并发度调整 此值。比如，如果一个
+任务会使用10GB的tempdb空间，而在生产环境里最多可能会有4个这样的任务同时运行，那要至少预留40GB的空间。
+5，根据4得到的值，设置tempdb在生产环境下的初始大小，同时也开启自动增长。
+*/

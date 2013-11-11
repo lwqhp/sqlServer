@@ -26,6 +26,7 @@ UNION  ALL   SELECT 'CG', 6, 'CG', 0, 4, 200501, N'采购订单', N'dbo.tb', N'bh'
 UNION  ALL   SELECT 'CG', 7, 'CG', 0, 4, 200501, N'采购订单', N'dbo.tb', N'bh'
 GO
 
+SELECT * FROM  tb_NO
 --获取新编号的存储过程
 CREATE PROC dbo.p_NextBH
 	@Name char(2),           -- 编号种类
