@@ -53,7 +53,10 @@ SUM(CASE WHEN p.index_id<2 THEN p.in_row_data_page_count+p.lob_used_page_count+p
 SUM(CASE WHEN p.index_id<2 THEN row_count ELSE 0 end) AS RowCounts 
  FROM sys.dm_db_partition_stats p 
 INNER JOIN sys.objects o ON p.object_id = o.object_id
+where o.name = 'BC_Sal_OrderMaster'
 GROUP BY o.name
+
+
 
 /*
 Íâ¼ü
