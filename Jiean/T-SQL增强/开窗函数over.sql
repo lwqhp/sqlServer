@@ -37,6 +37,9 @@ go
 select * from #SalesOrder
 go
 
+SET STATISTICS PROFILE ON
+SET STATISTICS IO ON
+
 select OrderID,OrderQty,
 sum(OrderQty) over() as [汇总],
 convert(decimal(18,4), OrderQty/sum(OrderQty) over() ) as [每单所占比例],

@@ -135,3 +135,19 @@ insert into #tmp2
 select * from #tmp
 |--Compute Scalar(DEFINE:([Expr1008]=CONVERT_IMPLICIT(varchar(80),[tempdb].[dbo].[#tmp].[cardcode],0)))
     |--Table Scan(OBJECT:([tempdb].[dbo].[#tmp]))
+    
+    
+---------------------------------------------
+/*
+浮点类型
+根据ieee 754标准Float类型使用二进制格式编码实数数据。
+并不是所有在进进制中描述的信息都能使用二进制存储，出于一些必要的因素，浮点数通常会舍入到一个非常接近的值。
+*/
+
+DECLARE @float FLOAT
+DECLARE @decimal DECIMAL(9,4)
+
+SET @float=59.95
+SET @decimal=59.95
+
+SELECT @float*100000000000,@decimal*100000000000

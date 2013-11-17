@@ -14,8 +14,7 @@ declare @RECCNT varchar(500)
 declare @DeviceName varchar(500)
 declare @CMD Nvarchar(500)
 
-DECLARE tmpcursor 
-CURSOR FOR SELECT DBName from @Result
+
 
 INSERT INTO @Result (DBName)
 Select [name] from sysdatabases where [status] <> 536
@@ -42,6 +41,8 @@ insert into @temp_table
 select * from #temp_table
 drop table #temp_table 
 
+DECLARE tmpcursor 
+CURSOR FOR SELECT DBName from @Result
 OPEN tmpcursor
 FETCH NEXT FROM tmpcursor INTO @DBName
 
@@ -69,6 +70,8 @@ END
 
 FETCH NEXT FROM tmpcursor INTO @DBName
 END
+CLOSE tmpcursor
+DEALLOCATE tmpcursor
 
 select a.[DBName]
 , CONVERT(varchar,CAST(a.[size] as money),1) as 'size'
@@ -79,8 +82,6 @@ select a.[DBName]
 from @Result a,master..sysdatabases b		  
 where a.[DBName]=b.name
 order by a.[size] 
-CLOSE tmpcursor
-DEALLOCATE tmpcursor
 
 
 
