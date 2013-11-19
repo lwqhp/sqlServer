@@ -2,7 +2,17 @@
 select * from sys.key_constraints --保存主键约束和唯一约束的信息
 select * from information_schema.check_constraints --check约束
 select * from sys.foreign_keys -- 外键约束信息
-select * from sys.foreign_key_columns
+select object_name(referenced_object_id) '主键表',
+object_name(parent_object_id) '外键约束表',
+ '约束列' =(select name from sys.columns where a.parent_object_id=object_id and a.parent_column_id=column_id),
+* from sys.foreign_key_columns a
+
+select * from information_schema.referential_constraints --外键约束的信息
+select * from information_schema.constraint_column_usage--查看指定数据库中的所有约束的信息以及约束与列的对应关系
+select * from information_schema.CONSTRAINT_TABLE_USAGE --查看数据库中的所有表中的约束信息
+select * from INFORMATION_SCHEMA.table_constraints --获取约束的基本信息
+select * from information_schema.KEY_COLUMN_USAGE --获取键约束列的信息
+
 
 --约束
 /*
