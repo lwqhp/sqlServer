@@ -15,6 +15,14 @@ select * from sys.foreign_key_columns
 一般是简结明了，反映约束对象含义，名称
 比如：约束类型_约束所在表名_字段(或含义)
 
+规则和默认值
+这是7.0以前的约束对象，他们不遵守ANSI标准，而且执行性能不如约束好。以不建议使用
+约束是表的功能，本身没有存在形式，而规则和默认值是自身的实际对象，本身存在，约束是在表定义中定义的，而规则和
+默认值是单独定义的，然后“绑定”到表上。
+
+规则和默认值的独立对象特性使得它们可以在重用时不用重新定义。实际上，规则和默认值不限于绑定到表上，它们也可以绑
+定到数据类型上，这有助于在不允许CLR数据类型 的sql server版本上创建高度功能化的用户自定义数据类型。
+
 */
 --练习表
 --状态表
@@ -140,7 +148,8 @@ delete sys_state where billStats=1
 --唯一约束---------------------------------------------------------------------------------------------------
 /*
 Unique
-唯一约束和主键约束类似，区别在于主键约束要求列不能为nul,而unique约事则可以
+唯一约束和主键约束类似，区别在于主键约束要求列不能为nul,而unique约事则可以,且只能插入一个null值，在unique看来，
+所有的null值都是长的一样的。
 */
 
 alter table sd_pur_ordermaster add constraint AK_sd_pur_ordermaster unique(billstats)
@@ -153,6 +162,9 @@ check不局限于一个特定的列，可以约束一个列，也可以通过某个列来约束另一个列
 
 --select * from sd_pur_ordermaster
 alter table sd_pur_ordermaster add constraint CK_sd_pur_ordermaster check(billstats between 1 and 12)
+
+--不检测原有数据是否符合约束条件
+alter table sd_pur_ordermaster WITH NOCHECK ADD  constraint FK_sd_pur_ordermaster CHECK (billstats between 1 and 12)
 
 insert into sys_state
 select 12,'未知'
@@ -193,6 +205,10 @@ alter table sd_pur_ordermaster add constraint DF_sd_pur_ordermaster  default(0) 
 primary key 和 unique约束 这对孪生约束是不能禁用的
 从系统信息里可以看到：主键，unique是不能禁用的，check约束，外键约束是可以禁用的
 */
+--查看约束状态
+EXEC sys.sp_helpconstraint @objname = N'', -- nvarchar(776)
+    @nomsg = '' -- varchar(5)
+
 
 --禁用外键约束
 --select * from sd_pur_ordermaster
@@ -203,11 +219,17 @@ select 'PT','PI131117admin-006',6
 alter table sd_pur_ordermaster nocheck constraint FK_sd_pur_ordermaster
 
 --规则-------------------------------------------------------------------------------------------------
+--查看哪些表和数据类型使用给定的规则或默认值 
+EXEC sys.sp_depends  @objname = N'' -- nvarchar(776)
+
+
 go
 Create rule SalaryRule
 as @salary >0;
-sp_bindrule 'SalaryRule' , 'Employee.Salary'
+sp_bindrule 'SalaryRule' , 'Employee.Salary' --这可以是表列名，也可以是用户定义数据类型
 
+--查看对象
+EXEC sp_helptext SalaryRule
 /*第一句定义了一个规则叫SalaryRul
 e 进行比较的事物是一个变量
 这个变量的值是所检查的列的值
@@ -223,7 +245,7 @@ exec sp_unbindrule 'Employee.Salary'
 Drop rule SalaryRule
 
 --默认值--------------------------------------------------------------------------------------------
---默认值与default约束类似（有区别的，但是我说不清楚）
+--默认值与default约束类似（区别在于它们被追加一表中的方式和用户自定义数据类型的默认值（是对象，而不是约束）的支持）
 
 create default salarydefault
 as 0;
