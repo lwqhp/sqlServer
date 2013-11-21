@@ -58,7 +58,7 @@ windows 提供的SQL性能计数器
 使用量，直到total 和target一样在为止.
 
 	反映内存的分布情况
-	1，Optiomizer memory : 服务器正在用于查询优化的动态内存总数。
+	1，Optimizer memory : 服务器正在用于查询优化的动态内存总数。
 	2，sql Cache Memory 服务器正在用于动态sqlserver高速缓存的动态内存总数
 	3,lock Memory:服务器用于锁的动态内存总量。
 	4，connection memory：服务器正在用来维护连接的动态内存总量。

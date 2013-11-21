@@ -1,4 +1,4 @@
-sql下用了判断各种资源是否存在的代码，很实用。需要的朋友可以参考下。sql判断是否存在
+--sql下用了判断各种资源是否存在的代码，很实用。需要的朋友可以参考下。sql判断是否存在
 --判断数据库是否存在
 if exists(select * from master..sysdatabases where name=N'库名')
 print 'exists'
