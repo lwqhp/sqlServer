@@ -5,8 +5,13 @@
 /*
 数据库引擎根据错误的严重级别的轻重分为4个级别
 	等级[severity] 0`10 时，为“信息性消息”,数据库引擎不会引起严重级别为0`9的系统错误。
-	等级[severity] 11`16时, 为“用户可以纠正的数据库引擎错误”。如除数为0
-	等级[severity] 17`19时，为“需要DBA注意的错误”.如内存不足，数据库引擎已到极限等。
+	等级[severity] 11`16时, 为“用户可以纠正的数据库引擎错误”。如除数为0,如果没有设置try/catch块，那么这些错误
+							会终止过程执行并在客户端引发错误。状态显示为设置的任何值，如果定义了try块，那么将
+							调用错误处理程序，而不是在客户端引发错误。
+	等级[severity] 17时		，通常只有sqlserver会使用这个错误严重性级别，基本上，它表时sqlserver用完了资源（比如tempdb已满）
+							而且不能完成请求。				
+	等级[severity] 18`19时，为“需要DBA注意的错误”.如内存不足，数据库引擎已到极限等。而且暗示系统管理员要注意底层原因，
+							对于错误严重性级别19来说，需要使用with log选项，事件将在windows event log中显示。
 	等级[severity] 20`25时, 为“致命错误或系统问题”.如硬件或软件损坏，完整性问题等造成数据库连接中止的错误，
 */
 --Exec spCRM_AddMessage
@@ -40,6 +45,7 @@ begin try
 end try
 begin catch
 	select ERROR_MESSAGE(),error_state(),ERROR_SEVERITY()
+	throw; --重新抛出错误
 end catch
 
 
