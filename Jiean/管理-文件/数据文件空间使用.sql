@@ -43,7 +43,13 @@ TotalExtents :当前数据库下所有数据文件里有多少个区
 UsedExtents :使用过了的区
 */
 
---按页统计
+/*
+sys.dm_db_partition_stats :分区信息视图,每个分区对应一行。
+显示用于存储和管理数据库中全部分区的 '行内数据'  'LOB 数据'和'行溢出数据'的 空间的有关信息。
+ 
+*/
+
+--按分区明细统计
 SELECT 
 o.name,
 SUM(p.reserved_page_count) AS reserved_page_count,
