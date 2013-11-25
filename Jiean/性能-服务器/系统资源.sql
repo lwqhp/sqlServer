@@ -46,11 +46,11 @@ sqlserverÀïµÄÄÚ´æ·Ö³ÉºÃ¶à²¿·Ý£¬Ã¿Ò»²¿·Ý¶¼ÓÐËüÃÇµÄÊ¹ÓÃÏÞÖÆ£¬²»ÊÇÓÃ»§ÏëÉêÇë¶àÉÙ£¬¾
  Page Hard Fault(Ó²´íÎó)
  µ±·ÃÎÊÒ»¸ö´æÔÚÓÚÐéÄâµØÖ·¿Õ¼ä£¬µ«²»´æÔÚÓÚÎïÀíÄÚ´æµÄÒ³Ãæ£¬¾Í»á·¢ÉúÒ»´Îpage Fault.windowsÄÚ´æ¹ÜÀí×é¼þ»á´¦Àí
  Ã¿Ò»¸öÒ³Ãæ·ÃÎÊ´íÎó£¬Ê×ÏÈËüÒªÅÐ¶ÏÊÇ²»ÊÇ·ÃÎÊÔ½½ç£¬Èç¹û²»ÊÇ£¬Èç¹ûÄ¿±êÒ³Ãæ´æÔÚÓÚÓ²ÅÌÉÏ(ÀýÈç,ÔÚpage fileÀï)£¬
- ÕâÖÖ·ÃÎÊ»á´øÀ´Ò»´ÎÓ²ÅÌ¶ÁÐ´£¬ÎÒÃÇ³ÆÆäÎªHard Fault.ÁíÒ»ÖÖÒ³ÃæÒÑÄáÉ£ÔÚÎïÀíÄÚ´æÖÐ£¬µ«ÊÇ»¹Ã»ÓÐÖ±½Ó·ÅÔÚÕâ¸ö½ø³Ì
+ ÕâÖÖ·ÃÎÊ»á´øÀ´Ò»´ÎÓ²ÅÌ¶ÁÐ´£¬ÎÒÃÇ³ÆÆäÎªHard Fault.ÁíÒ»ÖÖÒ³ÃæÒÑ¾­ÔÚÎïÀíÄÚ´æÖÐ£¬µ«ÊÇ»¹Ã»ÓÐÖ±½Ó·ÅÔÚÕâ¸ö½ø³Ì
  µÄworking Set ÏÂ£¬ÐèÒªwindowsÖØÐÂ¶¨ÏòÒ»´Î£¬ÕâÖÖ·ÃÎÊ²»»á´øÀ´Ó²ÅÌ²Ù×÷£¬ÎÒÃÇ³ÆÖ®ÎªSoft Fault.
 
  Reserved Memory£¨±£ÁôÄÚ´æ£©
- Ó¦ÓÃ³ÌÐòÔÚÄÚ´æÖÐ±£ÁôÒ»³öÒ»¿éÄÚ´æÑ°Ö·¿Õ¼ä£¬ÒÔ¹©½«À´Ê¹ÓÃ,µ«²»»áÊµ¼ÊÈ¥·ÖÅäÄÚ´æ¿Õ¼ä¡££¨Èç¹ûÄ³¿éµØÖ·ÒÑ¾­±»Æä
+ Ó¦ÓÃ³ÌÐòÔÚÄÚ´æÖÐ±£Áô³öÒ»¿éÄÚ´æÑ°Ö·¿Õ¼ä£¬ÒÔ¹©½«À´Ê¹ÓÃ,µ«²»»áÊµ¼ÊÈ¥·ÖÅäÄÚ´æ¿Õ¼ä¡££¨Èç¹ûÄ³¿éµØÖ·ÒÑ¾­±»Æä
  Ëû¶ÔÏó±£Áô£¬ÄãÈ¥·ÃÎÊËü£¬¾Í»áÊÕµ½Ò»¸ö·ÃÎÊÔ½½çµÄ´íÎó£©
 
  Committed Memory(Ìá½»ÄÚ´æ)
