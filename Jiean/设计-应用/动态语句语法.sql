@@ -36,8 +36,7 @@ set @sqls='select count(*) from tableName'
 exec(@sqls) 
 --如何将exec执行结果放入变量中？ 
 
-declare @num int, 
-               @sqls nvarchar(4000) 
+declare @num int,@sqls nvarchar(4000) 
 set @sqls='select @a=count(*) from tableName ' 
 exec sp_executesql @sqls,N'@a int output',@num output 
 select @num 
