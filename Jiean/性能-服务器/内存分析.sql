@@ -141,12 +141,13 @@ sum(virtual_memory_committed_kb) as vm_committed,--相对于reserve内存，memory cle
 sum(awe_allocated_kb) as awe_allocated,--内存clerk使用地址窗口化扩展插件(awe)分配的内存量
 sum(shared_memory_reserved_kb) as sm_reserved,--内存clerk保留的共享内存量。保留以供共享内存和文件映射使用的内存量
 sum(shared_memory_committed_kb) as sm_committed,--内存clerk提交的共享内存量，这两个字段可以追踪shardmemory的大小
-sum(multi_pages_kb) as mu_page_allocator,--通过stolen 分配的单页存量,也就是buffer pool 里stolen memory的大小
-SUM(single_pages_kb) AS sinlgepage_all,--分配的多页内存量，此内存在缓冲池外分配，也就是我们传说的sqlserver自己的代码使用的memtoleave的大小。
-[Reserved/COMMIT]=sum(virtual_memory_reserved_kb)/NULLIF(sum(virtual_memory_committed_kb),0),
-[Stolen]=SUM(single_pages_kb)+sum(multi_pages_kb),
-[Buffer Pool(single page)]=sum(virtual_memory_committed_kb) +SUM(single_pages_kb),
-[Memtoleave(Multi-page)]=sum(multi_pages_kb)
+--sum(multi_pages_kb) as mu_page_allocator,--通过stolen 分配的单页存量,也就是buffer pool 里stolen memory的大小
+--SUM(single_pages_kb) AS sinlgepage_all,--分配的多页内存量，此内存在缓冲池外分配，也就是我们传说的sqlserver自己的代码使用的memtoleave的大小。
+sum(pages_kb) AS sinlgepage_all,
+[Reserved/COMMIT]=sum(virtual_memory_reserved_kb)/NULLIF(sum(virtual_memory_committed_kb),0)
+--[Stolen]=SUM(single_pages_kb)+sum(multi_pages_kb),
+--[Buffer Pool(single page)]=sum(virtual_memory_committed_kb) +SUM(single_pages_kb),
+--[Memtoleave(Multi-page)]=sum(multi_pages_kb)
 from sys.dm_os_memory_clerks 
 group by type
 ORDER BY type
@@ -155,7 +156,7 @@ ORDER BY type
 
 /*
 内存中的数据页面由哪些表格组成，各占多少？
-sys.dm_os_buffer_descriptors : 记录了sqlserver 缓冲泄中当前所有数据页的信息，可以使用该视图的输出，根据数据库，对象或类型来确定缓冲
+sys.dm_os_buffer_descriptors : 记录了sqlserver 缓冲池中当前所有数据页的信息，可以使用该视图的输出，根据数据库，对象或类型来确定缓冲
 汇内数据库页的分布。
 
 这个视图可以回答
