@@ -1,22 +1,5 @@
 
 
-/*
-过多，多少，不合理的索引都会对数据查询造成影响。
-
-和索引有关的系统表
-sys.indexes :每个表格对象（例如表，视图或表值函数）的索引或堆都包含一行；如果表中没有聚集索引，则这个表为堆结构，埝会在sys.indexs中单独存在一条记录。
-sys.index_columns 索引的每个列都对应此目录视图中的一行记录。
-
-系统表的关联：
-object_id -> 对象ID
-index_id -> 索引ID ，索引的表sys_indexes
-
-column_id -> 列ID,列的表sys.columns
-*/
-
-SELECT * FROM sys.indexes
-
-SELECT * FROM sys.index_columns
 
 ---查询用户表的索引信息
 ;WITH
