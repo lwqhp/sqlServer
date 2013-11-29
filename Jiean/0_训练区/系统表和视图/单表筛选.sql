@@ -240,12 +240,13 @@ Select * From #tmp
  	(Exists(Select * From #tmp Where #tmp.work_code = skills.work_code And #tmp.mstrmk = 'Y') And (skills.master is null or skills.master = ''))
 
 -----------------------华丽的分割线--------------------------------------------
-
+/*
 数据库的使用过程中由于程序方面的问题有时候会碰到重复数据，重复数据导致了数据库部分设置不能正确设置……
 
 
 
-　　有两个意义上的重复记录，一是完全重复的记录，也即所有字段均重复的记录，二是部分关键字段重复的记录，比如Name字段重复，而其他字段不一定重复或都重复可以忽略。
+　　有两个意义上的重复记录，一是完全重复的记录，也即所有字段均重复的记录，
+　　二是部分关键字段重复的记录，比如Name字段重复，而其他字段不一定重复或都重复可以忽略。
 
 　　1、对于第一种重复，比较容易解决，使用
 
@@ -262,8 +263,10 @@ select min(autoID) as autoID into #Tmp2 from #Tmp group by Name,autoID
 select * from #Tmp where autoID in(select autoID from #tmp2)
 
 　　最后一个select即得到了Name，Address不重复的结果集（但多了一个autoID字段，实际写时可以写在select子句中省去此列）
-
+*/
 ---------------------------------我是可爱的分割线---------------------------------
+
+/*
 SQL DISTINCT重复的数据统计方法 group by 重复数据的个数统计 删除重复的数据
 
 DISTINCT 关键字可从 SELECT 语句的结果中除去重复的行。如果没有指定 DISTINCT，那么将返回所有行，包括重复的行。 
@@ -302,9 +305,10 @@ drop table 临时表;
 
 INSERT INTO t_table_bak
 select distinct * from t_table;
-
+*/
 ---------------------------------我是可爱的分割线---------------------------------
 
+/*
 SQL Server中删除重复数据最快的方法
 
 由于种种原因，在数据库中出现了我们不希望出现的重复数据，当对这些重复的数据进行删除的时候有许多种方法。我发现在网上流行的一种方法是利用临时表的方法，SQL脚本如下：
@@ -318,8 +322,8 @@ drop table #Tmp
 但是这种方法执行效率是一个方面，另外如果数据库中有text类型的字段的话将不能执行，非常的有局限性。
 
 　　下面提供一个通用的方法并且执行效率也是非常不错的，教本如下：
-
-下载: cleanRepeatedRows2.sql
+*/
+--下载: cleanRepeatedRows2.sql
 declare @max int,@rowname varchar(400)
 declare cur_rows cursor local for
      select repeatedrow,count(*) from tableName group by repeatedrow having count(*) > 1
@@ -334,10 +338,11 @@ begin
      fetch cur_rows into @rowname ,@max
 end
 close cur_rows
-　　set rowcount 0简单说明一下：首先声明了两个变量，一个是记录重复的数量，另外一个是记录重复字段的值，变量的类型以及长度可根据你实际的字段进行定义；接下来声明一个游标，该游标主要是列出重复的数据以及重复的数
+　　
+　　/*set rowcount 0简单说明一下：首先声明了两个变量，一个是记录重复的数量，另外一个是记录重复字段的值，变量的类型以及长度可根据你实际的字段进行定义；接下来声明一个游标，该游标主要是列出重复的数据以及重复的数
 
 量；然后打开游标并从中取出数据，其中“select @max = @max -1”这句的意思是保留一条重复数据，剩下的逐一删除；最后关闭游标，搞定。
 
-　　执行完教本之后可以使用下面的教本检查是否含有重复的数据：
+　　执行完教本之后可以使用下面的教本检查是否含有重复的数据：*/
 
 select repeatedrow,count(*) from tableName group by repeatedrow having count(*) > 1
