@@ -66,7 +66,9 @@ VALUES('a','EN',89),('a','CH',78),('a','HO',99),('b','EN',34),('b','CH',88),('b'
 SELECT * FROM T
 
 --为了去除objec中的最后一个逗号，插入一个临时表，并使用substring处理
-SELECT name ,(SELECT LTRIM(RTRIM(objec))+',' FROM T WHERE objec=t.objec FOR XML PATH('')) objec,SUM(temp.score) totalscroe INTO #tmp
+SELECT name ,
+(SELECT LTRIM(RTRIM(objec))+',' FROM T WHERE objec=t.objec FOR XML PATH('')) objec,
+SUM(temp.score) totalscroe INTO #tmp
 FROM T temp
 GROUP BY name 
 
