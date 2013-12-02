@@ -1,3 +1,4 @@
+
 CREATE PROC dbo.p_DeleteCode
 	@TableName sysname,			-- 调整编码规则的表名
 	@FieldName sysname,			-- 编码字段名
@@ -138,6 +139,7 @@ GO
 
 -- 调用示例
 -- a. 测试数据表
+DROP TABLE tb
 CREATE TABLE dbo.tb(
 	No varchar(10))
 INSERT dbo.tb SELECT '1'
