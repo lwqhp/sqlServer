@@ -28,26 +28,13 @@ EXECUTE AS USER = 'emdbuser';
 
 --表名获取一个表的Schema
 select sys.objects.name as A1,sys.schemas.name A2
-from　 sys.objects,
-　　　　sys.schemas
+from sys.objects,
+sys.schemas
 where sys.objects.type='U'
-and　 sys.objects.schema_id=sys.schemas.schema_id
+and sys.objects.schema_id=sys.schemas.schema_id
 
 -------------------------------------------------------------------------------------------
 
-/*
-架构
-sys.schemas
-
-对象
-sys.objects
-
-类型		表				列				
-sys.types	sys.tables		sys.columns		
-
-存储过程		触发器			视图
-sys.procedures	sys.triggers	sys.views
-*/
 
 /*
 了解一个数据库时候，通常是先了解下表，以及表的结构。
