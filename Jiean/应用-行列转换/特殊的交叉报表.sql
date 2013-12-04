@@ -22,6 +22,8 @@ INTO # FROM tb
 GROUP BY Item, Color
 ORDER BY Item, Color
 
+select * from #
+
 -- b. 生成各组 Item 的 Color 序号
 DECLARE
 	@Notem varchar(10),
@@ -35,6 +37,12 @@ UPDATE # SET
 	@Notem = Item
 
 -- c. 生成交叉数据报表处理语句
+/*
+有点意思：转换两列数据到行.
+使用序号确定转成的列数，按列数循环，先拼接出每列的列转行的语句
+最后用union ll把各行合并在一起。
+*/
+
 DECLARE
 	@sql_Color nvarchar(4000),
 	@sql_Quantity nvarchar(4000),
@@ -43,9 +51,10 @@ SELECT
 	@sql_Color = N'',
 	@sql_Quantity = N'',
 	@fd = N'',
-	@No = MAX(No)
+	@No = MAX(No) --转列数
 FROM #
 GROUP BY Item
+
 WHILE @No > 0
 	SELECT 
 		@fd = N', '
@@ -62,6 +71,8 @@ WHILE @No > 0
 								WHEN ' + @No + N' THEN A.Quantity
 							END))',
 		@No = @No - 1
+
+
 EXEC(N'
 SELECT
 	Item = Item ' + @fd + '

@@ -62,10 +62,16 @@ SELECT
 	@value, NULL, '>= ' + RTRIM(@value)
 select * from @tb_area
 
---select *
---FROM #t A, @tb_area B
---WHERE (B.min_limit IS NULL OR A.col >= B.min_limit)
---	AND ( B.max_limit IS NULL OR A.col < B.max_limit)
+--以上生成区间表
+-------------------------------------------------------------------------------------
+/*
+判断数值落在那个区间
+left join A表的所有记录都和区间表比较,每一区间，>=B表最小值 并且<b表最大值,还有两种情况：null值
+*/
+select *
+FROM #t A, @tb_area B
+WHERE (B.min_limit IS NULL OR A.col >= B.min_limit)
+	AND ( B.max_limit IS NULL OR A.col < B.max_limit)
 
 -- c. 统计
 SELECT
@@ -101,12 +107,11 @@ select * from #t1
 --统计
 SELECT a.Description,
 	Record_count=COUNT(b.ID),
-	[Percent]=CASE 
-		WHEN Counts=0 THEN '0.00%'
-		ELSE CAST(CAST(
-			COUNT(b.ID)*100./c.Counts
-			as decimal(10,2)) as varchar)+'%'
-		END
+	--[Percent]=CASE 
+	--	WHEN (select sum(ID) over() from #t1)=0 THEN '0.00%'
+	--	ELSE CAST(CAST(COUNT(b.ID)*100./ (select sum(ID) over() from #t1)  as decimal(10,2)) as varchar)+'%'
+	--	END
+	[Percent]=CAST(CAST(COUNT(b.ID)*100./ (select count(*) from #t1)   as decimal(10,2)) as varchar)+'%'
 FROM(
 	SELECT sid=1,a=NULL,b=30  ,Description='<30' UNION ALL
 	SELECT sid=2,a=30  ,b=60  ,Description='>=30 and <60' UNION ALL
@@ -116,9 +121,8 @@ FROM(
 )a LEFT JOIN #t1 b 
 	ON (b.col<a.b OR a.b IS NULL)
 		AND(b.col>=a.a OR a.a IS NULL)
-	CROSS JOIN(
-		SELECT COUNTS=COUNT(*) FROM #t1
-	)c
-GROUP BY a.Description,a.sid,c.COUNTS
+	--CROSS JOIN(
+	--	SELECT COUNTS=COUNT(*) FROM #t1
+	--)c
+GROUP BY a.Description,a.sid--,c.COUNTS
 ORDER BY a.sid
-
