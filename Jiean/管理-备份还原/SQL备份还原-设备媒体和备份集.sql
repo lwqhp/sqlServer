@@ -23,18 +23,19 @@
 ------------------------------------------------------------------------------------------------
 /*
 当你得到一个备份时，有时候可能会不知道备份集中包含的备份信息
+ 只针对当前服务器路径
 */
 
 --RESTORE 语句查询备份文件备份（媒体）集信息
-RESTORE LABELONLY FROM DISK='F:\DB\Backup\947kan'
+RESTORE LABELONLY FROM DISK='F:\DBBak\ad01.bak'
 
-/*FamilyCount :媒体簇数目，如果>1,而实际上所能使用的备份媒体小于这个数目的话，则意味着无法从这个备份媒体
+/*FamilyCount :介质簇数目，如果>1,而实际上所能使用的备份集小于这个数目的话，则意味着无法从这个备份媒体
 进行数据还原。
 */
 
 
 --查看备份集所有信息
-RESTORE HEADERONLY FROM DISK='F:\DB\Backup\947kan'
+RESTORE HEADERONLY FROM DISK='F:\DBBak\ad01.bak'
 
 /*
 备份的文件名可以自定义，通过headeronly可以查看到备份文件备份时的名称backupname，备份的数据库databasename,
@@ -54,13 +55,13 @@ RESTORE FILELISTONLY FROM DISK='F:\DB\Backup\947kan' WITH FILE =1
 
 /*通过系统信息了解数据库的备份记录和备份策略*/
 
---每当对数据库做备份时，sqlserver往msdb.dbo.backupset表中插入一行记录
+--备份的历史信息,每当对数据库做备份时，sqlserver往msdb.dbo.backupset表中插入一行记录
 select * from msdb.dbo.backupset
 
 --数据库备份文件信息
 select * from  msdb.dbo.backupfile
 
---媒体集
+--备份集
 select * from  msdb.dbo.backupmediaset
 
 --里面的记录表明某个媒体集编号包含多少个物理文件，每一行又称为媒体簇
