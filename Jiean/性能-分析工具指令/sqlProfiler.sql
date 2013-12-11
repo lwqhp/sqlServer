@@ -36,7 +36,17 @@ Profiler模板，定义自己常用的模板，但前期每个手工建
 profiler工具捕捉的事件进入内存中的缓冲以便通过网络反馈给GUI，GUI依赖网络，网络流量可能降低系统的速度并异致缓冲
 被填满，这将在较小的程序上影禹服务器的性能，进一步地，当缓冲被填满，服务器将开始丢弃事件以避免严重地影禹服务器性能。
 
-1，定义跟踪脚本
+导入性能数据的同时，可以加入计数器
+
+1，限制事件和数据列
+2，丢弃性能分析所用的启动事件
+3，限制跟踪输出大小
+4，避免在线数据列排序
+5，远程运行profiler
+6,限制使用某些事件
+
+
+A)，定义跟踪脚本
 服务器端脚本跟踪，占用系统资源更少
 1,新建一个跟踪并设置好，然后导出 脚本文件。
 2，手动修改一些参数：sp_trace_create 改成服务器上要存放trace文件的地方
@@ -48,20 +58,10 @@ EXEC sp_trace_setstatus @TraceID,0;
 EXEC sp_trace_setstatus @TraceID,2;--跟踪关闭并且从服务器中删除
 
 
-2，存储过程捕捉跟踪
+B)，存储过程捕捉跟踪
 SELECT * FROM ::fn_trace_getinfo(default);
-
-导入性能数据的同时，可以加入计数器
-
-1，限制事件和数据列
-2，丢弃性能分析所用的启动事件
-3，限制跟踪输出大小
-4，避免在线数据列排序
-5，远程运行profiler
-6,限制使用某些事件
-
 
 */
 --把trace文件里的记录像一张表格一样查询出来
-select * INTO T FROM ::fn_trace_GETTABLE('dfdf.tc',DEFAULT)
+select * INTO T FROM fn_trace_GETTABLE('dfdf.tc',DEFAULT)
 
