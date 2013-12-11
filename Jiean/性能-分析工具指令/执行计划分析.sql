@@ -1,5 +1,9 @@
 
 --Ö´ÐÐ¼Æ»®·ÖÎö
+/*
+¸ÅÄî£ºÖ´ÐÐ¼Æ»®ÓÖ½Ð²éÑ¯ÓÅ»¯Æ÷£¬ËüÍ¨¹ý¶ÔÓï¾äÖÐµÄÃ¿ÖÖ¿ÉÒÔ×éºÏµÄÔËËã·û¼ÆËã³öÒ»¸ö³É±¾µÍ£¬Ð§Òæ¸ßµÄ²ßÂÔ£¬Ò²¾ÍÊÇÖ´ÐÐ¼Æ»®£¬
+»º´æµ½ÄÚ´æÖÐ£¬µ±Óï¾ä±»µ÷ÓÃÊ±£¬Óï¾ä½«°´×¼±¸ºÃÁËµÄÖ´ÐÐ¼Æ»®½øÐÐ½âÎö¡£
+*/
 SET STATISTICS PROFILE ON 
 
 /*
@@ -13,7 +17,34 @@ EstimateCPU: sqlServer¸ù¾ÝEstimateRowsºÍÍ³¼ÆÐÅÏ¢Àï¼ÇÂ¼µÄ×Ö¶Î³¤¶È,ÒÔ¼°Òª×öµÄÊÂÇéµ
 TotalSubtreeCost : SQLServers¸ù¾ÝEstimateIOºÍEstimateIOÍ¨¹ýÄ³ÖÖ¼ÆËã¹«Ê½£¬¼ÆËã³öµÄÃ¿Ò»²½Ö´ÐÐ¼Æ»®×ÓÊ÷cost
 Wamings : SQLServer ÔÚÔËÐÐÃ¿Ò»²½Ê±Óöµ½µÄ¾¯¸æ¡£
 Parallel : Ö´ÐÐ¼Æ»®µÄÕâÒ»²½ÊÇ²»ÊÇÊ¹ÓÃÁË²¢ÐÐµÄÖ´ÐÐ¼Æ»®¡£
+
+·ÖÎö£º
+--Óï¾äµÄ¿ªÏú
+1£¬¶àÓï¾ä£¬¿ÉÔÚÍ¼ÐÎ½çÃæÉÏ¿´µ½¸÷Óï¾äµÄ¿ªÏúÕ¼±È
+2, µ¥Óï¾ä£¬¿ÉÔÚÍ¼ÐÎ½çÃæÉÏ¿´µ½¸÷ÔËËãµÄ¿ªÏúÕ¼±È
+
+--ÏµÍ³ÌáÊ¾
+2£¬²é¿´ÊÇ·ñÓÐ¸ÐÌ¾ºÅ¡£
+
+--²é¿´Êý¾ÝÁ¿ºÍÊ¹ÓÃµÄÁ¬½Ó·½Ê½
+3£¬½ÚµãÖ®¼äµÄÁ¬½Ó¼ýÍ·¿í¶È£¬¿ÉÒÔ¿´³ö´«ÊäµÄÊý¾ÝÁ¿£¬·ÖÎö¼ýÍ·×ó±ßµÄ½ÚµãÒÔÀí½âÆäÐèÒªÕâÃ´¶àÐÐµÄÔ­Òò£¬»¹Òª¼ì²é¼ýÍ·µÄ
+ÊôÐÔ£¬¿ÉÄÜ¿´µ½¹À¼ÆµÄÐÐºÍÊµ¼ÊµÄÐÐ²»Ò»Ñù£¬Õâ¿ÉÄÜÍ¬¹ýÊ±µÄÍ³¼ÆÔì³É¡£
+4£¬¹Û²ìÁ¬½Ó·½Ê½£¬¶Ô±ÈÊä³öµÄÊý¾Ý¼¯£¬¿´Á¬½Ó·½Ê½ÊÇ·ñºÏÀí¡£
+
+--Ï¸¿´ Ê¹ÓÃµÄÔËËã·û£¨Ë÷Òý£¬ÅÅÐò£¬ÊéÇ©£©
+5£¬Ñ°ÕÒÊéÇ©²éÕÒ²Ù×÷£¬¶Ô´ó½á¹û¼¯µÄÊéÇ©²Ù×÷¿ÉÄÜÔì³É´óÁ¿µÄÂß¼­¶Á¡£
+6£¬Ñ°ÕÒÖ´ÐÐÅÅÐò²Ù×÷µÄ²½Öè£¬Õâ±íÊ¾Êý¾ÝÃ»ÓÐÒÔÕýÈ·µÄÅÅÐò½øÐÐ¼ìË÷¡£
+7£¬²é¿´Ë÷ÒýµÄÊ¹ÓÃ£¬ÒÔ¼°ÊÇ·ñÊÇ×î¼ÑË÷Òý
+
+--½Å±¾´ÓÄÚ´æÖÐ²é¿´Ö´ÐÐ¼Æ»®
+9£¬Ö±½Ó´Ó±£´æËüÃÇµÄÄÚ´æ¿Õ¼ä-¼Æ»®»º´æÖÐ¶ÁÈ¡Óï¾äµÄÖ´ÐÐ¼Æ»®
 */
+SELECT p.query_plan,t.text FROM sys.dm_exec_cached_plans r
+CROSS APPLY sys.dm_exec_query_plan(r.plan_handle) p
+CROSS APPLY sys.dm_exec_sql_text(r.plan_handle) t
+
+
+----------------------------------------------------------------------------------------------------------------------
 USE AdventureWorks
 go
 

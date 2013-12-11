@@ -1,0 +1,9 @@
+
+自动化分析SQL Trace
+
+工具：ReadTrace
+http://support.microsoft.com/kb/944837
+
+ReadTrace -I"c:\saple\a.trc" -o"c:\sample" -f
+
+查看：RML Utitlities for SQL Server -Reporter
