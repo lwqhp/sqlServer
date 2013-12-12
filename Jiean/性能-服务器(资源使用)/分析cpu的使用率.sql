@@ -44,22 +44,6 @@ process : processor time
 
 
 3，找出cpu100%的时候sqlserver 里正在运行的最耗cpu资源的语句，对它们进行优化。			
-*/
---可用用trace跟踪或者用dmv来查询
-SELECT 
-highest_cpu_queries.*,q.dbid,q.objectid,q.number,q.encrypted,q.text
- FROM (SELECT TOP 50 qs.* FROM sys.dm_exec_query_stats qs ORDER BY qs.total_worker_time DESC ) AS highest_cpu_queries
-CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS q
-ORDER BY highest_cpu_queries.total_worker_time DESC 
 
---找出最经常重编译的存储过程
-SELECT 
-TOP 25 sql_text.text,sql_handle,plan_generation_num,execution_count,dbid,objectid
- FROM sys.dm_exec_query_stats a
-CROSS APPLY sys.dm_exec_sql_text(sql_handle) AS sql_text
-WHERE plan_generation_num>1
-ORDER BY plan_generation_num DESC 
-
-/*
 4,降低系统负载，或者升级硬件
 */

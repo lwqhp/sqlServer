@@ -54,17 +54,33 @@ OUTER APPLY sys.dm_exec_sql_text (p.plan_handle) sql
 ORDER BY size_in_bytes DESC
 
 --每个查询执行次数
-SELECT QS.EXECUTION_COUNT, QT. TEXT AS QUERY_TEXT, QT.DBID, DBNAME= DB_NAME (QT.DBID), QT.OBJECTID, 
-QS.TOTAL_ROWS, QS.LAST_ROWS, QS.MIN_ROWS, QS.MAX_ROWS 
-FROM SYS.DM_EXEC_QUERY_STATS AS QS 
-CROSS APPLY SYS.DM_EXEC_SQL_TEXT(QS.SQL_HANDLE) AS QT 
-ORDER BY QS.EXECUTION_COUNT DESC 
+select 
+b.text,SUBSTRING(b.text,(a.statement_start_offset/2)+1,(
+	(CASE statement_end_offset 
+	WHEN -1 THEN datalength(b.text) 
+	ELSE a.statement_end_offset END -a.statement_start_offset)/2)+1) AS statement_text,
+	execution_count
+ from sys.dm_exec_query_stats a
+cross apply sys.dm_exec_sql_text(a.sql_handle) b 
+order by execution_count desc  
 
 --前10个I / O密集型查询
-SELECT TOP 10 TOTAL_LOGICAL_READS, TOTAL_LOGICAL_WRITES, EXECUTION_COUNT, 
-TOTAL_LOGICAL_READS+TOTAL_LOGICAL_WRITES AS [IO_TOTAL], 
-QT. TEXT AS QUERY_TEXT, DB_NAME(QT.DBID) AS DATABASE_NAME, QT.OBJECTID AS OBJECT_ID 
-FROM SYS.DM_EXEC_QUERY_STATS QS 
-CROSS APPLY SYS.DM_EXEC_SQL_TEXT(SQL_HANDLE) QT 
-WHERE TOTAL_LOGICAL_READS+TOTAL_LOGICAL_WRITES > 0 
-ORDER BY [IO_TOTAL] DESC 
+select 
+b.text,SUBSTRING(b.text,(a.statement_start_offset/2)+1,(
+	(CASE statement_end_offset 
+	WHEN -1 THEN datalength(b.text) 
+	ELSE a.statement_end_offset END -a.statement_start_offset)/2)+1) AS statement_text,a.total_logical_writes+a.total_logical_writes,last_logical_writes,min_logical_writes,max_logical_writes,total_logical_reads
+,last_logical_reads,min_logical_reads,max_logical_reads,execution_count,total_worker_time,
+db_name(b.dbid),object_id(b.objectid) 
+from sys.dm_exec_query_stats a
+cross apply sys.dm_exec_sql_text(a.sql_handle) b
+where a.total_logical_writes+a.total_logical_writes>0
+order by 3 desc 
+
+--找出最经常重编译的存储过程
+SELECT 
+TOP 25 sql_text.text,sql_handle,plan_generation_num,execution_count,dbid,objectid
+ FROM sys.dm_exec_query_stats a
+CROSS APPLY sys.dm_exec_sql_text(sql_handle) AS sql_text
+WHERE plan_generation_num>1
+ORDER BY plan_generation_num DESC 
