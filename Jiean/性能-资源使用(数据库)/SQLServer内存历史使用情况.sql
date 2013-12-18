@@ -136,4 +136,104 @@ group by objtype
 select usecounts,refcounts,size_in_bytes,cacheobjtype,objtype,text
 from sys.dm_exec_cached_plans cp
 cross apply sys.dm_exec_sql_text(plan_handle)
-order by objtype desc
+order by objtype DESC
+
+/*
+找出读取数据页面最多的语句出来
+
+1,使用DMV分析sqlserver启动以个来做read最多的语句
+sys.dm_exec_query_stats :返回缓存查询计划的聚合性能统计信息。
+缓存计划中的每个查询语句在该视图中对一行。sqlserver会统计使用这个执行计划的语句从上次sqlserver启动以来的信息
+
+*/
+--按照物理读的页面数排序
+SELECT TOP 50 
+qs.total_physical_reads,qs.execution_count,
+qs.total_physical_reads/qs.execution_count as [avg IO],
+substring(qt.text,qs.statement_start_offset/2,(
+case when qs.statement_end_offset = -1 then len(convert(nvarchar(max),qt.text))*2
+else qs.statement_end_offset end -qs.statement_start_offset)/2) as query_text,
+qt.dbid,dbname=DB_NAME(qt.dbid),
+qt.objectid,
+qs.sql_handle,
+qs.plan_handle
+ FROM sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
+order by qs.total_physical_reads DESC
+
+--按照逻辑读的页面数排序
+SELECT TOP 50 
+qs.total_logical_reads,qs.execution_count,
+qs.total_logical_reads/qs.execution_count as [avg IO],
+substring(qt.text,qs.statement_start_offset/2,(
+case when qs.statement_end_offset = -1 then len(convert(nvarchar(max),qt.text))*2
+else qs.statement_end_offset end -qs.statement_start_offset)/2) as query_text,
+qt.dbid,dbname=DB_NAME(qt.dbid),
+qt.objectid,
+qs.sql_handle,
+qs.plan_handle
+ FROM sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
+order by qs.total_logical_reads DESC
+
+/*
+DMV有两个缺点：
+a，视图里每一个语句记录的生存期与执行计划本身相关联，如果sqlserver有内存压力，把一部份执行计划从缓存中删除时，这
+些记录也会从该视图中删除，所以查询得到的结果不能保证其可靠性。
+
+b，视图里的是历史信息，从sqlserver启动就开始收集了，但是很多时候问题是在每天某个特定时间段里发生的。
+
+
+2,使用sql Trace文件来分析某一段时间内做read最多的语句
+*/
+SELECT * INTO SAMPLE
+FROM fn_trace_gettable('c:\sample\a.trc',default)
+WHERE eventclass IN(10,12)
+--10,RPC:Completed 在完成了远程过程调用(RPC)时发生，一般是一些存储过程调用
+--12，sql:batchcompleted 在完成了transact-sql批处理时发生。
+
+--找到是哪台客户端服务器上的那个应用发过来的语句从整体上廛在烽据库上引起的reads最多
+SELECT databaseid,hostname,applicationname,SUM(reads) FROM SAMPLE 
+GROUP BY databaseid,hostname,applicationname
+ORDER BY SUM(reads) DESC 
+
+--按照reads从大到小排序最大的的语句
+SELECT TOP 1000 
+textdata,databaseid,hostname,applicationname,loginname,spid
+ FROM SAMPLE
+ORDER BY reads DESC 
+
+
+---从视图观察sqlserver io
+SELECT 
+wait_type,
+waiting_tasks_count,
+wait_time_ms
+FROM sys.dm_os_wait_stats
+/*
+如果经常有连接处于等待磁盘io，一般来讲，服务器的io还是比较忙的，而这种繁忙已经影响到了语句的响应速度。
+当sqlserver要去读写一个页面的时候，它首先会在buffer pool里寻找，如果在buffer pool里找到了，那么读、写操作会
+继续进行，没有任何等待。如果没有找到，那么sqlserver就会设置连接的等待状态为
+Pageiolatch_ex（写），PageIolatch_sh(读)，然后发起一个异步io操作，将页面读入buffer pool中，在io没做完之前，连
+接都会保持这个状态，io消耗的时间越长，等待的时间也会越长。
+
+Writelog 日志文件的等待状态，当sqlserver要写日志文件而磁盘来不及完成时，sqlserver会不得不进入等待状态，直到日志
+记录被写入，才会提交当前的事务。如果sqlserver经常要等writelog,通常说明磁盘上的瓶颈还是比较严重的。
+*/
+
+--了解是那个数据库，那个文件在做io
+SELECT 
+db.name AS database_name,f.fileid AS FILE_ID,
+f.filename AS FILE_NAME,
+i.num_of_reads,i.num_of_bytes_read,i.io_stall_read_ms,
+i.num_of_writes,i.num_of_bytes_written,i.io_stall_write_ms,
+i.io_stall,i.size_on_disk_bytes
+ FROM sys.databases db 
+INNER JOIN sys.sysaltfiles f ON db.database_id = f.dbid
+INNER JOIN sys.dm_io_virtual_file_stats(NULL,null) i ON i.database_id = f.dbid AND i.file_id = f.fileid
+
+--检查当前sqlserver中每个处理挂起状态的io请求
+SELECT 
+database_id,file_id,io_stall,io_pending_ms_ticks,scheduler_address
+FROM sys.dm_io_virtual_file_stats(NULL,NULL) t1, sys.dm_io_pending_io_requests AS t2
+WHERE t1.file_handle = t2.io_handle

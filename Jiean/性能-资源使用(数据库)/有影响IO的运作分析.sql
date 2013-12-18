@@ -74,37 +74,3 @@ databases ：一些和日志写入有关系的计数器----------------------------
 
 
 */
-
----从视图观察sqlserver io
-SELECT 
-wait_type,
-waiting_tasks_count,
-wait_time_ms
-FROM sys.dm_os_wait_stats
-/*
-如果经常有连接处于等待磁盘io，一般来讲，服务器的io还是比较忙的，而这种繁忙已经影响到了语句的响应速度。
-当sqlserver要去读写一个页面的时候，它首先会在buffer pool里寻找，如果在buffer pool里找到了，那么读、写操作会
-继续进行，没有任何等待。如果没有找到，那么sqlserver就会设置连接的等待状态为
-Pageiolatch_ex（写），PageIolatch_sh(读)，然后发起一个异步io操作，将页面读入buffer pool中，在io没做完之前，连
-接都会保持这个状态，io消耗的时间越长，等待的时间也会越长。
-
-Writelog 日志文件的等待状态，当sqlserver要写日志文件而磁盘来不及完成时，sqlserver会不得不进入等待状态，直到日志
-记录被写入，才会提交当前的事务。如果sqlserver经常要等writelog,通常说明磁盘上的瓶颈还是比较严重的。
-*/
-
---了解是那个数据库，那个文件在做io
-SELECT 
-db.name AS database_name,f.fileid AS FILE_ID,
-f.filename AS FILE_NAME,
-i.num_of_reads,i.num_of_bytes_read,i.io_stall_read_ms,
-i.num_of_writes,i.num_of_bytes_written,i.io_stall_write_ms,
-i.io_stall,i.size_on_disk_bytes
- FROM sys.databases db 
-INNER JOIN sys.sysaltfiles f ON db.database_id = f.dbid
-INNER JOIN sys.dm_io_virtual_file_stats(NULL,null) i ON i.database_id = f.dbid AND i.file_id = f.fileid
-
---检查当前sqlserver中每个处理挂起状态的io请求
-SELECT 
-database_id,file_id,io_stall,io_pending_ms_ticks,scheduler_address
-FROM sys.dm_io_virtual_file_stats(NULL,NULL) t1, sys.dm_io_pending_io_requests AS t2
-WHERE t1.file_handle = t2.io_handle

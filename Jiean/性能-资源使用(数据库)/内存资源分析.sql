@@ -30,7 +30,7 @@ sys.sysprocesses ¶¯Ì¬¹ÜÀíÊÓÍ¼ÖĞ³öÏÖÒ»Ğ©Á¬½ÓµÈ´ıi/0Íê³ÉµÄÏÖÏó¡£
 µ±sqlserver³öÏÖdatabase pageÄÚ´æÆ¿¾±µÄÊ±ºò£¬ÍùÍù»á°éËæ×Å·¢ÉúÓ²ÅÌÆ¿¾±ÎÊÌâ¡£ÕâÊÇÒòÎª
 1£©sqlserverÊı¾İÒ³paging ¶¯×÷»á´øÀ´´óÁ¿µÄÓ²ÅÌ¶ÁĞ´£¬Ê¹µÃÓ²ÅÌ¸ú×ÅÃ¦ÂµÆğÀ´£¬
 2£©Èç¹ûÒ»¸öÁ¬½ÓÒªµÈsqlserer´ÓÓ²ÅÌÉÏ¶ÁÊı¾İ£¬Õâ¸öµÈ´ı»á±È´ÓÄÚ´æÀï¶ÁÒª³¤µÃ¶à£¬Ê±¼ä»¨·Ñ²»ÔÚÒ»¸öÊıÁ¿¼¶ÉÏ¡£ÄÄÅÂÓ²ÅÌÔÙ
-¿ì£¬Ò²±È²»ÉÏÄÚ´æ¡£ËùÒÔ´ÓÁ¬½ÓµÄµÈ´ı×´Ì¬À´³Ö£¬ËüÃÇ»á¾­³£µÈÓ²ÅÌ¡£
+¿ì£¬Ò²±È²»ÉÏÄÚ´æ¡£ËùÒÔ´ÓÁ¬½ÓµÄµÈ´ı×´Ì¬À´¿´£¬ËüÃÇ»á¾­³£µÈÓ²ÅÌ¡£
 
 µ±È·¶¨ÁËÊı¾İÒ³Ãæ»º³åÇøÓĞÄÚ´æÑ¹Á¦ºó£¬·ÖÎöÑ¹Á¦À´Ô´ºÍ½â¾ö·½·¨
 
@@ -101,73 +101,9 @@ d,¸ú×ÙsqlserverµÄÔËĞĞ£¬ÕÒµ½¶ÁÈ¡Êı¾İÒ³×î¶àµÄÓï¾ä½øĞĞÆÀ¹À¡£Èç¹ûÕâĞ©Óï¾äÌìÉú¾ÍÒª¶Áº
 ÎªÊ²Ã´ÒªÓÃÕâÃ´¶àdatabse page»º´æ£¬ÔÚÄÚ´æÓĞÑ¹Á¦µÄÇé¿öÏÂ£¬sqlserverÊÇ²»»áÎŞ´¿ÎŞ¹ÊµØ»º¹Ë´æÊı¾İÒ³ÃæµÄ¡£Ò»¶¨ÊÇÓĞÓÃ»§ÔÚÓÃÕâĞ©
 Êı¾İ¡£
 
-ÕÒ³ö¶ÁÈ¡Êı¾İÒ³Ãæ×î¶àµÄÓï¾ä³öÀ´
-
-1,Ê¹ÓÃDMV·ÖÎösqlserverÆô¶¯ÒÔ¸öÀ´×öread×î¶àµÄÓï¾ä
-sys.dm_exec_query_stats :·µ»Ø»º´æ²éÑ¯¼Æ»®µÄ¾ÛºÏĞÔÄÜÍ³¼ÆĞÅÏ¢¡£
-»º´æ¼Æ»®ÖĞµÄÃ¿¸ö²éÑ¯Óï¾äÔÚ¸ÃÊÓÍ¼ÖĞ¶ÔÒ»ĞĞ¡£sqlserver»áÍ³¼ÆÊ¹ÓÃÕâ¸öÖ´ĞĞ¼Æ»®µÄÓï¾ä´ÓÉÏ´ÎsqlserverÆô¶¯ÒÔÀ´µÄĞÅÏ¢
-
-*/
---°´ÕÕÎïÀí¶ÁµÄÒ³ÃæÊıÅÅĞò
-SELECT TOP 50 
-qs.total_physical_reads,qs.execution_count,
-qs.total_physical_reads/qs.execution_count as [avg IO],
-substring(qt.text,qs.statement_start_offset/2,(
-case when qs.statement_end_offset = -1 then len(convert(nvarchar(max),qt.text))*2
-else qs.statement_end_offset end -qs.statement_start_offset)/2) as query_text,
-qt.dbid,dbname=DB_NAME(qt.dbid),
-qt.objectid,
-qs.sql_handle,
-qs.plan_handle
- FROM sys.dm_exec_query_stats qs
-CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
-order by qs.total_physical_reads DESC
-
---°´ÕÕÂß¼­¶ÁµÄÒ³ÃæÊıÅÅĞò
-SELECT TOP 50 
-qs.total_logical_reads,qs.execution_count,
-qs.total_logical_reads/qs.execution_count as [avg IO],
-substring(qt.text,qs.statement_start_offset/2,(
-case when qs.statement_end_offset = -1 then len(convert(nvarchar(max),qt.text))*2
-else qs.statement_end_offset end -qs.statement_start_offset)/2) as query_text,
-qt.dbid,dbname=DB_NAME(qt.dbid),
-qt.objectid,
-qs.sql_handle,
-qs.plan_handle
- FROM sys.dm_exec_query_stats qs
-CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
-order by qs.total_logical_reads DESC
-
-/*
-DMVÓĞÁ½¸öÈ±µã£º
-a£¬ÊÓÍ¼ÀïÃ¿Ò»¸öÓï¾ä¼ÇÂ¼µÄÉú´æÆÚÓëÖ´ĞĞ¼Æ»®±¾ÉíÏà¹ØÁª£¬Èç¹ûsqlserverÓĞÄÚ´æÑ¹Á¦£¬°ÑÒ»²¿·İÖ´ĞĞ¼Æ»®´Ó»º´æÖĞÉ¾³ıÊ±£¬Õâ
-Ğ©¼ÇÂ¼Ò²»á´Ó¸ÃÊÓÍ¼ÖĞÉ¾³ı£¬ËùÒÔ²éÑ¯µÃµ½µÄ½á¹û²»ÄÜ±£Ö¤Æä¿É¿¿ĞÔ¡£
-
-b£¬ÊÓÍ¼ÀïµÄÊÇÀúÊ·ĞÅÏ¢£¬´ÓsqlserverÆô¶¯¾Í¿ªÊ¼ÊÕ¼¯ÁË£¬µ«ÊÇºÜ¶àÊ±ºòÎÊÌâÊÇÔÚÃ¿ÌìÄ³¸öÌØ¶¨Ê±¼ä¶ÎÀï·¢ÉúµÄ¡£
-
-
-2,Ê¹ÓÃsql TraceÎÄ¼şÀ´·ÖÎöÄ³Ò»¶ÎÊ±¼äÄÚ×öread×î¶àµÄÓï¾ä
-*/
-SELECT * INTO SAMPLE
-FROM fn_trace_gettable('c:\sample\a.trc',default)
-WHERE eventclass IN(10,12)
---10,RPC:Completed ÔÚÍê³ÉÁËÔ¶³Ì¹ı³Ìµ÷ÓÃ(RPC)Ê±·¢Éú£¬Ò»°ãÊÇÒ»Ğ©´æ´¢¹ı³Ìµ÷ÓÃ
---12£¬sql:batchcompleted ÔÚÍê³ÉÁËtransact-sqlÅú´¦ÀíÊ±·¢Éú¡£
-
---ÕÒµ½ÊÇÄÄÌ¨¿Í»§¶Ë·şÎñÆ÷ÉÏµÄÄÇ¸öÓ¦ÓÃ·¢¹ıÀ´µÄÓï¾ä´ÓÕûÌåÉÏâÜÔÚ·é¾İ¿âÉÏÒıÆğµÄreads×î¶à
-SELECT databaseid,hostname,applicationname,SUM(reads) FROM SAMPLE 
-GROUP BY databaseid,hostname,applicationname
-ORDER BY SUM(reads) DESC 
-
---°´ÕÕreads´Ó´óµ½Ğ¡ÅÅĞò×î´óµÄµÄÓï¾ä
-SELECT TOP 1000 
-textdata,databaseid,hostname,applicationname,loginname,spid
- FROM SAMPLE
-ORDER BY reads DESC 
-
 
 --Stolen Memory»º´æÑ¹Á¦·ÖÎö------------------------------
-/*
+
 ÔÚsqlServer Àï£¬³ıÁËdataBase Pages,ÆäËüµÄÄÚ´æ·ÖÅä»ù±¾¶¼²»ÊÇ×ñ´ÓÏÈreserve,ÔÙcommitµÄ·½·¨£¬¶øÊÇÖ±½Ó´ÓµØÖ·¿Õ¼äÀïÉêÇë
 ËùÒÔÕâĞ©ÄÚ´æ»ù±¾¶¼ÊÇStolen Memory.¶ÔÒ»°ãµÄSqlServer,Stolen ÄÚ´æÒ²Ö÷ÒªÒÔ8KBÎªµ¥Î»·ÖÅä£¬·Ö²¼ÔÚBUffer Pool Àï
 
