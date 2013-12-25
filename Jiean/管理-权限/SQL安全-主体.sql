@@ -110,7 +110,106 @@ exec sp_helpsrvrole
 exec sp_helpsrvrolemember 'sysadmin'
 
 
+/*数据库级别的主体-------------------------------------------------
+数据库级别的主体是可以分配访问数据库或数据库中的特殊对象的权限给用户的对象。
 
+数据库用户：是执行数据库内的请求的数据库级别的安全上下文，并且与sqlserver或windows登录名关联。
+数据库角色：
+应用程序角色
+
+一旦创建了登录名，就可以把它映射到数据库用户，一个登录名可以映射到一个sqlserver实例 的多个数据库上。
+*/
+
+--创建用户
+CREATE LOGIN text3
+with password='A,12345678'
+
+CREATE USER text3
+FOR LOGIN [text3]	--默认是名称相同的登陆名上
+WITH default_schema=dbo --默认是dbo
+
+
+--查看数据库用户信息
+EXEC sys.sp_helpuser @name_in_db = text3 -- sysname
+
+--修改
+ALTER USER text3
+WITH NAME =text4
+
+ALTER USER text4
+WITH DEFAULT_SCHEMA=dbo
+
+DROP USER text4
+
+--修复孤立的数据库用户
+SELECT * FROM sys.database_principals a
+LEFT JOIN sys.server_principals b ON a.sid = b.sid
+WHERE b.sid IS NULL AND a.type_desc ='sql_user' AND a.principal_id>4
+
+--重新指定
+ALTER USER text4
+WITH LOGIN li.weiqiang
+
+--查看固定数据库角色
+EXEC sys.sp_helpdbfixedrole @rolename = NULL -- sysname
+
+--查看有固定数据库角色的用户
+EXEC sys.sp_helprolemember @rolename = NULL -- sysname
+/*
+一个固定数据库角色将重要的数据库权限汇集到一起，这些权限不可以修改或删除。
+像固定服务器角色一样，对于数据库用户，最好不要在没有确认所有权限都是绝对必要的情况下，将它授于到固定数据库
+角色的成员中，例如，不要在用户只需要一个表的select 权限时授于它db_owner成员关系。
+*/
+
+--关联用户和数据库角色
+EXEC sp_addrolemember 'db_datawriter','text4'
+EXEC sp_droprolemember 'db_datawriter','text4'
+
+--管理用户自定义数据库角色
+
+--查看
+EXEC sys.sp_helprole @rolename = NULL -- sysname
+
+CREATE ROLE role_lwq AUTHORIZATION db_owner
+
+--授于一个表的select权限给新的角色
+GRANT SELECT ON TB TO role_lwq
+
+--添加用户
+EXEC sp_addrolemember 'role_lwq','text3'
+
+--修改
+ALTER ROLE role_lwq WITH NAME = role_lwq2
+
+--删除角色中的用户
+EXEC sp_droprolemember 'role_lwq2','text3'
+--删除角色
+DROP ROLE role_lwq2
+
+/*应用程序角色
+应用程序角色是由登录名和数据库角色混合而成的，能够以与分配给用户定义角色权限相同的方式，分配权限给应用程序
+角色，不同的是应用程序角色中不允许拥有成员，取而代之的是，应用程序角色被使用启用密码的系统存储过程激活，当
+使用应用程序角色时，它将覆盖登录名可能拥有的所有其他以限。
+
+*/
+
+--创建
+CREATE APPLICATION ROLE app
+WITH PASSWORD ='123',
+DEFAULT_SCHEMA = 'dbo'
+
+--授于权限
+GRANT SELECT ON TB TO app
+
+--激法当前用户会话的应用程序角色权限
+EXEC sp_setapprole 'app','123'
+
+SELECT * FROM TB
+
+--使用sp_setaprole 进入到应用程序权限也意喷水 着只应用这个角色的权限
+ALTER APPLICATION ROLE app WITH NAME = new_app,PASSWORD='1234',DEFAULT_SCHEMA='dbo'
+
+DROP APPLICATION ROLE new_app
 
 同样的sqlServer也对安全对象的范围进行了划分
 服务器
