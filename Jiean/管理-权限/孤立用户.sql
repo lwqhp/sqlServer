@@ -16,6 +16,14 @@ sqlserverµÄÓÃ»§°²È«¹ÜÀíÓĞÁ½²ã£¬Ò»²ãÊÇ·şÎñÆ÷£¬Ò»²ãÊÇÊı¾İ¿â£¬ÔÚÁ½¸ö²ãÃæÉÏ·ÖÅä²»Í¬µ
 Ò²¾ÍÊÇËµ£¬µ±Äã°ÑÊı¾İ¿âÒÆµ½Ò»¸öĞÂµÄ·şÎñÆ÷ÉÏÊ±£¬Èç¹ûÍ¬ÔÚÒ»¸öÓòÖĞ£¬windowÕÊºÅÖ»ĞèÔÙÌí¼ÓÒ»ÏÂ¾Í¿ÉÒÔÁË¡£µ«sqlserverÕÊºÅ
 ÔòÊÇËæ»úÉú³ÉµÄSID,¾ÍÃ»ÓĞ°ì·¨ºÍÔ­À´µÄÊı¾İ¿âÓÃ»§¹ØÁªÉÏµÄ¡£
 */
+--ĞŞ¸´¹ÂÁ¢µÄÊı¾İ¿âÓÃ»§
+SELECT * FROM sys.database_principals a
+LEFT JOIN sys.server_principals b ON a.sid = b.sid
+WHERE b.sid IS NULL AND a.type_desc ='sql_user' AND a.principal_id>4
+
+--ÖØĞÂÖ¸¶¨
+ALTER USER text4
+WITH LOGIN li.weiqiang
 
 --¼ì²â¹ÂÁ¢ÓÃ»§
 sp_change_users_login @Action='Report';
