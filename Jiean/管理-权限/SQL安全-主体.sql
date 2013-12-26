@@ -211,6 +211,8 @@ ALTER APPLICATION ROLE app WITH NAME = new_app,PASSWORD='1234',DEFAULT_SCHEMA='d
 
 DROP APPLICATION ROLE new_app
 
+
+
 同样的sqlServer也对安全对象的范围进行了划分
 服务器
 数据库
