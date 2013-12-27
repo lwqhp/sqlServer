@@ -34,7 +34,7 @@ BACKUP DATABASE | LOG  sqllwqhp
 FILEGROUP ='指定备份的文件组名称'
 FILE ='指定备份的文件逻辑名称'
 READ_WRITE_FILEGROUPS --用于部份备份时的参数，表示不备份只读的文件组
-TO DISK ='d:\sqllwqhp_20131226_2132.bak'--disk表示一个备份集
+TO DISK ='d:\sqllwqhp_20131226_2132.bak'--disk表示一个备份集（备份设备）
    ,DISK='e:\sqllwqhp_20131226_2132_2.bak' --多个备份集，也就是媒体簇
 MIRROR TO DISK='f:\sqllwqhp_20131226_2132_2.bak' --镜像备份
 WITH format --第一次创建镜像备份集时，需要带上
