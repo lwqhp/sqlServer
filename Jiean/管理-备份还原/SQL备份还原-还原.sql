@@ -131,6 +131,26 @@ FROM logback WITH norecovery;
 
 RESTORE LOG [test] FROM logbackup2 WITH norecovery;
 
-BACKUP LOG [Test] TO new_log_backup
+BACKUP LOG [Test] TO new_log_backup --创建新的事务日志备份来捕捉还原的页面
 RESTORE LOG [Test] FROM new_log_backup WITH recovery;
 
+RESTORE DATABASE | LOG  sqllwqhp --数据库名不相同的情况，是新建
+FILEGROUP ='文件组'--还原指定的文件组，不同于主文件组的文件组可以在还原操作中被置为离线状态，保持其他活动文件组为可用状态(online还原)
+FROM DISK='d:\sllwqhp_20131226_2132.bak'
+DISK='e:\sllwqhp_20131226_2132_2.bak'  --这是一个多媒体簇的备份
+WITH FILE=2 --备份集上的第二个备份
+,REPLACE --覆盖既存的数据库
+,NORECOVERY |RECOVERY /*norecovery模式允许附加其他事务日志或差异备份，在使用recovery选项的那一瞬间，
+数据库置为联机状态*/
+,STOPAT='2013-12-26 23:34:50.934' /*在数据库还原和日志还原里都加上这个参数，以确保还原操作不会越过指定的时间点*/
+MOVE 'sqllwqhp' TO 'd:\lwqhp.mdf',
+MOVE 'sqllwqhp_log' TO 'd:\lwqhp_log.ldf'
+,PARTIAL /*部分还原参数，将主文件组置为联机状态，然后在有需要的情况下还原其他文件组，如果使用置为完整模式
+或大容量日志恢复模式的数据库，则可以在可读可写文件组上使用这个命令，如果数据库置为简单恢复模式，则只能
+在只读辅助文件组上使用partial*/
+,PAGE='' --用于页面还原，指定文件和页ID
+
+--踢掉所有其它连接
+ALTER DATABASE sqllwqhp
+SET SINGLE_USER
+WITH ROLLBACK IMMEDIATE

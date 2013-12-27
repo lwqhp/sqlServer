@@ -30,6 +30,56 @@ format ±íÊ¾ÔÚÃ¿Ò»´ÎÊ¹ÓÃÃ½ÌåÊ±¶Ô±¸·ÝÃ½Ìå½øÐÐ³õÊ¼»¯£¬²¢¸²¸ÇÈÎºÎÏÖÓÐµÄµÄÃ½Ìå±êÍ·¡£²
 DifferEntial ²îÒì±¸·Ý²ÎÊý
 */
 --ÍêÈ«±¸·Ý£º±¸·ÝÊý¾Ý¿âÖÐµÄËùÓÐÊý¾Ý£¬ÒÔ¼°¿ÉÒÔ»Ö¸´ÕâÐ©Êý¾ÝµÄ×ã¹»ÈÕÖ¾¡£
+BACKUP DATABASE | LOG  sqllwqhp
+FILEGROUP ='Ö¸¶¨±¸·ÝµÄÎÄ¼þ×éÃû³Æ'
+FILE ='Ö¸¶¨±¸·ÝµÄÎÄ¼þÂß¼­Ãû³Æ'
+READ_WRITE_FILEGROUPS --ÓÃÓÚ²¿·Ý±¸·ÝÊ±µÄ²ÎÊý£¬±íÊ¾²»±¸·ÝÖ»¶ÁµÄÎÄ¼þ×é
+TO DISK ='d:\sqllwqhp_20131226_2132.bak'--disk±íÊ¾Ò»¸ö±¸·Ý¼¯
+   ,DISK='e:\sqllwqhp_20131226_2132_2.bak' --¶à¸ö±¸·Ý¼¯£¬Ò²¾ÍÊÇÃ½Ìå´Ø
+MIRROR TO DISK='f:\sqllwqhp_20131226_2132_2.bak' --¾µÏñ±¸·Ý
+WITH format --µÚÒ»´Î´´½¨¾µÏñ±¸·Ý¼¯Ê±£¬ÐèÒª´øÉÏ
+WITH compression | NO_COMPRESSION --ÊÇ·ñÑ¹Ëõ±¸·Ý
+,DESCRIPTION ='ËµÃ÷±¸·Ý¼¯µÄ×ÔÓÉ¸ñÊ½ÎÄ±¾£¬°ïÖúÊ¶±ð±¸·ÝÉè±¸µÄÄÚÈÝ'
+,NAME ='±¸·Ý¼¯µÄÃû³Æ'
+,MEDIADESCRIPTION ='Ã½Ìå¼¯µÄ×ÔÓÉ¸ñÊ½ÎÄ±¾£¬°ïÖúÊ¶±ðÃ½ÌåµÄÄÚÈÝ'
+,MEDIANAME ='Õû¸ö±¸·ÝÃ½Ìå¼¯µÄÃû³Æ£¬×î¶àÎª128¸ö×Ö·û'
+,RETAINDAYS=30 --Ö¸¶¨ÔÚÕâ¸ö±¸·Ý¼¯ÉÏ±£ÁôÊ±¼ä£¬³¬¹ýÕâ¸öÊ±¼ä²Å»á±»¸²¸Ç
+,INIT |NOINIT --ÊÇ¸²¸Ç»¹ÊÇ×·¼Óµ½µ±Ç°±¸·Ý¼¯
+,COPY_ONLY --½ö±¸·Ý£¬²»ÆÆ»µ±¸·ÝÐòÁÐ
+,DIFFERENTIAL --²îÒì±¸·Ý
+,STATS =25 -- ÔÚ±¸·Ý¹ý³ÌÖÐ·µ»Ø·µÀ¡ÐÅÏ¢µ½¿Í»§¶Ë
+--ÈÕÖ¾±¸·Ý²ÎÊý²¿·Ý
+,NO_TRUNCATE /*±¸·Ýµ±Ç°ÈÕÖ¾ÖÐ»î¶¯µÄ²¿·Ý£¬¶øÇÒ²»½Ø¶ÏÊÂÎñÈÕÖ¾ÖÐ²»»î¶¯µÄ²¿·Ý£¬Ò²¾ÍÊÇ»áÒ»Ö±±£Áô£¬Ä¬ÈÏÊÇ±¸·Ý
+ÍêÈÕÖ¾ºó£¬²»»î¶¯²¿·ÝÈÕÖ¾»á±»½Ø¶Ï£¬ÖØÐÂÊ¹ÓÃ*/
+,NORECOVERY /*±¸·ÝÊÂÎñµÄÎ²²¿£¬È»ºóÈÃÊý¾Ý¿â´¦ÓÚrestoring×´Ì¬£¬standby Ò²±¸·ÝÊÂÎñÈÕÖ¾Î²²¿£¬µ«²»»á½«Êý¾Ý
+¿â´¦ÓÚrestoring×´Ì¬£¬¶ø°ÑËüÖÃÎªÖ»¶Ástandby×´Ì¬£¬ÓÃÓÚÈÕÖ¾´«ËÍ*/ 
+
+
+--²é¿´ÉèÖÃ·þÎñÆ÷Ñ¹ËõÉè¶¨
+EXEC sp_configure 'backup compression default','1'
+RECONFIGURE WITH override
+go
+
+SELECT * FROM sys.configurations WHERE name ='backup compression default'
+
+--×Ô¶¨Òå±¸·ÝÉè±¸
+EXEC sys.sp_addumpdevice @devtype = 'disk', -- varchar(20)
+    @logicalname = 'logicName', -- sysname
+    @physicalname = N'd:\sqllwqhp_20131226_2132.bak', -- nvarchar(260)
+    @cntrltype = 0, -- smallint
+    @devstatus = '' -- varchar(40)
+
+--²é¿´
+EXEC sp_helpdevice 'logicName'
+SELECT * FROM sys.backup_devices
+
+--É¾³ý
+EXEC sp_dropdevice 'logicName','delfile'
+
+--±¸·Ý
+BACKUP DATABASE sqllwqhp
+TO logicname
+
 
 --²îÒì±¸·Ý£º×Ô×î½üÒ»´ÎÍêÕû±¸·Ýºó·¢Éú¸ü¸ÄµÄÊý¾Ý£¬×î½üÒ»´ÎÍêÕû±¸·Ý³ÆÎª²îÒìµÄ¡°»ù×¼¡±
 /*ÒÔÏÂ¶¼¿ÉÒÔ×÷Îª²îÒì±¸·ÝµÄ»ù×¼
@@ -64,6 +114,8 @@ ALTER DATABASE db_test MODIFY FILEGROUP FG_READ_ONLY READ_ONLY
 go
 
 BACKUP DATABASE db_test READ_WRITE_FILEGROUPS TO DISK = 'F:\DB\Backup\db_test.bak' WITH format
+
+EXEC sp_helpfile
 
 --Ö¸¶¨ÎÄ¼þ×éÃû³Æ
 BACKUP DATABASE db_test 
