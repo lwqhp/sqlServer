@@ -15,8 +15,8 @@ statistics IO on
 statistics time on
 statistics profile on
 
-动态视图：              查询历史上语句执行的性能记录
-sys.dm_exec_query_stats
-
+动态视图：              
+sys.dm_exec_query_stats -查询历史上语句执行的性能记录
+sys.dm_exec_requests --返回当前执行的查询信息
 
 */

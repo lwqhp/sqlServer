@@ -145,6 +145,8 @@ order by objtype DESC
 sys.dm_exec_query_stats :返回缓存查询计划的聚合性能统计信息。
 缓存计划中的每个查询语句在该视图中对一行。sqlserver会统计使用这个执行计划的语句从上次sqlserver启动以来的信息
 
+
+
 */
 --按照物理读的页面数排序
 SELECT TOP 50 
@@ -175,6 +177,21 @@ qs.plan_handle
  FROM sys.dm_exec_query_stats qs
 CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
 order by qs.total_logical_reads DESC
+
+/*
+对于应用程序发送未预定义的查询文本和没有适当参数化的文本值，每个几乎相同查询的变种将生成独立的统计信息，使统
+计信息在相关性和聚合方面有所不同
+比如相同的查询，只是条件中代入的查询关键字不一样，如姓名（没有作参数代入），会出现为每个查询创建统计信息行，
+这就是没有预定义查询文本的应用程序产生的问题。
+针对这个问题 ，视图引入了两个新列，分别是query_hash 和query_plan_hash,这两列包含二进制散列值。query_hash二进
+制值与那些除了文本值外都相同的查询一样，生成的query_plan_hash二进制值与那些使用相同查询计划的查询一样，这两
+列增加了聚合整个跨越相同查询或查询执行计划的统计信息的能力。
+*/
+SELECT COUNT(b.text) FROM sys.dm_exec_query_stats a
+CROSS APPLY sys.dm_exec_sql_text(a.sql_handle) b
+WHERE text LIKE '%purchasing.vendorwithcontacts%'
+GROUP BY a.query_hash
+
 
 /*
 DMV有两个缺点：
@@ -220,6 +237,14 @@ Pageiolatch_ex（写），PageIolatch_sh(读)，然后发起一个异步io操作，将页面读入buff
 Writelog 日志文件的等待状态，当sqlserver要写日志文件而磁盘来不及完成时，sqlserver会不得不进入等待状态，直到日志
 记录被写入，才会提交当前的事务。如果sqlserver经常要等writelog,通常说明磁盘上的瓶颈还是比较严重的。
 */
+dm_os_wait_stats 是实例级别的
+--清除当前累积的等待类型统计信息
+dbcc sqlperf('sys.dm_os_wait_stats',clear)
+
+-- 查看数据库i/o统计信息
+select * from sys.dm_io_virtual_file_stats(null,null)
+
+
 
 --了解是那个数据库，那个文件在做io
 SELECT 
