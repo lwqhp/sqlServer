@@ -15,12 +15,17 @@
 */
 
 --返回表的两种格式
+/*
+不能将标量UDF转换为表UDF,也不可以将表UDF转换为标量UDF
+*/
+--内联表值函数:不需要显示定义返回的表，只需要使用一个select语句来定义返回的行和列（只有一个select返回语句）
 ALTER  FUNCTION fn_returnTable1()
 RETURNS TABLE WITH SCHEMABINDING --加上
 AS 
 RETURN(SELECT GETDATE() AS dt)
 
 go
+--多语句表值函数
 CREATE FUNCTION fn_returnTable2()
 RETURNS @a TABLE(id int)
 AS 
@@ -52,3 +57,11 @@ SELECT OBJECTPROPERTY(OBJECT_ID('fn_returnTable1'),'isDeterministic')
 WITH SCHEMABINDING:绑定架构，以防止视图所引用的表在视图未被调整的情况下发生改变。
 必须为任何创建索引的视图指定 SCHEMABINDING
 */
+
+
+--查看UDF元数据
+SELECT * FROM sys.sql_modules a
+INNER JOIN sys.objects b ON a.object_id = b.object_id
+WHERE type IN('IF',--内联表
+'TF',--多语句表
+'FN')--标量

@@ -1,4 +1,12 @@
-
+/*
+存储过程的好处
+1,帮助在数据层聚集t-sql代码
+2,帮助大的即席查询减少网络流量
+3,促进代码的可复用性。
+4，淡化数据获取的方法
+5，与视图不同，存储过程可以利用流控制，临时表，表变量等
+6,对查询响应时间的影响比较稳定
+*/
 
 --存储过程
 /*
@@ -47,72 +55,7 @@ SET @varName = 'a'
 SELECT @varName = filed FROM tableName
 
 
-条件语句
-IF @a >0 
-BEGIN 
 
-END
-ELSE
-	BEGIN
-	
-	end	
-IF @a>0
-BEGIN ...END
-ELSE IF @a<0 
-BEGIN ...END
-ELSE
-begin ...END 	
-
---循环语句
-WHILE @var IS NOT NULL 
-BEGIN
-	赋值区别：SELECT 和 set ：如果没有记录，SELECT 中的变量赋值语句是不执行，还是原来的值，SET，则会返回null值给变量
-	
-	关键点：开始前，先给@var赋一个值，以判断是否要进入循环
-		
-	执行完后，重新取值给@var，否则会死循环
-END 
-
-/*
-各语句块之间的承接
-*/
---上面的执行控制下面块的选择
-DECLARE @id INT=@@ROWCOUNT;
-IF @id >0 
-
---中间调用存储过程，返回值
-	--返回表
-	INSERT INTO #tb
-	EXEC spBC_MergeOrder 'A','B'
-	
-	--返回值和执行状态，控制下面块的选择
-	DECLARE @RetVal TINYINT =0 --返回值   
-	DECLARE @billno VARCHAR(20) --返回值  单号
-	declare @FormLang Varchar(2) = 'CN'
-	
-	EXEC spBC_MergeOrder @RetVal   Output,   @FormLang , @RetBillNo   Output  
-	
-	IF @RetVal=0 
-	BEGIN ...END
-	ELSE IF @RetVal=-1 
-	BEGIN ...END
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
---抛出错语
- RaisError(N'没有用户ID，请先到系统参数设置,才能使用自动合并功能', 16, 1,N'错误')
- 
  BEGIN TRY
  --正常语句
  END TRY
@@ -132,76 +75,6 @@ IF @id >0
  
  
  
-1,创建
-CREATE PROCEDURE dbo.proName(
-@sqlParam nvarchar(100)
-,@param2 int
-)
-AS
-
-定义变量
-DECLARE @varName int
-DECLARE @varName2 nvarchar(1000)
-DECLARE @sql nvarchar(4000)
-
-打印结果和执行语句,退出
-PRINT @varName
-EXECUTE(@sql)
-RETURN 
-
-给变量赋值
-SET @varName = 'a'
-SELECT @varName = filed FROM tableName
-
-
-条件语句
-IF @a >0 
-BEGIN 
-
-END
-ELSE
-	BEGIN
-	end	
-
-循环语句
-WHILE @var IS NOT NULL 
-BEGIN
-	--关键点：开始前，先给@var赋一个值，以判断是否要进入循环
-		
-	--执行完后，重新取值给@var，否则会死循环
-	SET @var=''
-END 
-	
---用于控制条件分支，选择的方法
-
-@@ERROR
---错误跳转，多在事务中，没错误就继续往下执行，有错误就跳转到错误判断语句，回滚或提交
-	SET @ERROR = 0
-	执行一条语句
-	SET @ERROR = @@ERROR
-		IF(@ERROR <> 0)
-		GOTO ERROR
-		
-		--跳转点
-	ERROR:
-		IF(@ERROR <> 0)
-		BEGIN
-			ROLLBACK TRANSACTION
-			INSERT INTO nn_sys_returnerp_log([office_missive_id]
-		  ,[type]
-		  ,[log_datetime]
-		  ,[desc])
-			VALUES(@office_missive_id,2,getdate(),Convert(varchar(30),@ERROR)+'移转到办结表出错!');
-		END
-		ELSE
-		BEGIN
-			COMMIT TRANSACTION
-			/*只有办结的单才自动加签名，中止的单不应该增加自动签名?*/	
-			IF EXISTS(SELECT 0 FROM office_missive_search WHERE office_missive_id =	@office_missive_id 
-AND m_isback = 0 AND m_status=2)	
-			--自动加签名意见
-			EXECUTE sp_auto_addsign_tosearch @office_missive_id
-		END	
 
 --存储过程调用存储过程
 /*
@@ -220,7 +93,7 @@ return
 */	
 
 
-退出信息
+--退出信息
 Declare @MsgLangID Int
 Select @MsgLangID = msglangid From sys.syslanguages  Where name = @@LANGUAGE  
 Begin
@@ -231,7 +104,7 @@ Begin
 	Return 
 END
 
-数据库语言选择
+--数据库语言选择
 Set NoCount On 
 Declare @Lang Varchar(30) --暂存原语种
 Set @Lang = @@Language
@@ -248,27 +121,29 @@ Else If Upper(@FormLang) = 'EN'
 	Set Language 'English'             --英语  
 --================================	
 		
-		*删除模板表*/
-declare @template_name varchar(50)
- 
-declare cur_missive_delete  cursor for 
- select [name] from sysobjects where xtype='U' and [name] like 'office_missive_template_%'
-   OPEN cur_missive_delete  
-   FETCH NEXT FROM cur_missive_delete  INTO @template_name 
 
- 
-   WHILE @@FETCH_STATUS = 0
-   BEGIN      
-     exec('delete from '+@template_name +' from #A where '+@template_name +'.sys_work_id=#A.office_missive_id')
-    --print ('delete from '+@template_name +' from #A where '+@template_name +'.sys_work_id=#A.office_missive_id')
-    FETCH NEXT FROM cur_missive_delete  INTO  @template_name 
-   
-   END
+--sqlServer 启动时自动执行存储过程
 
-   CLOSE cur_missive_delete  
-   DEALLOCATE cur_missive_delete
-drop table #A
+--切换到master,只在在这个地方才能放置自动执行的存储过程
+USE master
+go 
 
+--定义一个要sqlserver启动后自动执行的存储过程
+CREATE PROCEDURE sqlStartupLog(
+	@startupDateTime datetime NOT null
+)
+AS
+INSERT INTO sqlStartupLog(startupDateTime)VALUES(GETDATE()
+go
+
+--自执行设置
+EXEC sys.sp_procoption  @ProcName = N'sqlStartupLog', -- nvarchar(776) 要执行的存储过程名称
+    @OptionName = 'startup', -- varchar(35) 活动
+    @OptionValue = 'true' -- varchar(12) 表示启用或禁用
+
+
+--查看存储过程元数据
+SELECT * FROM sys.sql_modules
 
  
  
