@@ -45,6 +45,7 @@ SELECT @@identity --这是全局操作identity列的最大值，比如A表的操作触发了B表的更新
 
 SELECT SCOPE_IDENTITY() --这是当前操作或当前会话的标识列的最大值。
 
+SELECT IDENT_CURRENT('TABLEName') --获取跨任何会话或作用域的某个表的最新identity值
 
 /*--------------
 2)GUID 全局唯一标识符：它是由网卡上的标识数字(每个网卡都有唯一的标识号)以及 CPU 时钟的唯一数字生成的的一个 16 字节的二进制值。

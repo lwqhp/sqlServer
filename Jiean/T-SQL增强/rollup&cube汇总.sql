@@ -1,4 +1,6 @@
 
+--加一个group by all :这会把条件进行汇总，且不符合条件的记录也会显示出来，只是汇总列为null
+
 --with rollup 和 with cube
 
 /*

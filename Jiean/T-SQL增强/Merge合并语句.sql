@@ -32,9 +32,11 @@ VALUES('A001','AA1',GETDATE()),
 SELECT * FROM #Servertb
 SELECT * FROM #Clienttb
 */
-MERGE INTO #Servertb a
-USING #Clienttb b ON a.code = b.code --关联
-WHEN MATCHED  THEN UPDATE SET a.name=b.NAME,a.modifyDTM = b.modifyDTM --当匹配且名称不相同时，更新主表
+MERGE INTO #Servertb a  --目标表target
+USING #Clienttb b	--源表source
+ON a.code = b.code --关联
+WHEN MATCHED --matched 匹配
+AND a.NAME<> b.NAME THEN UPDATE SET a.name=b.NAME,a.modifyDTM = b.modifyDTM --当匹配且名称不相同时，更新主表
 --WHEN MATCHED AND a.modifyDTM <> b.modifyDTM THEN UPDATE SET a.modifyDTM = b.modifyDTM 
 WHEN NOT MATCHED BY TARGET THEN INSERT(code,name,modifyDTM)VALUES(b.code,b.name,b.modifyDTM)--不在主表中新增
 WHEN NOT MATCHED BY SOURCE THEN DELETE;--不在子集中删除

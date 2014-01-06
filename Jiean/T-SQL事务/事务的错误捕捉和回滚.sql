@@ -166,6 +166,17 @@ ROLLBACK TRANÓï¾ä×ÜÊÇÊôÓÚ×îÍâ²ãµÄÊÂÎñ£¬²¢ÇÒÒò´Ë×ÜÊÇ»Ø¹öÕû¸öÊÂÎñ¶ø²»ÂÛÆäÖÐ´ò¿ªÁË¶
 
 */
 
+BEGIN TRAN t1
+SELECT @@trancount --1
+	BEGIN TRAN t2
+	SELECT @@trancount --2
+		BEGIN TRAN t3
+		SELECT @@TRANCOUNT --3
+		COMMIT TRAN 
+		SELECT @@TRANCOUNT -2
+	ROLLBACK TRAN 
+	SELECT @@trancount --0
+
 ---ºóÆÚ´¦Àí
  Set Language @Lang --E)»¹Ô­ÓïÑÔ 
  Set @RetVal = -1 	  
