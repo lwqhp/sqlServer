@@ -2,26 +2,32 @@
 
 --Delete动作要申请的锁
 
-SET TRAN ISOLATION LEVEL READ COMMITTED
+use AdventureWorks2012
+go
+
+SET TRAN ISOLATION LEVEL READ COMMITTED --已提交读
 GO
-SET STATISTICS PROFILE ON
 
 BEGIN TRAN 
-DELETE  dbo.employee_demo_Btree WHERE LoginID ='adventure-works\kim1'
+DELETE  sales.SalesOrderDetail WHERE SalesOrderDetailID=101180
 
 ROLLBACK TRAN 
+
+
 
 /*
 delete 语句在所在的索引上加了排它锁，在它们所在的页面上申请了意向排它锁。
 */
 
-SET TRAN ISOLATION LEVEL REPEATABLE READ
+SET TRAN ISOLATION LEVEL REPEATABLE READ --可重复读
 GO
 
 BEGIN TRAN
-DELETE  dbo.employee_demo_heap WHERE LoginID ='adventure-works\tete0'
+DELETE  sales.SalesOrderDetail WHERE SalesOrderDetailID=101180
 
 ROLLBACK TRAN 
+
+
 
 /*
 在REPEATABLE READ隔离级别下
