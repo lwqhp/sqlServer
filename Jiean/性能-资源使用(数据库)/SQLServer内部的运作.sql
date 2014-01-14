@@ -8,12 +8,12 @@
 >观察：该比率是缓存命中总次数与过去几千闪页面访问的缓存查找总次数之比，基本在99%%从上，如果小于95%,通常就有了
 内存不足的问题，可以通过增加sqlserver的可用内存量来提高缓冲区高速缓存命中率。
 
-2，Checkpoint pages/sec:由要求刷新所有脏页的检查点或其他操作'每秒刷新到磁盘的页数'。
+2，Checkpoint pages/sec:由要求刷新所有脏页的检查点或其他操作'每秒刷新到磁盘的页数'。一般在30个左右
 观察：如果用户的操作主要是读，就不会有很多数据改动的脏页，checkpoint的值就比较小，相反，如果用户做了很多insert/
 update/delete,那么内存中修改过的数据脏页就会比较多，每次checkpoint的量也会比较大，
 这个值在分析disk io问题的时候反而用得比较多。
 
-3，lazy writes/sec:每秒被缓冲区管理器的惰性编写器写入的缓冲区数。
+3，lazy writes/sec:每秒被缓冲区管理器的惰性编写器写入的缓冲区数。保持在20以下
 观察：当sqlserver感到内存压力的时候，就会将最久没有被重用到的数据页和执行计划清理出内存，使它们可再用于用户进程。
 如果sqlserver内存压力不大，lazy writer就不会被经常触发，如果被经常触发，那么应该是有内存的瓶颈。
 一个正常的sqlServer 会偶尔有一些lazy writes,但是在内存吃紧的时候，会连续发生lazy writes.
@@ -29,7 +29,7 @@ update/delete,那么内存中修改过的数据脏页就会比较多，每次checkpoint的量也会比较大
 
 以实例名开头:Buffer manager:提供了计数器，用于监视sqlserver如何使用内存存储数据页，内部数据结构 和 过程缓存。
 
-1，Page Life expectancy : 页若不被引用，将在缓冲池中停留的秒数。
+1，Page Life expectancy : 页若不被引用，将在缓冲池中停留的秒数。至少在300秒以上
 
 观察： 如果sqlserver没有新的内存需求，或者有空余的空间来完成新的内存需求，那么lazy writer就不会被触发，页面会一直
 放在缓冲池里，那么pagelife expectancy就会维持在一个比较高的水平，如果sqlserver出现了内存压力，lazy writer就会被触发

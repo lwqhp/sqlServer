@@ -145,7 +145,8 @@ Committed Bytes
 
 3,Available Mbytes
 现在系统空闲的物理内存数，这个指标能够直接反映出windows层面上有没有内存压力。
-如果此值长期小于100MB，一般来说物理内存是不太够的。
+如果此值长期小于100MB，一般来说物理内存是不太够的。如果这个值长时间保持很低并且slqserver内存没有变化，
+说明服务器的内存处理压力之下。
 比较：这个数值跟“资源监视器”里的可用总数是对得上的。但计数器能反映出某段时间最大，最小，平均值。
 
 4，Page File:%Usage 和Page File:%Peak Usage
@@ -153,17 +154,21 @@ Committed Bytes
 量的差距越大，性能也越差。
 
 5，pages/sec
-Hard Page Fault 每秒钟需要从磁盘上读取或写入的页面数目。这里包括windows系统和所有应用进程的所有磁
-盘paging动作，是Memory:pages input/sec 和memory:pages output/sec 的和。
+Hard Page Fault 每秒钟需要从磁盘上读取或写入磁盘以解决硬页面错误的的页面数量。
+这里包括windows系统和所有应用进程的所有磁盘paging动作，是Memory:pages input/sec 和memory:pages output/sec 的和。
 
 
 如果在缓冲区中未能命中，就需要去物理内存的其它区域寻找，如果找到了，就是一个Soft Page Fault；
 如果在缓存文件中找到，就是一个Hard Page Fault。
 Pages/sec反映Hard Page Fault 表示每秒钟需要从磁盘上Paging动作（读取或写入）的页面数量。
 
+Memory:Page Faults/sec 指出系统每秒处理的叫页面错误数据，包括软页面错误和硬页面错误
+
 一共有下列几个相关的计数器，计算公式为：
 Memory:Page Faults/sec = Soft Page Fault + Hard Page Fault
-Memory:Page/sec = Memory:Pages Input/sec + Memory:Pages Output/sec
+Memory:Page/sec = Memory:Pages Input/sec --应用程序只等待输入的页面而不是输出的页面
++ Memory:Pages Output/sec --页面输出将给系统带来压力，但是应用程序一般不会看到这一压力，页面输出通常由应用程序
+需要备份到磁盘的脏页面来表示，只在磁盘负载成为问题时才是个问题。
 
 此计数器指示由于页错误而从磁盘取回的页数，或由于页错误而写入磁盘以释放工作集空间的页数。
 如果它的比率高，则表示分页过多，需要同时监视 Memory: Page Faults/sec 计数器以确保磁盘活动不是由分页导致。
@@ -172,6 +177,9 @@ Memory:Page/sec = Memory:Pages Input/sec + Memory:Pages Output/sec
 Windows 虚拟内存管理器 (VMM) 在剪裁 SQL Server 和其它进程的工作集大小时会收走这些进程的页。
 此 VMM 活动会导致页错误。若要确定分页过多是由 SQL Server 还是由其它进程导致，
 请监视用于 SQL Server 进程实例的 Process: Page Faults/sec。
+
+如果Pages/sec计数器值非常高，可以检查process:PAGE faults/sec 来查找导致过多分页的进程
+
 
 对于一个调整良好，有足够内存资源的系统来讲，它所要处理的数据应该比较长期地保存在物理内存里，如果频繁
 地被换进换出(page in/page/out)，势必会严重影响性能，所以如果一个系统不缺内存，pages/sec不能长时间地保

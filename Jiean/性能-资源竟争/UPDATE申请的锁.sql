@@ -57,3 +57,29 @@ d,扫描过的页面越多，意向锁也会越多，在扫描的过程中，对所有扫描到的记录也会加锁，
 3，但是也要严格避免表扫描的发生，如果只是修改表格记录的一小部分，要尽量使用index seek ，避免全表扫描这
 种执行计划。
 */
+
+--更新引起的事务隔离场景
+IF object_id('t1') IS NOT NULL DROP TABLE t1
+
+CREATE TABLE t1(c1 INT,c2 INT ,c3 DATETIME)
+INSERT INTO t1(c1,c2,c3)VALUES(
+	11,12,GETDATE()
+),(21,22,GETDATE())
+
+--select  * from t1
+
+--连接1
+BEGIN TRAN 
+UPDATE t1 SET c3=GETDATE() WHERE c1 = 11
+
+ROLLBACK TRAN 
+
+--连接2
+BEGIN TRAN 
+SELECT c2 FROM t1 WHERE c1=21
+COMMIT TRAN 
+
+/*
+更新会在页面上有IU锁，在经过的记录上短暂留下U锁，在更新行上申请X锁，如果查询用的是表扫描，即使加上了where
+条件，但x锁将会隔离S锁，使得表扫描在X锁处被阻塞
+*/
