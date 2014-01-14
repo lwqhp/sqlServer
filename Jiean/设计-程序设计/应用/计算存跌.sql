@@ -44,3 +44,32 @@ select * from tmp where NewInqty>0
 005	M00B	2013-09-01 00:00:00.000	20	5	0
 031	M00B	2013-09-01 00:00:00.000	10	10	0
 056	M00A	2013-09-01 00:00:00.000	5	5	0
+
+
+
+
+/*
+有一种思路：把数量全部拆分成对应的记录，并计数，这样，只要关联计数器就可以得到剩余的货号的货龄。
+*/
+create table #tmp(companyID varchar(20),StockID varchar(20),MaterialID varchar(30),InDate datetime,Qty int)
+go
+
+insert into #tmp(companyID,StockID,MaterialID,InDate,Qty)
+values('HK','A','A-001','2013-01-01',1)
+,('HK','A','A-001','2013-01-02',-2)
+,('HK','A','A-001','2013-01-03',3)
+,('HK','A','A-001','2013-01-04',-1)
+,('HK','A','A-001','2013-01-05',-1)
+,('HK','A','A-001','2013-01-06',3)
+,('HK','A','B-001','2013-01-01',3)
+,('HK','A','B-001','2013-01-02',-1)
+,('HK','A','B-001','2013-01-03',5)
+,('HK','A','B-001','2013-01-04',-4)
+,('HK','A','B-001','2013-01-05',1)
+,('HK','A','B-001','2013-01-06',-2)
+,('HK','A','B-001','2013-01-07',1)
+
+
+select  * from #tmp where Qty<0 order by companyID,stockID,MaterialID,InDate
+
+
