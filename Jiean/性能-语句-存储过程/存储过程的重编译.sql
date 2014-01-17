@@ -108,25 +108,32 @@ numeric_roundabort 为off
 
 
 */
+use AdventureWorks2012
+go
 
 CREATE PROC sptemp
 AS
 CREATE TABLE #myTemptable(id INT,dsc NVARCHAR(50))
 INSERT INTO #myTemptable
         ( id, dsc )
-SELECT productmodeklid,[name] FROM production.productmodel 
+SELECT ProductModelID,[name] FROM production.ProductModel /*第一次执行发生重编译,存储过程创建生成的执行计划不包
+含任何关于局部临时表的信息，因此，生成的计划不会用于使用DML语句访问临时表*/
 
-SELECT * FROM #myTemptable
+SELECT * FROM #myTemptable /*第2次重编译，来自于该表装入时其中包含的数据的变化*/
 
 CREATE CLUSTERED INDEX PK_myTemptable ON #myTemptable(id)
 
-SELECT * FROM #myTemptable
+SELECT * FROM #myTemptable/*第3次重编译，是由于临时表的架构变化使现在计划作废，导致在表再次被访问时进行重编译
+,如果这个索引在第1次重编译之前已经创建，则现在计划将在第2条select 语句时保持有效，因此，可以将create index
+DDL语句放置在所有访问该的DML语句之上来避免这次重编译*/
 
 CREATE TABLE #t2(c1 int)
 
-SELECT * FROM #t2
+SELECT * FROM #t2/*第4次重编译，生成一个包含#t2的处理策略的计划*/
 
 go
+
+exec sptemp --第二次执行则会重用计划缓存
 
 --表变量
 /*
