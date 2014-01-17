@@ -33,6 +33,8 @@ set语句之前的语句会发生重编译，set语句之后的语句会发生重编译，第二次执行后不会再
 6)执行计划老化并被释放，或者是内存压力而强迫被释放
 
 7)对sp_recompile系统存储过程的显式调用
+手工标记需要从编译的存储过程，在存储过程和触发器上调用，则该存储过程或触发器在下次执行时被重编译，在表或视
+图上调用标记所有调用该表、视图的存储过程和触发器在下次执行时重新编译。
 
 8)显示使用recompile子句
 
@@ -53,6 +55,8 @@ sp:recompile事件表示计划已经存在但是不能被重用，当服务器重启后的存储过程执行，sq
 
 --重编译语句
 exec sp_recompile 'spSD_procedure_name'
+--临时重编译，不产生计划缓存
+EXEC spSD_procdure_name '参数' WITH recompile
 /*
 4)实体表的重编译
 存储过程创建后第一次执行,执行计划在存储过程实际执行之前生成，当存储过程创建之前存储过程中创建的表不存在，则计划不会
@@ -78,3 +82,62 @@ drop table #t12
 go
 
 exec spTS_name12345
+
+
+--避免重编译
+/*
+1,不要交替使用DDL和DML语句
+2，避免统计变化引起的重编译
+有两种避免统计变化引起的重编译的技术：
+a）在语句后使用option(keepfixed plan)
+b) 禁用该表上的自动更新统计特性 exec sp_autostats 't1','off'
+
+5，使用表变量
+6，避免在存储过程中改变SET选项
+为了ansi兼容性，建议保持以下set选项为on
+arithabort
+concat_null_yields_null
+quoted_identifier
+ansi_nulls
+ansi_padding
+ansi_warnings
+numeric_roundabort 为off
+
+7，使用optimize for查询提示
+8，使用计划向导
+
+
+*/
+
+CREATE PROC sptemp
+AS
+CREATE TABLE #myTemptable(id INT,dsc NVARCHAR(50))
+INSERT INTO #myTemptable
+        ( id, dsc )
+SELECT productmodeklid,[name] FROM production.productmodel 
+
+SELECT * FROM #myTemptable
+
+CREATE CLUSTERED INDEX PK_myTemptable ON #myTemptable(id)
+
+SELECT * FROM #myTemptable
+
+CREATE TABLE #t2(c1 int)
+
+SELECT * FROM #t2
+
+go
+
+--表变量
+/*
+使用表变量，可以避免临时表引起的重编译，因为表变量不创建统计，与临时表相关的不同重编译问题不适用于它，对于
+延迟对象解析，存储过程在第一次执行时被重编译，但表变量不会。
+表变量没有事务日志开销，没有锁开销，没有回滚开锁
+在创建之后不能在表变量上执行任何ddl语句，约束只能作为表变量的declare语句的一部份，因此，在表变量上只能用
+primary key或unique约束创建一个索引
+表变量不创建任何统计，这意味着它们在执行计划中被解析为一个单行的表
+表变量中不支持以下语句
+insert into ta exec spname
+select * into from tb
+set @tb = value
+*/
