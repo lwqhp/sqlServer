@@ -1,3 +1,33 @@
+
+
+USE AdventureWorks
+go
+
+BEGIN TRAN 
+SELECT productID,modifieddate
+FROM production.ProductDocument WITH (TABLOCK)
+
+--锁活动查询
+SELECT 
+request_session_id,
+resource_type,
+resource_database_id,
+OBJECT_NAME(resource_associated_entity_id,resource_database_id),
+request_mode,
+request_status
+ FROM sys.dm_tran_locks
+WHERE resource_type IN('database','object')
+/*
+resource_type指定锁定的资源类型（锁范围的类型）
+resource_associated_entity_id 依赖资源类型，
+1）如果该列包含对象ID是object类型的，可以用sys.objects 视图来关联
+2）如果该列包含分配单元ID(类型是allocation_unit),可以引用sys.allocation_units 和container_id,然后可以将
+	container_id 联结到sys.partitions上，此时就可以确定对象ID了
+3)如果该包含hobt ID(资源类型为key,page,row,hobt),可以直接引用sys.partitions,然后查找相应的对象ID
+4）对于database,extent,application或metadata的资源类型，该列值为0
+*/
+
+
 SELECT request_session_id	--锁的来源进程
 ,resource_type --来源锁的类型
 ,request_status
