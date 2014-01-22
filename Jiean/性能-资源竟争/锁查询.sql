@@ -27,6 +27,17 @@ resource_associated_entity_id 依赖资源类型，
 4）对于database,extent,application或metadata的资源类型，该列值为0
 */
 
+--锁的禁用
+/*
+1，table,这是默认行为，当设置为该值时，就在表级别启用了锁升级，不论是否为分区表
+2，auto如果是表已分区，则在分区级别（堆或B树）启用锁升级，如果表未分区，锁升级将发生在表级别上。
+3，disable在表级别删除锁升级，注意，对于用了tablock提示或使用可序列化隔离级别下堆的查询时，你仍然可能看到表锁
+*/
+ALTER TABLE person.Address
+SET (lock_escalation=auto)
+
+
+
 
 SELECT request_session_id	--锁的来源进程
 ,resource_type --来源锁的类型
