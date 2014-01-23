@@ -82,10 +82,10 @@ last_family_number：备份放入多少个物理文件中的
 */
 
 --备份日志，备份的历史信息,每当对数据库做备份时，sqlserver往msdb.dbo.backupset表中插入一行记录
-select * from msdb.dbo.backupset
+select * from msdb.dbo.backupset --主表，备份记录log
 
 --数据库备份文件信息
-select * from  msdb.dbo.backupfile
+select * from  msdb.dbo.backupfile --明细表，备份文件
 /*
 physical_drive 备份来源的驱动器
 physical_name 备份来源的物理路径
@@ -188,13 +188,14 @@ ORDER BY backup_finish_date
 SELECT * FROM #tmp
 
 ;WITH CTETmp AS(
-	SELECT id,first_lsn,last_lsn,0 AS [level] FROM #tmp WHERE id = 1
+	SELECT id,first_lsn,last_lsn,1 AS [level] FROM #tmp WHERE id = 1
 	UNION ALL
-	SELECT a.id,a.first_lsn,a.last_lsn,b.[level] +1 AS [level] FROM #tmp a
+	SELECT a.id,a.first_lsn,a.last_lsn,b.[level] +1 AS [level] 
+	FROM #tmp a
 	INNER JOIN CTETmp b ON a.id = b.id+1 AND a.first_lsn <>b.last_lsn
 )
-SELECT * FROM CTETmp WHERE [level]>0
+SELECT * FROM CTETmp WHERE [level]>1
 
 --测试
-UPDATE #tmp SET first_lsn = 253000000561500002 WHERE id = 2
+UPDATE #tmp SET first_lsn = 253000000561500002 WHERE id = 3
 
