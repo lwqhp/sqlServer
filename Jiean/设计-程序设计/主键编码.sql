@@ -86,3 +86,11 @@ SELECT NEWID() --其全局唯一性，可以预先取得GUID,完成业务逻辑后再插入到数据库，也
 
 因为自定义主键的编码的多样性，所以关于流水号主键的设计单独分出来讲解。
 */
+
+
+--定义一个RowGuidCol属性列
+
+CREATE TABLE t2 (buildingEntryExitID UNIQUEIDENTIFIER ROWGUIDCOL DEFAULT NEWID())
+
+--查询，使用通用标识符
+SELECT ROWGUIDCOL FROM t2

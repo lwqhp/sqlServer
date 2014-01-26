@@ -94,3 +94,27 @@ ALTER TABLE a DROP COLUMN a1
 ALTER TABLE a ADD a5 INT DEFAULT(1)
 
 ALTER TABLE a DROP COLUMN a5
+
+--排序规则
+/*
+sqlserver排序规则决定了数据如何排序，比较，表现和存储，如果需要在某个列中保存或比较字符数据，而该列使用的
+默认排序规则与数据库或服务器级别的排序规则不同，则可以在列定义中使用collate命令来指定新的排序规则。
+
+sqlServer允许两种类型的排序规则：windows和sql,windows排序规则是sqlServer的首选，因为它们提供了更多选项并且
+和微软window环境提供的支持一致。sql排序规则用于早期的sqlserver版本，并且提供了向后兼容性。
+
+对于varchar,char,nchar,nvarchar数据类型的列，可以在create table 或alter table 操作中显式定义windows或sql规则。
+
+*/
+
+--查看实例的默认排序规则
+SELECT SERVERPROPERTY('collation')
+
+--查看数据库的默认排序规则
+SELECT DATABASEPROPERTYex('test','collation')
+
+--查看排序规则信息
+select * from  fn_helpcollations() where name like 'chinese_PRC%'
+
+--应用新的排序规则 ：在列名后加 collate +规则名
+SELECT * FROM a WHERE a2 COLLATE chinese_PRC_CI_AS =2

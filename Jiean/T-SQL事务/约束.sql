@@ -72,9 +72,10 @@ SELECT 'PT','PI131117admin-004',4
 /*
 1,定义表的时候创建主键(一种是在字段的后面加上，另一种是在最后定义,这种方式可以同时定义多个主键)
 2,修改表结构的方式创建主键，但必须要加主键的字段是"不可为空"的
+3，主键默认创建唯一，聚集索引，也可以在主键创建时显式指定创建一个非聚集索引。
 */
 CREATE TABLE sd_pur_ordermaster(
-	companyID VARCHAR(20) primary key,
+	companyID VARCHAR(20) primary key, --列约束
 	billno VARCHAR(30) ,
 	billStats INT
 )
@@ -83,7 +84,7 @@ CREATE TABLE sd_pur_ordermaster(
 	companyID VARCHAR(20),
 	billno VARCHAR(30),
 	billStats INT,
-	primary key(companyID,billno)
+	primary key(companyID,billno)--表约束，定义组合键，只能用表约束
 )
 
 alter table sd_pur_ordermaster alter column companyID VARCHAR(20) not null 
@@ -113,14 +114,22 @@ CREATE TABLE sd_pur_ordermaster(
 )
 
 --添加外键约束
-ALTER TABLE sd_pur_ordermaster ADD CONSTRAINT FK_sd_pur_ordermaster FOREIGN KEY(billStats) REFERENCES sys_state(billStats)
+ALTER TABLE sd_pur_ordermaster 
+ADD CONSTRAINT FK_sd_pur_ordermaster --约束名
+FOREIGN KEY(billStats) --定义作为外键列名
+REFERENCES sys_state(billStats)--作为主键的表(列名)
 
 --自表外键约束
 /*参与构造外键关系的列必须定义为具有同一长度和小数位数
 创建表的时候做表自引用 就可以忽略 foreign key 语句
 表自引用的外键列 必须允许为null 要不是不允许插入的（避免对最初行的需要）
+
+一般用于表现递归关系。
 */
-alter table sd_pur_ordermaster add constraint FK_sd_pur_ordermaster2 foreign key(billno) references sd_pur_ordermaster(companyID)--companyID要是主键
+alter table sd_pur_ordermaster 
+add constraint FK_sd_pur_ordermaster2 
+foreign key(billno) 
+references sd_pur_ordermaster(companyID)--companyID要是主键
 
 --删除已引用了的主键记录
 DELETE sys_state --出错
@@ -138,7 +147,7 @@ UPDATE sys_state SET billStats=5 WHERE billStats=2 --出错
 /*
 约束未尾声明
 on update cascade --联级更新，主键更新，同时更新受外键约束值
-on delete cacade	--联级删除,主键删除，同时删除受外键约束值
+on delete cascade	--联级删除,主键删除，同时删除受外键约束值
 */
 
 select * from sys_state
@@ -160,14 +169,20 @@ delete sys_state where billStats=1
 Unique
 唯一约束和主键约束类似，区别在于主键约束要求列不能为nul,而unique约事则可以,且只能插入一个null值，在unique看来，
 所有的null值都是长的一样的。
+unique约束在创建的时候会创建一个基础表索引，这个索引可以是clustered或者是nonclustered ,但是在表已经存在聚集
+索引的时候不能创建clustered索引
 */
 
+CREATE TABLE sd_pur_ordermaster(billstats VARCHAR(20) NULL UNIQUE)
 alter table sd_pur_ordermaster add constraint AK_sd_pur_ordermaster unique(billstats)
 
 --Check约束---------------------------------------------------------------------------------------------------
 /*
 check不局限于一个特定的列，可以约束一个列，也可以通过某个列来约束另一个列
 定义check约束使用的规则与where子句中的基本一样
+语法：
+check(logical_expression)
+如果check的逻辑表达式计算为T,行就会被插入，如果check约束的表达式计算为F,行插入就会失败。
 */
 
 --select * from sd_pur_ordermaster
@@ -181,6 +196,19 @@ select 12,'未知'
 
 insert into sd_pur_ordermaster
 select 'PT',	'PI131117admin-005',12 --受check约束
+
+--禁止和启用约束
+
+ALTER TABLE sd_pur_ordermaster NOCHECK CONSTRAINT  FK_sd_pur_ordermaster --临时禁止了约束的检查
+
+--再次启用
+ALTER TABLE sd_pur_ordermaster CHECK CONSTRAINT  FK_sd_pur_ordermaster
+
+--禁用所有的check和foreign key 
+ALTER TABLE sd_pur_ordermaster NOCHECK CONSTRAINT ALL 
+
+--启用所有的check和foreign key
+ALTER TABLE sd_pur_ordermaster CHECK CONSTRAINT ALL
 
 /*
 其它
