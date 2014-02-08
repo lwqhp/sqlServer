@@ -12,6 +12,12 @@
 /*
 视图并不能提升性能，视图最终会被解释成语句，所以，对视图的关联条件，同样也会影响视图内部的表关联，
 不要嵌套视图超过一级，具体来讲，不要定义一个调用另一个视图的视图
+
+1)像select 查询一样对视图进行性能调优，因为普通视图从本质上说是一个“已存储的”查询，性能糟糕的视图会严重影响
+服务器性能
+2)不要嵌套视图超过一级
+3）如果可能的话，使用存储过程而不用视图
+4）除非使用了top关键字，否则不能使用ordr by 
 */
 
 CREATE VIEW vw_name
@@ -44,29 +50,37 @@ EXEC sys.sp_refreshsqlmodule @name = 'vw_name'
 在视图上他建一个唯一的聚集索引，一旦视图上的索引被创建，用于物化视图的数据就像表的聚集索引那样保存，在视
 图上创建了唯一的聚集索引之后，还可以创建另外的非聚集索引，基础表不会受到这些视图索引创建的影响，因为
 他们是独立的基础对象。
+
+索引视图对于跨多行聚合数据的视图定义来说特别理想，因为聚合值能保持是最新的和物化的，可以直接查询而不用重新计算
+索引视图对频繁引用更新的基础表的查询来说也很理想，但是在变化非常快的表上创建它们可能会由于要不断更新索引而
+导致性能下降，更新非常频繁的基础表会引起视图的索引频繁更新，也不是说更新速度要以查询性能为代价。
 */
 go
-CREATE VIEW vw_name1
-WITH SCHEMABINDING /*绑定视图到基础表的架构上，这样会阻止在基础表上进行的，对视图定义有影响的任何修改操作
+CREATE VIEW vw_name2
+WITH SchemaBinding 
+/*绑定视图到基础表的架构上，这样会阻止在基础表上进行的，对视图定义有影响的任何修改操作
 也为视图的查询定义增加了额外的需求，架构绑定视图中引用的对象必须包含两部份的schema.object命名规则，并且
 所有引用的对象必须处于同一个数据库中。
 */
 AS
-SELECT * FROM sys.objects
+SELECT name,objec,score FROM dbo.t --一定要指定列名，表要带上架构
+
 
 go
 --创建聚集索引
-CREATE UNIQUE CLUSTERED INDEX PK_vw_name1 ON vw_name1(object_id)
+CREATE UNIQUE CLUSTERED INDEX PK_vw_name1 ON vw_name2(name,objec)
 
 --然后创建非聚集索引
-CREATE NONCLUSTERED INDEX IX_vw_name1 ON vw_name1(name)
+CREATE NONCLUSTERED INDEX IX_vw_name1 ON vw_name2(name)
 /*
 索引视衅允许把视图的结构物化成一个物理对象，和普通表以及相关的索引相似，它允许sqlserver查询优化器从单独的物
 理区域获取数据，而不用每次调用的时候处理视图定义查询
 
 with (noexpand)强制优化器为索引视图使用索引
 */
-
+SET STATISTICS PROFILE ON
+SELECT * FROM t WHERE NAME = 'a' AND objec = 'CH'
+SET STATISTICS PROFILE OFF 
 ----------------------------------------------------------------------------------------
 --3.1)分区视图
 /*

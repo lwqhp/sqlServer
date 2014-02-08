@@ -80,3 +80,91 @@ ALTER INDEX ALL ON a REBUILD
 
 --将新的列添加到即有的非聚集索引中
 CREATE NONCLUSTERED INDEX IX_aa ON a(a,a2) WITH (DROP_EXISTING=ON)
+
+-- 在tempdb中创建临时索引
+/*
+如果索引创建时间比期望的要长很多，可以尝试使用索引选项sort_in_tempdb，来把索引放在tempdb数据库中，而不是使用
+索引所在的用户数据库，来提升索引创建性能(对于大型表)
+*/
+
+CREATE NONCLUSTERED INDEX IX_aaa ON a(a,a2) WITH(SORT_IN_TEMPDB=ON)
+
+--控制创建索引的并行执行计划
+/*
+ 限制索引创建的并发性可能会提升在创建过程中用户活动的并发性，但也可能增加索引创建花费的时间。maxdop并不能保
+ 证slqserver将实际使用指定的处理器的数量，它只是确保sqlserver不会超过maxdop的限定值。
+*/
+
+CREATE NONCLUSTERED INDEX IX_aaaa ON a(a,a2) WITH (MAXDOP=2)
+
+--在创建索引的过程中允许用户表访问
+/*
+只有共享意向锁保持在源表上，而不是索引创建过程中的默认的长时间表锁保持行为。
+*/
+CREATE NONCLUSTERED INDEX IX_aaaaa ON a(a,a2) WITH (ONLINE=ON)
+
+
+--包含索引
+/*
+包含索引可以允许添加最多1023个非键列到非聚集索引，通过创建覆盖索引帮助提升查询性能，这些非键列没有存储在索
+引的所有级别上，而只是存在于非聚集索引的叶级别上.
+只可以对非聚集索引使用，并且仍然不可以包含废弃的image,ntext,以及text数据类型。
+*/
+
+CREATE NONCLUSTERED INDEX IX_a5 ON a(a,a2) INCLUDE(a,a2)
+
+--填充因子
+/*
+索引的填充因子百分比：是指首次创建索引时索引页的叶级别充满程度，如果没有显式设置填充因子，则它默认为0,既尽
+最大可能来填充页。
+
+索引页的可用空间 允许插入新行时不拆分页，添加新行到充满的索引页会引发页拆分，为了得到空间，会从既有的充满的
+页移动一半的行到新页，大量的页拆分会减慢insert操作，但是另一方面，充满的数据页允许更快的读取活动，国为数拓
+库引擎可以从更少的数据页中检索更多的行。
+
+100%的填充因子可以提升读取的性能，但是会减慢写活动的性能引发频繁的页拆分，因为数据库引擎为了在数据页中得到
+空间必须持续地交换行的位置。太低的填充因子会给行插入带来益处，但它也会减慢读取操作，因为要检索所有需要的行
+必须访问更多的数据页，经验的做法是，为几乎没有数据修改活动的表使用100%填充因子，低活动的使用80-90,中等活
+动的使用60-70,为索引键上的高活动使用50或更低百分比
+*/
+
+CREATE NONCLUSTERED INDEX IX_a6 ON a(a,a2) 
+WITH (PAD_INDEX=ON --删除并重建索引
+,FILLFACTOR=50)
+
+
+--禁用页和/或行索引锁定
+ALTER INDEX dbo.a.IX_a ON dbo.a 
+SET (ALLOW_PAGE_LOCKS=OFF,ALLOW_ROW_LOCKS=of) --禁用页锁和行锁，只可以使用表锁
+
+
+--在文件组上创建索引
+/*
+文件组可以用来帮助管理超大型数据库，通过文件组一方面可以进行单独的备份，另一方面如果文件组的文件存在于分离
+的磁盘阵列中时也会提升i/o性能，默认如果没有显式地指定，索引会创建在与底层表相同的文件组中。
+*/
+
+CREATE NONCLUSTERED INDEX IX_a6 ON a(a,a2) ON [文件组]
+
+
+--索引分区
+/*
+如果两个表中的两列频繁联结，并且使用同一分区函数，同一数据类型，同样的分区数与边界，则可能会提升查询联结性
+能，然而，出于管理与性能方面的原因，通常的方法将更可能是使用索引与表的对齐分区方案。
+*/
+
+CREATE NONCLUSTERED INDEX IX_a6 ON a(a,a2) ON [HitDateRangeScheme](HitDate)--应用分区方案
+
+--筛选索引
+/*
+通过使用筛选特性来创建需要比全表索引更少存储空间的微调的索引，如果大部分查询都是查询表中一小部分数据，筛选
+索引将会提升i/o性能，也会减少磁盘存储。
+*/
+CREATE NONCLUSTERED INDEX IX_a6 ON a(a,a2) 
+WHERE a >=1 AND a<=10
+
+--压缩索引
+
+CREATE NONCLUSTERED INDEX IX_a6 ON a(a,a2)  WITH (DATA_COMPRESSION=PAGE) --创建用 with
+
+ALTER INDEX IX_a6 ON a REBUILD WITH (DATA_COMPRESSION=row)--with子句在rebuild关键字之后
