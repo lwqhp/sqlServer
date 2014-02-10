@@ -1,9 +1,23 @@
 
+/*
+一般在日期处理上出现的性能效率问题：
+1）索引失效：缺少索引或索引用不上
+2）循环生成日期区间：大部份的问题都可以改为以其他非循环方式解决
+3)数据类型误用，字符型和日期类型间出现隐式转换，字符型不能直接应用系统的日期函数。
 
+a.相同的日期类型或同一类日期类型间比较不用类型转换，不同的数据类型比较会有类型转换
 
- 
- 
+b.日期格式是固定长度的，所以在转换成字符型时用char
 
+常见的性能低下查询
+1,采用时间差函数datediff计算日期差值再做比较
+2,采用转换函数convert 转换字段后再比较
+3,采用时间函数把日期折成年，月，日后再比较
+
+*/
+------------------------------------------------------------------------------------------------
+------常用系统日期函数--------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 
 --日期增减函数
 dateadd(datepart,number,date)
@@ -27,9 +41,10 @@ CONVERT(data_type,expression,style)
 cast(expression)
 
 
-/*
------------日期格式化---------------------
-*/
+------------------------------------------------------------------------------------------------
+-----------日期格式化-------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
 --短日期格式： yyyy-m-d
 replace(CONVERT(nvarchar(10),getdate(),120),N'-0','-')
 --长日期格式：yyyy年mm月dd日[stuff删除指定长度的字符并在指定的起始点插入另一组字符]
@@ -40,16 +55,25 @@ datename(year,getdate())+N'年'+cast(datepart(month,getdate()) as varchar)+N'月'+
 --完整日期+时间格式：yyyy-mm-dd hh:mi:ss:mmm [了解convert的样式即可]
 CONVERT(char(11),getdate(),120) + CONVERT(char(12),getdate(),114)
 
+------------------------------------------------------------------------------------------------
+----------日期推算----------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+-->>>>>>指定日期的该年的第一天和最后一天>>>>>>>>>>>>
 /*
---------------日期推算处理----------------------
+一年的第一个月第一天和最后一个月最后一天都是固定的，取年份拼接即可
 */
+select CONVERT(char(5),getdate(),120) +N'1-1'
+select CONVERT(char(5),getdate(),120) +N'12-31'
 
---指定日期的该年的第一天和最后一天
-CONVERT(char(5),getdate(),120) +N'1-1'
-CONVERT(char(5),getdate(),120) +N'12-31'
-
---指定日期所在季度的第一天和最后一天
-CONVERT(datetime,
+-->>>>>>指定日期所在季度的第一天和最后一天>>>>>>>>>>>>
+/*
+一年有4个季度，一个季度3个月,datepart的quarter可返回日期所处的季度
+季度数*3得到所在季度的最后一个月份,减去2则就是月季的第一个月了
+第一个月份减去当前月份得到当前月份离第一个月份的偏移量
+同理，最后一个月份减去当前月份得到当前月份离最后一个月的偏移量
+*/
+select CONVERT(datetime,
 	CONVERT(char(8),
 	dateadd(month,
 		datepart(quarter,getdate())*3-month(getdate())-2,
@@ -57,31 +81,104 @@ CONVERT(datetime,
 	,120)
 +'1')
 --最后一天
-convert(datetime,
+select convert(datetime,
 	convert(char(8),
 	dateadd(month,
-		datepart(quarter,getdate())*3-month(getdat()),
+		datepart(quarter,getdate())*3-month(getdate()),
 		getdate())
 	,120)
 	+ case when datepart(quarter,getdate()) in(1,4)
 	then '31' else '30' end
 )
-dateadd(day,-1,
+--加一个月减一天的方式取最后一天
+select dateadd(day,-1,
 	convert(char(8),
-	dateadd(month,
-		1+datepart(quarter,getdate())*3-month(getdate()),
-		getdate())
+	dateadd(month,1+datepart(quarter,getdate())*3-month(getdate()),getdate())
 		,120 )+'1')
 
---作业，当前日期所在月的第一天和最后一天
+-->>>>>>周的计算>>>>>>>>>>>>
+select @@datefirst
+SET DATEFIRST 7 --查看，设置周的第一天是星期几
+select datepart(weekday,getdate()) --返回日期所在周的第几天
+select datepart(week,getdate()) --返回日期所在年的第几周
+/*
+一周的第一天星期几是根据数据库设定而,默认是星期天作为一周的开始,@@datefirst=7
+datepart(weekday,getdate())返回日期所在周的第几天
+一周固定是7天，7-日期所在周的天数，等于日期离周最后一天的偏移量
+*/
+
+--根据当前日期与周最后一天的偏移量，生成周区间表
+with tmp as(
+	select 1 as dwnum,getdate() as startDate,dateadd(day,7-datepart(weekday,getdate()),getdate()) as endDate
+	union all
+	select a.dwnum+1 as dwnum,dateadd(day,1,a.enddate),dateadd(day,7,a.enddate) 
+	from tmp a where a.startDate<='2014-03-05' 
+)
+select * from tmp
+
+/*
+查询给定日期是当月的第几周
+
+跟一周的开始是周日还是周一，不影响
+*/
+--查询日期所在月的第几周:本年日期的第几周-给定日期所在月第一天是本年的第几周
+declare @date datetime;
+set @date = getdate()
+
+select datepart(week,@date) --日期是当年的第几周
+	-datepart(week,dateadd(month,datediff(month,0,@date),0))--给定日期所在月第一天是本年的第几周
+	+1 
+select datepart(week,@date)
+	-datepart(week,dateadd(day,1-datepart(day,@date),@date))
+	+1 
+
+--生成日期所在月的第几周
+/*
+日期所在年的周数-日期所在月的上一个月的年周数，就等于这个月的周数
+*/
+declare @startDate datetime
+declare @endDate datetime
+set @startDate='2013-08-03'
+set @endDate='2013-10-23'
+
+select datepart(week,@startDate+number)
+-datepart(week,dateadd(day,1-datepart(day,@startDate+number),@startDate+number))+1 as weekNum, 
+@startDate+number as rangeDate
+from master..spt_values where type = 'P' and number<=datediff(day,@startDate,@endDate)
 
 
 
---指定日期所在周的任意一天 number 为天
-dateadd(day,number-datepart(weekday,getdate()),getdate())
+---给一个日期,生成本周的日期列表:
+declare @date datetime
+set @date=getdate()
+select @date+1-datepart(dw,@date) --取指定日期所在周的星期一,默认星期日是一周的第一天
+
+select dateadd(dd,a.number,DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-2)%7-1,GETDATE()))
+from master..spt_values a
+where type='p'
+    and number<=6
+
+
+declare @d datetime
+set @d = getdate()
+select dateadd(d,n,@d) as t
+from (select -1 as n union all select -2 union all select -3 union all select -4 union all select -5 union all select -6 union all
+      select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 0) t
+where datepart(wk,@d)=datepart(wk,dateadd(d,n,@d)) 
+
+
+
+DECLARE @dt datetime
+SET @dt=GETDATE()
+ 
+DECLARE @number int
+SET @number=3 --指定星期几
 --指定日期所在周的任意星期几
-dateadd(day,number-(datepart(weekday,getdate())+@@DATEFIRST-2)%7-1,getdate())
-
+--A.  星期天做为一周的第1天
+SELECT DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-1)%7,GETDATE())
+ 
+--B.  星期一做为一周的第1天
+SELECT DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-2)%7-1,GETDATE())
 
 /*
 -------日期加减处理----------------------
@@ -284,73 +381,9 @@ BEGIN
 END
 GO
 
-select @@DATEFIRST
-
-set datefirst 1
-
----给一个日期,生成本周的日期列表:
-declare @date datetime
-set @date=getdate()
-select @date+1-datepart(dw,@date) --取指定日期所在周的星期一,默认星期日是一周的第一天
-
-select dateadd(dd,a.number,DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-2)%7-1,GETDATE()))
-from master..spt_values a
-where type='p'
-    and number<=6
 
 
-declare @d datetime
-set @d = getdate()
-select dateadd(d,n,@d) as t
-from (select -1 as n union all select -2 union all select -3 union all select -4 union all select -5 union all select -6 union all
-      select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 0) t
-where datepart(wk,@d)=datepart(wk,dateadd(d,n,@d)) 
 
 
-DECLARE @dt datetime
-SET @dt=GETDATE()
- 
-DECLARE @number int
-SET @number=3 --指定星期几
---指定日期所在周的任意星期几
---A.  星期天做为一周的第1天
-SELECT DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-1)%7,GETDATE())
- 
---B.  星期一做为一周的第1天
-SELECT DATEADD(Day,1-(DATEPART(Weekday,GETDATE())+@@DATEFIRST-2)%7-1,GETDATE())
-/*
-生成月份列表
-实现统计每个月份的money合计，对于没有数据的月份，显示为0，在统计中，为了补齐缺少的月份，使用select
-配合union all语句构造一个包含1-12共12条记录的虚拟表
-*/
-select @@datefirst
-set datefirst 1
 
-/*
-查询给定日期是当月的第几周
-给定日期是当年的第几周-给定日期所在月第一天是当年的第几周
-跟一周的开始是周日还是周一，不影响
-*/
-declare @date datetime;
-set @date = getdate()
 
-select datepart(week,@date)-datepart(week,dateadd(month,datediff(month,0,@date),0))+1 
-select datepart(week,@date)-datepart(week,dateadd(day,1-datepart(day,@date),@date))+1 
-
-declare @startDate datetime
-declare @endDate datetime
-set @startDate='2013-08-03'
-set @endDate='2013-10-23'
-
-select datepart(week,@startDate+number)-datepart(week,dateadd(day,1-datepart(day,@startDate+number),@startDate+number))+1 as weekNum, @startDate+number as rangeDate
-from master..spt_values where type = 'P' and number<=datediff(day,@startDate,@endDate)
-
-SELECT a.[month],[month]=isnull(b.[monty],0)
-FROM (
-	SELECT [month] =1 UNION ALL
-	SELECT [month] =2 )a
-	LEFT JOIN (
-		SELECT [month]=month(date),[month] = sum([month])
-		FROM @t
-		GROUP BY month(date)
-		)b ON a.[month] = b.[month]
