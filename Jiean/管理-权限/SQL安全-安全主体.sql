@@ -1,15 +1,19 @@
 
 
 
---SqlServer°²È«Ö÷Ìå
+--°²È«Ö÷Ìå
 /*
-Ò»¸öÄÜÇëÇó·þÎñÆ÷£¬Êý¾Ý¿â»ò¼Ü¹¹×ÊÔ´µÄÊµÌå³ÆÎª°²È«Ö÷Ìå£¬SqlServer°Ñ°²È«¼¶±ð·Ö³ÉÈý¸ö¼¶±ð
+Ò»¸öÄÜÇëÇó·þÎñÆ÷£¬Êý¾Ý¿â»ò¼Ü¹¹×ÊÔ´µÄÊµÌå³ÆÎª°²È«Ö÷Ìå.
+
+Ö÷ÌåÊÇ²Ù×÷µÄ¶ÔÏó,µÇÂ½Ê±µÄwindowÕÊÌ×£¬sqlÕÊ»§£¬ºÍÊý¾Ý¿âÀïµÄÓÃ»§,¾ÍÊÇÎÒÃÇ³£ËµµÄÖ÷Ìå
+SqlServer°Ñ°²È«¼¶±ð·Ö³ÉÈý¸ö¼¶±ð
 window¼¶±ð
 sqlServer¼¶±ð
-Êý¾Ý¿â¼¶±ð
+	Êý¾Ý¿â¼¶±ð
 
-²»Í¬µÄ°²È«¼¶±ð¾ö¶¨ÁË°²È«Ö÷ÌåµÄÓ°Ïì·¶Î§£¬Í¨³££¬windowºÍsqlserver¼¶±ðµÄ°²È«Ö÷Ìå¾ßÓÐÊµÀý¼¶µÄ·¶Î§£¬¶øÊý¾Ý¿â¼¶±ðµÄÖ÷ÌåÆä
-Ó°Ïì·¶Î§ÊÇÌØ¶¨µÄÊý¾Ý¿â¡£
+²»Í¬µÄ°²È«¼¶±ð¾ö¶¨ÁËÖ÷ÌåµÄÓ°Ïì·¶Î§£¬Í¨³££¬windowºÍsqlserver¼¶±ðµÄ°²È«Ö÷Ìå¾ßÓÐÊµÀý¼¶µÄ·¶Î§£¬¶øÊý¾Ý¿â¼¶±ðµÄÖ÷ÌåÆä
+Ó°Ïì·¶Î§ÊÇÌØ¶¨µÄÊý¾Ý¿â¡£·þÎñÆ÷¼¶±ðÖ÷ÌåºÍÊý¾Ý¿âÖ÷ÌåÊÇÏà»¥¶ÀÁ¢µÄ(ÊÇÖ¸ÑéÖ¤ºÍÊÚÈ¨)£¬ÓÖÊÇ¹ØÁªµÄ(Ã¿Ò»¸ö·þÎñÆ÷Ö÷Ìå¶¼¶Ô
+Ó¦Ò»¸öÊý¾Ý¿âÖ÷Ìå£¬Êý¾Ý¿â¶ÔÏóÊÇÕë¶ÔÊý¾Ý¿âÖ÷ÌåÊÚÈ¨)
 
 
 {¿ÉÒÔÀí½âÎªÁ½¸ö²ã¼¶£¬·þÎñÆ÷²ãºÍÊý¾Ý¿â²ã,·þÎñÆ÷²ã¼¶°üÀ¨ÁËwindow¼¶±ðµÄÖ÷ÌåºÍSqlServerÖ÷Ìå}
@@ -18,6 +22,24 @@ sqlServer¼¶±ð
 Ö»ÓÐ½«windowÕÊ»§Ìí¼Óµ½sqlserverÊµÀýÖÐ£¬²ÅÄÜÊÚÓÚÊý¾Ý¿â¶ÔÏóµÄÈ¨ÏÞ¡£
 
 */
+
+--²é¿´ÊµÀýÖÐÒÑ¾­Ìí¼ÓµÄwindowµÇÂ¼ÃûºÍÓÃ»§×é(ÀïÃæ°üº¬ÁËwindowÖ÷ÌåºÍsql·þÎñÆ÷Ö÷Ìå£¬ÒÔ¼°¹Ì¶¨½ÇÉ«)
+select * from sys.server_principals
+where type_desc in('WINDOWS_LOGIN','WINDOWS_GROUP')
+/*
+¼¸¸öÄÚ²¿windowÖ÷Ìå£º
+NT SERVICE\SQLWriter: SQL Server VSS ±àÐ´Æ÷,SQLWriter ·þÎñÔÚ¾ßÓÐËùÐèµÄËùÓÐÈ¨ÏÞµÄ LOCAL SYSTEM ÕÊ»§ÏÂÔËÐÐ
+NT SERVICE\Winmgmt :  Windows Management Instrumentation (WMI) ±ØÐëÄÜ¹»Á¬½Óµ½Êý¾Ý¿âÒýÇæ¡£ ÎªÁËÖ§³ÖÕâÒ»µã£¬Ó¦ÔÚÊý¾Ý¿âÒýÇæÖÐÌá¹© Windows WMI Ìá¹©³ÌÐò (NT SERVICE\winmgmt) µÄ Per-service SID¡£ 
+					SQL Server °²×°³ÌÐò½« NT SERVICE\Winmgmt ÕÊ»§ÉèÖÃÎªÊý¾Ý¿âÒýÇæµÇÂ¼Ãû£¬²¢½«ÆäÌí¼Óµ½ sysadmin ¹Ì¶¨·þÎñÆ÷½ÇÉ«ÖÐ
+NT Service\MSSQLSERVER : Êý¾Ý¿âÒýÇæ·þÎñµÄÄ¬ÈÏÊµÀý
+NT AUTHORITY\SYSTEM :  Local System ÊÇÒ»¸ö¾ßÓÐ¸ßÌØÈ¨µÄÄÚÖÃÕÊ»§¡£ Ëü¶Ô±¾µØÏµÍ³ÓµÓÐÐí¶àÌØÈ¨²¢×÷ÎªÍøÂçÉÏµÄ¼ÆËã»ú¡£ ¸ÃÕÊ»§µÄÊµ¼ÊÃû³ÆÎª NT AUTHORITY\SYSTEM¡£ 
+NT SERVICE\SQLSERVERAGENT : SQL Server ´úÀí·þÎñ£¬Î»ÓÚÒÔÏÂÄ¬ÈÏÊµÀýÉÏ£ºSQL Server
+NT SERVICE\ReportServer : sqlserver±¨±í·þÎñ
+
+
+*/
+
+
 --2.1)windowÖ÷Ìå--------------------------------------------------------------------------------
 
 --·þÎñÆ÷Ö÷ÌåµÄÔöÐÞ¸Ä¼°²é¿´
@@ -46,9 +68,7 @@ deny connect sql to [HENGKANGIT\li.weiqiang]  --¾Ü¾ø·ÃÎÊ(GUIÖÐ×´Ì¬ÊÇÁ¬½Ó¾Ü¾ø,Ê¹Ó
 
 grant connect sql to [HENGKANGIT\li.weiqiang] --ÔÊÐí·ÃÎÊ
 
---²é¿´ÊµÀýÖÐÒÑ¾­Ìí¼ÓµÄwindowµÇÂ¼ÃûºÍÓÃ»§×é
-select * from sys.server_principals
-where type_desc in('WINDOWS_LOGIN','WINDOWS_GROUP')
+
 
 /*
 µ±sql ServerµÇÂ¼Ãû¹ØÁªµ½windowsÓÃ»§×é£¬ËüÊ¹µÃÕâ¸öwindowÓÃ»§×éµÄËùÓÐ³ÉÔ±¼Ì³ÐÁËwindowµÇÂ¼ÃûµÄ·ÃÎÊÈ¨ÏÞ£¬ËùÒÔ£¬Õâ¸öÓÃ»§×é

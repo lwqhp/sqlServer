@@ -1,4 +1,4 @@
-select * from sys.login_token
+select * from sys.login_token --为登录名标记中包含的每个服务器主体返回一行
 
 exec sp_helplogins 'sa'
 
