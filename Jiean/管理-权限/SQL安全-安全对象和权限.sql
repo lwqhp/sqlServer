@@ -39,26 +39,43 @@ SELECT * FROM sys.fn_builtin_permissions('schema')
 */
 SELECT * FROM sys.fn_builtin_permissions('SERVER') ORDER BY permission_name
 
+--只有在当前数据库是 master 时，才能授予服务器范围的权限
+
 --授于跟踪权限
 GRANT ALTER trace TO login_name
-WITH GRANT OPTION-- 被授于者拥有将权限授于其他被授于者的权限
-AS grantor_principal -- 指定授于者派生它的权力，将权限授于被授于者
+WITH GRANT OPTION--指示该主体还可以向其他主体授予所指定的权限
+AS grantor_principal ----登陆名. 指定执行此查询的主体要从哪个主体派生其授予该权限的权限
 
 GRANT CREATE ANY DATABASE,VIEW ANY DATABASE TO [li.weiqiang]
 
 --拒绝
 DENY SHUTDOWN TO [li.weiqiang]
 CASCADE --如果被授于者主体授于所有这些权限给其他主体，那么那些被授于者的权限也将被拒绝。
-AS grantor_principal
+AS grantor_principal --登陆名
 
 --取消,既没有授于也没有拒绝这个权限--取消操作删除以前授于或拒绝了的权限。
 REVOKE ALTER trace FROM [li.weiqiang]
-CASCADE
+CASCADE --如果权限有授予权的话，取消的同时，也要取消授予权，加上cascade
 
 --查看服务器范围权限
-SELECT * FROM sys.server_permissions a
-INNER JOIN sys.server_principals b ON a.grantee_principal_id = b.principal_id
-WHERE name = 'lwqhp'
+
+select * from sys.server_principals --查看服务器主体(登陆名)
+select 
+grantee_principal_id,--向其授予权限的服务器主体 ID
+grantor_principal_id --这些权限的授权者的服务器主体 ID
+from sys.server_permissions --为每个服务器级权限返回一行。
+
+
+select 
+c.name '授权者', 
+b.name '被授权者',
+a.class_desc,
+a.permission_name,
+a.state_desc
+from sys.server_permissions a
+inner join sys.server_principals b on a.grantee_principal_id = b.principal_id
+inner join sys.server_principals c on a.grantor_principal_id = c.principal_id
+where b.name = 'lwq13' or c.name = 'lwq13'
 
 /*数据库范围的安全对象和权限------------------------------------------------------------------------
 数据库级别的安全对象对于提定的数据库是唯一的，包括
@@ -73,7 +90,7 @@ DENY ALTER ANY DATABASE DDL TRIGGER TO USER_NAME
 
 REVOKE CONNECT FROM USER_NAME
 
---查看数据库权限
+--查看数据库权限(不在界面中反映)
 SELECT name,principal_id FROM sys.database_principals --确定主体标识符 
 
 SELECT 
@@ -85,7 +102,7 @@ CASE a.class_desc WHEN 'schema' THEN SCHEMA_NAME(major_id)
 							ELSE '' END  AS object_name 
  FROM sys.database_permissions a
 LEFT JOIN sys.objects b ON a.major_id = b.object_id
-WHERE grantee_principal_id = 5
+WHERE grantee_principal_id = 6
 
 
 /*架构范围的安全对象和权限---------------------------------------------------------------------------------
