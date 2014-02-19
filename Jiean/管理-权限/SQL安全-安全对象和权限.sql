@@ -90,7 +90,7 @@ DENY ALTER ANY DATABASE DDL TRIGGER TO USER_NAME
 
 REVOKE CONNECT FROM USER_NAME
 
---查看数据库权限(不在界面中反映)
+--查看数据库权限
 SELECT name,principal_id FROM sys.database_principals --确定主体标识符 
 
 SELECT 

@@ -177,7 +177,10 @@ WITH DEFAULT_SCHEMA=dbo
 DROP USER lwq1a --删除
 ALTER AUTHORIZATION ON SCHEMA::db_owner TO dbo; --然后手动删除就可以了。 
 
-
+--查看帐号的用户映射(要看所有数据库的，在UI里看)
+SELECT DP.name as[user_name],SP.name as [logion_name] 
+FROM sys.database_principals DP ,sys.server_principals SP 
+WHERE SP.sid = DP.sid 
 
 --3.2查看固定数据库角色--------------------------------------------------------
 /*
