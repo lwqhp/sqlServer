@@ -16,7 +16,7 @@ SELECT * FROM sys.dm_db_index_physical_stats(db_id('test'),NULL,NULL,NULL,'Limit
 WHERE avg_fragmentation_in_percent>30
 ORDER BY OBJECT_NAME(OBJECT_ID)
 /*
-avg_fragmentation_in_percent  显示 聚集索引或非聚集索引的逻加碎片，返回索引的叶级无序页的百分比，以于堆来
+avg_fragmentation_in_percent  显示 聚集索引或非聚集索引的逻辑碎片，返回索引的叶级无序页的百分比，以于堆来
 说，显示的则是区级碎片
 */
 

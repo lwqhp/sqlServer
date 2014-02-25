@@ -18,3 +18,5 @@ WHERE   s.avg_total_user_cost * ( s.avg_user_impact / 100.0 ) * ( s.user_seeks
 ORDER BY [Total Cost] DESC ,
         s.avg_total_user_cost * s.avg_user_impact * ( s.user_seeks
                                                       + s.user_scans ) DESC
+
+--可减少的成本*可下降成本百分比*使用的次数=总的可以减少的成本

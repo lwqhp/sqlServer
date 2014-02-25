@@ -1,20 +1,13 @@
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
-SELECT TOP 30
-        DB_NAME() AS DatabaseName ,
-        '[' + SCHEMA_NAME(o.Schema_ID) + ']' + '.' + '['
-        + OBJECT_NAME(s.[object_id]) + ']' AS TableName ,
-        i.name AS IndexName ,
-        i.type AS IndexType ,
-        s.user_updates ,
-        s.system_seeks + s.system_scans + s.system_lookups AS [System_usage]
-FROM    sys.dm_db_index_usage_stats s
-        INNER JOIN sys.indexes i ON s.[object_id] = i.[object_id]
-                                    AND s.index_id = i.index_id
-        INNER JOIN sys.objects o ON i.object_id = O.object_id
-WHERE   s.database_id = DB_ID()
-        AND OBJECTPROPERTY(s.[object_id], 'IsMsShipped') = 0
-        AND s.user_seeks = 0
-        AND s.user_scans = 0
-        AND s.user_lookups = 0
-        AND i.name IS NOT NULL
-ORDER BY s.user_updates DESC
+select 
+db_name(),quotename(SCHEMA_NAME(c.schema_id))+'.'+quotename(OBJECT_NAME(a.object_id)),
+b.name,b.type,a.user_updates,a.system_seeks+a.system_scans+a.system_lookups AS [System_usage]
+ from sys.dm_db_index_usage_stats a
+inner join sys.indexes b on a.object_id = b.object_id and a.index_id = b.index_id
+inner join sys.objects c on b.object_id = c.object_id
+where a.database_id = db_id()
+	and b.index_id>=1
+	and a.user_seeks =0
+	and a.user_scans = 0
+	and a.user_lookups = 0
+ORDER BY a.user_updates DESC

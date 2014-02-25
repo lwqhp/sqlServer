@@ -206,7 +206,7 @@ EXEC sys.sp_helprolemember @rolename = NULL -- sysname
 */
 
 --关联用户和数据库角色
-EXEC sp_addrolemember 'db_datawriter','lwq1'
+EXEC sp_addrolemember 'db_datawriter','lwq13a'
 EXEC sp_droprolemember 'db_datawriter','lwq1'
 
 -->>>>>管理用户自定义数据库角色---------------
@@ -219,7 +219,7 @@ CREATE ROLE role_lwq AUTHORIZATION db_owner
 GRANT SELECT ON TB TO role_lwq --授于一个表的select权限给新的角色
 
 --给角色添加用户
-EXEC sp_addrolemember 'role_lwq','text3'
+EXEC sp_addrolemember 'role_lwq','lwq13a'
 
 --修改
 ALTER ROLE role_lwq WITH NAME = role_lwq2

@@ -98,7 +98,7 @@ c.database_backup_lsn,
 c.backup_finish_date,
 c.type,
 b.physical_device_name
-FROM msdb..backupmediafamily a --介质集记录每一次备份信息
+FROM msdb..backupmediaset a --备份集信息
 INNER JOIN msdb..backupmediafamily b ON a.media_set_id = b.media_set_id -- 介质簇具体记录保存路径，簇数
 INNER JOIN msdb..backupset c ON a.media_set_id = c.media_set_id --备份日志：关联相关的介质集的备份记录(一般直接查询这里即可)
 INNER JOIN msdb..backupfile d ON c.backup_set_id = d.backup_set_id --关联出备份来源的相关信息
