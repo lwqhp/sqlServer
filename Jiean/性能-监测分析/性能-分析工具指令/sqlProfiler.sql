@@ -65,3 +65,8 @@ SELECT * FROM ::fn_trace_getinfo(default);
 --把trace文件里的记录像一张表格一样查询出来
 select * INTO T FROM fn_trace_GETTABLE('dfdf.tc',DEFAULT)
 
+--查看所有正在运行着的跟踪信息
+SELECT * FROM sys.traces
+
+--对textdata进行聚合，以找出多次调用每个查询所产生的总体性能影响。
+
