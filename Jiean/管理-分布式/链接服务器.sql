@@ -65,3 +65,13 @@ SELECT * FROM OPENROWSET(BULK 'c:\a.txt' --数据文件
 ,ERRORFILE='c:\c.txt'--保存被拒绝行的错误文件
 ,SINGLE_CLOB --以ascii文本的格式导入数据
 ) AS contacttype
+
+--使用BUlk将文件内容作为单个LOB值进行插入
+INSERT INTO customerdata(custid,xml_data)
+VALUES(101,(SELECT xml_data FROM OPENROWSET(BULK 'c:\e.xml',SINGLE_NCLOB) AS F(xml_data)));
+/*
+参数对应的数据类型：
+single_clob varchar(max)
+single_Nclob nvarchar(max)
+single_blob varbinary(max)
+*/
