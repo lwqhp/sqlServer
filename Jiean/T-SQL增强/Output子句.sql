@@ -72,3 +72,62 @@ SELECT * FROM [DepartChangeLogs]
 为我们提供了更为强大的内建的方法－变更数据捕获（CDC，http://msdn.microsoft.com/zh-cn/library/bb500244%28v=sql.100%29.aspx）和更改跟踪，下面我们隆重介绍它们。
 */
 
+--一些现场应用
+
+--1，插入新的记录，并返回序号，比如identity,作为其它用途
+INSERT [dbo].[DepartDemo] ([DCode])
+OUTPUT Inserted.DCode --同理，delete.dcode可以捕获当前删除的行
+INTO DepartChangeLogs ---output 返回的记录集插到这里来
+VALUES (N'发改委', N'0', N'向问天', 0, N'DeomUser',
+ CAST(0x00009DF7017B6F96 AS DateTime), N'', CAST(0x0000000000000000 AS DateTime),
+ 1, N'油价，我说了算', 0, N'')
+
+/*
+在把要删除的数据存档时，比如把数据移到另一个备份表中，使用output子句非常有利，如果没有output子句，就需要先查
+询数据并存档，然后再删除，这种方法不但更慢，而且更复杂，为了保证select和delete之间不会新增加匹配筛选器的行(
+也称为幻读），必须用可序列化的隔离级别来锁一要存档的数据，而使用output子句，就不用担心幻读问题 。
+
+
+*/
+
+--一个组合查询的例子，在merge中的数据处理通过output选择性抛出后插入到其它表。
+IF OBJECT_ID('dbo.CustomersAudit', 'U') IS NOT NULL
+  DROP TABLE dbo.CustomersAudit;
+
+CREATE TABLE dbo.CustomersAudit
+(
+  audit_lsn  INT NOT NULL IDENTITY,
+  login_name SYSNAME NOT NULL DEFAULT (SUSER_SNAME()),
+  post_time  DATETIME NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+  custid       INT         NOT NULL,
+  companyname  VARCHAR(25) NOT NULL,
+  phone        VARCHAR(20) NOT NULL,
+  address      VARCHAR(50) NOT NULL,
+  CONSTRAINT PK_CustomersAudit PRIMARY KEY(audit_lsn)
+);
+
+BEGIN TRAN
+
+INSERT INTO dbo.CustomersAudit(custid, companyname, phone, address)
+  SELECT custid, Icompanyname, Iphone, Iaddress
+  FROM (MERGE INTO dbo.Customers AS TGT
+        USING dbo.CustomersStage AS SRC
+          ON TGT.custid = SRC.custid
+        WHEN MATCHED THEN
+          UPDATE SET
+            TGT.companyname = SRC.companyname,
+            TGT.phone = SRC.phone,
+            TGT.address = SRC.address
+        WHEN NOT MATCHED THEN 
+          INSERT (custid, companyname, phone, address)
+          VALUES (SRC.custid, SRC.companyname, SRC.phone, SRC.address)
+        OUTPUT $action AS action, 
+          inserted.custid,
+          inserted.companyname AS Icompanyname,
+          inserted.phone AS Iphone,
+          inserted.address AS Iaddress) AS D
+  WHERE action = 'INSERT';
+  
+SELECT * FROM dbo.CustomersAudit;
+
+ROLLBACK TRAN
