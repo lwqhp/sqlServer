@@ -26,4 +26,18 @@ exists ºÍ inµÄÇø±ðÖ÷ÒªÔÚÓÚ nullÖµµÄÅÐ¶Ï£¬exists²»»á·µ»Øunknown,Èç¹û×Ó²éÑ¯µÄÉ¸Ñ¡Æ
 existsÊ¹ÓÃtopÔËËã·û£¨ÒòÎªÖ»ÐëÈ·¶¨ÊÇ·ñÖÁÉÙÓÐÒ»¸öÆ¥Åä¼´¿É£©£¬ÕâÔÚ°üº¬´óÁ¿ÖØ¸´Ê±ÌØ±ðÓÐÐ§£¬Ã¿¸ö·Ö×éÖ»²éÕÒÒ»´Î£¬
 ÔÚÒ¶¼¶Ö»É¨ÃèÒ»ÐÐ£¬ÒÔ²éÕÒÒ»¸ö¶ø²»ÊÇËùÓÐµÄÆ¥Åä¡£¶ø not in ÐèÒª¶ÔÊÇ·ñÓÐ nullÖµ×öÌØ±ðµÄ²éÕÒ£¬ÕâÊÇÒòÎªnullÖµ»á
 Ó°Ïì·µ»ØÖµµÄÅÐ¶Ï£¬µ±ÓÐnullÖµÊ±£¬ not in ÓÀÔ¶·µ»Ø¿ÕÐÐ¡£
+
+not in×Ó²éÑ¯µÄÒ»¸öbug
+select * from a 
+where colname not in(select col_name from b)
+b±íÖÐÃ»ÓÐcol_nameÁÐ£¬µ«Óï¾ä²»±¨´í£¬·µ»Ø¿ÕÖµ£¬ÒòÎªÃû³Æ½âÎöÊÇ´ÓÄÚ²¿Ç¶Ì×²ãÏòÍâ½øÐÐµÄ£¬²éÑ¯´¦ÀíÆ÷ÏÈÔÚµ±Ç°²ãÒýÓÃµÄ
+±íÖÐÑ°ÕÒcol_name,Ã»ÕÒµ½»á¼ÌÐøÏòÍâ±íÕÒ£¬¶øa±íÖÐ¶îcol_name,ËùÒÔ²»±¨´í¡£
+
+ÅÉÉú±í
+ÅÉÉú±íÊÇÍêÈ«ÐéÄâµÄ£¬ËüÃ»ÓÐ±»ÎïÀíµØÊµÀýÈË£¬ÓÅ»¯Æ÷Ò²²»»áÎªËüÉú³Éµ¥¶ÀµÄ¼Æ»®£¬¾­±àÒë£¬»áºÏ²¢Íâ²¿²éÑ¯ºÍÄÚ²¿²éÑ¯£¬
+Éú³ÉÒ»¸ö¼Æ»®£¬µ±Ê¹ÓÃÅÉÉú±í£¬²»»áÓÐÌ«´óÐÔÄÜÎÊÌâ¡£
+
+CTEºÍÅÉÉú±íÒ»Ñù£¬Ò²ÊÇÐéÄâµÄ£¬sqlserverÄÚ²¿»áÖØÐÂ×éÖ¯²éÑ¯£¬Ö±½Ó·ÃÎÊµ×²ãµÄ¶ÔÏó£¬ÎªÕâ¸ö²éÑ¯Éú³ÉµÄÖ´ÐÐ¼Æ»®ºÍÊ¹ÓÃ
+ÅÉÉú±íÊ±µÃµ½µÄ¼Æ»®ÊÇÒ»ÑùµÄ¡£Á½´Î¶ÔcteÃû³ÆµÄÒýÓÃ¶¼½«±»À©Õ¹£¬ÕâÒâÎ¶×Å»ù´¡±í±»·ÃÎÊÁ½´Î£¬¾ÛºÏÁ½´Î£¬Èç¹ûµ×²ãÊý¾Ý
+±íÖÐ°üº¬´óÁ¿ÐÐ£¬Äã¿ÉÄÜ»á¿¼ÂÇÊ¹ÓÃÁÙÊ±±í»ò±í±äÁ¿¡£
 */
