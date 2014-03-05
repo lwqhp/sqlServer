@@ -257,6 +257,14 @@ select 'PT','PI131117admin-006',6
 alter table sd_pur_ordermaster nocheck constraint FK_sd_pur_ordermaster
 
 --规则-------------------------------------------------------------------------------------------------
+/*
+　　规则和默认值的应用要早于CHECK和DEFAULT约束。他们是较老的SQL Server备用约束的一部分，当然也不是没有优点。自7.0版本之后，MicroSoft列出规则和默认值只是为了向后兼容，而不准备在以后继续支持这个特性。因此对于生成新代码时，应该使用约束。
+
+　　规则、默认值与约束的本质区别是：约束是一个表的特征，本身没有存在形式，而规则和默认值是表和自身的实际对象，本身存在。约束是在表定义中定义的，而规则和默认值是单独定义，然后"绑定到"表上。
+
+　　规则和默认值的独立对象特性使得它们可以在重用时不用重新定义。实际上，规则和默认值不限于被绑定到表上，它们也可以绑定到数据类型上。
+
+*/
 --查看哪些表和数据类型使用给定的规则或默认值 
 EXEC sys.sp_depends  @objname = N'' -- nvarchar(776)
 
@@ -295,3 +303,5 @@ exec sp_unbinddefault 'employee.salary'
 --删除默认值：
 drop default 'salarydefault'
 
+
+EXEC sp_depends 'dbo.D_T_Numeric6'
