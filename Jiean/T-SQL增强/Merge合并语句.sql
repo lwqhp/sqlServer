@@ -44,11 +44,15 @@ WHEN NOT MATCHED BY SOURCE THEN UPDATE SET name = 'a' --当目标表不在源表中时，更
 
 OUTPUT $ACTION AS ACTION,INSERTED.NAME,DELETED.NAME; --使用output语句还可以返回执行的动作名和操作的记录
 /*
-使用merge语句优点是不需要访问数据两闪，而且merge语句是作为原子操作进行处理的，避免了显式声明事务的需要，用一
+使用merge语句优点是不需要访问数据两次，而且merge语句是作为原子操作进行处理的，避免了显式声明事务的需要，用一
 般的语句，更新插入两个过程要显示声明事务，以把两个步骤作为一个原子来处理。
+
+
 
 但merge是按完整方式记录日志的，而 insert select 语句能够在某些特定的情况下按最小方式记录日志，所以在大量用
 merge的情景下，最好用简单模式。这好像对性能也提升不大。
+
+Merge需要根据联接键对数据流进行排序，如果需要，Sqlserver将会自动对源数据进行排序，所以请确保使用合适的索引。
 
 连接本质：
 matched : 内联两表

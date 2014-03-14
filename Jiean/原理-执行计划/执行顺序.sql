@@ -28,7 +28,7 @@ SELECT a.SalesOrderID,a.OrderDate,a.CustomerID,b.SalesOrderDetailID,b.ProductID,
 的此之上，将两个结果集用嵌套循环的方式连接起来，4，得到结果，和执行第3行，在salesorderheader_test 上作culustered index seek 并列为一层
 2层是一个嵌套循环，说明sqlserver 是使用的嵌套循环把两个结果集合并起来。
 
-首先salesorderheader_test 在salesorderID上有聚集索引，sqlserver可以直热闹找到salesorderID=43659,然后把它的几个字
+首先salesorderheader_test 在salesorderID上有聚集索引，sqlserver可以直接找到salesorderID=43659,然后把它的几个字
 段取出，是一个culustered index seek
 
 而salesorderdetail_test在salesorderID上的是非聚集索引，返回的值不能宛全被非聚集索引所包含，所以先用非聚找到
