@@ -35,6 +35,9 @@
 文件和文件组备份
 
 */
+backup database HK_ERP_HP
+to disk = 'd:\HK_ERP_HP.bak'
+with compression,copy_only
 
 --备份---------------------------------------------------------------------------------------------
 BACKUP 

@@ -26,7 +26,7 @@ sqlServer ×Ô¶¯Õì²âÐèÒªÖØÐÂ±àÒëÏÖÓÐ¼Æ»®µÄÌõ¼þ£¬sqlserver¸ù¾ÝÌØ¶¨µÄ¹æÔòÈ·¶¨ÏÖÓÐ¼Æ»
 
 4)´æ´¢¹ý³Ì±àÒëÊ±Ò»¸ö¶ÔÏó²»´æÔÚ£¬µ«ÊÇÔÚÖ´ÐÐÆÚ¼ä´´½¨£¬Õâ±»³ÆÎªÑÓ³Ù¶ÔÏó½âÎö
 
-5£©SETÑ¡Ïî±ä»¯,ÔÚ´æ´¢¹ý³ÌÊ½ÖÐÐÞÆòÌÖsetÑ¡Ïî»áµ¼ÖÂsqlServerÔÚÖ´ÐÐsetÓï¾äºóÃæµÄÓïßñÖ®Ç°ÖØ±àÒë¸Ã´æ´¢¹ý³Ì£¬Òò´Ë£¬ÔÚÖ´ÐÐ
+5£©SETÑ¡Ïî±ä»¯,ÔÚ´æ´¢¹ý³ÌÖÐÐÞ¸ÄsetÑ¡Ïî»áµ¼ÖÂsqlServerÔÚÖ´ÐÐsetÓï¾äºóÃæµÄÓï¾äÖ®Ç°ÖØ±àÒë¸Ã´æ´¢¹ý³Ì£¬Òò´Ë£¬ÔÚÖ´ÐÐ
 setÓï¾äÖ®Ç°µÄÓï¾ä»á·¢ÉúÖØ±àÒë£¬setÓï¾äÖ®ºóµÄÓï¾ä»á·¢ÉúÖØ±àÒë£¬µÚ¶þ´ÎÖ´ÐÐºó²»»áÔÙÖØ±àÒë£¬set nocount Ã»ÓÐÐÞ¸Ä»·¾³
 ÉèÖÃ£¬²»»áÒýÆð´æ´¢¹ý³ÌÖØ±àÒë
 
@@ -111,29 +111,49 @@ numeric_roundabort Îªoff
 use AdventureWorks2012
 go
 
-CREATE PROC sptemp
+alter PROC sptemp2
 AS
 CREATE TABLE #myTemptable(id INT,dsc NVARCHAR(50))
-INSERT INTO #myTemptable
-        ( id, dsc )
-SELECT ProductModelID,[name] FROM production.ProductModel /*µÚÒ»´ÎÖ´ÐÐ·¢ÉúÖØ±àÒë,´æ´¢¹ý³Ì´´½¨Éú³ÉµÄÖ´ÐÐ¼Æ»®²»°ü
-º¬ÈÎºÎ¹ØÓÚ¾Ö²¿ÁÙÊ±±íµÄÐÅÏ¢£¬Òò´Ë£¬Éú³ÉµÄ¼Æ»®²»»áÓÃÓÚÊ¹ÓÃDMLÓï¾ä·ÃÎÊÁÙÊ±±í*/
+INSERT INTO #myTemptable( id, dsc )
+SELECT ProductModelID,[name] FROM production.ProductModel 
+/*´¥·¢µÚÒ»´ÎÖ´ÐÐ·¢ÉúÖØ±àÒë,´æ´¢¹ý³Ì´´½¨Éú³ÉµÄÖ´ÐÐ¼Æ»®²»°ü
+º¬ÈÎºÎ¹ØÓÚ¾Ö²¿ÁÙÊ±±íµÄÐÅÏ¢£¬Òò´Ë£¬Éú³ÉµÄ¼Æ»®²»»áÓÃÓÚÊ¹ÓÃDMLÓï¾ä·ÃÎÊÁÙÊ±±í
+ÖØ±àÒëºó£¬ÔÙ´ÎÔËÐÐ insert intoÓï¾ä
+*/
 
-SELECT * FROM #myTemptable /*µÚ2´ÎÖØ±àÒë£¬À´×ÔÓÚ¸Ã±í×°ÈëÊ±ÆäÖÐ°üº¬µÄÊý¾ÝµÄ±ä»¯*/
+SELECT * FROM #myTemptable 
+/*´¥·¢µÚ2´ÎÖØ±àÒë£¬À´×ÔÓÚ¸Ã±í×°ÈëÊ±ÆäÖÐ°üº¬µÄÊý¾ÝµÄ±ä»¯
+ÖØ±àÒëºó£¬ÔÙ´ÎÔËÐÐÓï¾ä
+*/
+
+
+exec('SELECT * FROM #myTemptable')
+/*excel»áÒýÆð1,5µÄÓï¾äÖØ±àÒë£¬µ«²»»áÔì³É´æ´¢¹ý³ÌµÄÖØ±àÒë,ÒòÎªexecÓï¾ä¸Ä±äÁËÁÙÊ±±í¼Ü¹¹¡¢°ó¶¨»òÈ¨ÏÞ*/
+
+EXECUTE sp_executesql N'SELECT * FROM #myTemptable' 
+/*sp_executesql²»»áÒýÆð´æ´¢¹ý³ÌºÍÓï¾äµÄÖØ±àÒë*/
+
+
+--alter table #myTemptable add newfiled varchar(30)
+/*µÚÒ»´ÎÖ´ÐÐ·¢ÉúÑÓ³Ù¶ÔÏó½âÎö±àÒë£¬µÚ¶þ´ÎÒÔºóÃ¿´ÎÖ´ÐÐ·¢Éú¼Ü¹¹¸Ä±äÖØ±àÒë*/
 
 CREATE CLUSTERED INDEX PK_myTemptable ON #myTemptable(id)
 
-SELECT * FROM #myTemptable/*µÚ3´ÎÖØ±àÒë£¬ÊÇÓÉÓÚÁÙÊ±±íµÄ¼Ü¹¹±ä»¯Ê¹ÏÖÔÚ¼Æ»®×÷·Ï£¬µ¼ÖÂÔÚ±íÔÙ´Î±»·ÃÎÊÊ±½øÐÐÖØ±àÒë
+SELECT * FROM #myTemptable
+/*´¥·¢µÚ3´ÎÖØ±àÒë£¬ÊÇÓÉÓÚÁÙÊ±±íµÄ¼Ü¹¹±ä»¯Ê¹ÏÖÔÚ¼Æ»®×÷·Ï£¬µ¼ÖÂÔÚ±íÔÙ´Î±»·ÃÎÊÊ±½øÐÐÖØ±àÒë
 ,Èç¹ûÕâ¸öË÷ÒýÔÚµÚ1´ÎÖØ±àÒëÖ®Ç°ÒÑ¾­´´½¨£¬ÔòÏÖÔÚ¼Æ»®½«ÔÚµÚ2Ìõselect Óï¾äÊ±±£³ÖÓÐÐ§£¬Òò´Ë£¬¿ÉÒÔ½«create index
 DDLÓï¾ä·ÅÖÃÔÚËùÓÐ·ÃÎÊ¸ÃµÄDMLÓï¾äÖ®ÉÏÀ´±ÜÃâÕâ´ÎÖØ±àÒë*/
 
 CREATE TABLE #t2(c1 int)
 
-SELECT * FROM #t2/*µÚ4´ÎÖØ±àÒë£¬Éú³ÉÒ»¸ö°üº¬#t2µÄ´¦Àí²ßÂÔµÄ¼Æ»®*/
+SELECT * FROM #t2
+/*µÚ4´ÎÖØ±àÒë£¬Éú³ÉÒ»¸ö°üº¬#t2µÄ´¦Àí²ßÂÔµÄ¼Æ»®*/
 
 go
 
-exec sptemp --µÚ¶þ´ÎÖ´ÐÐÔò»áÖØÓÃ¼Æ»®»º´æ
+exec sptemp2 
+--Ö÷ÒªÊÇµÚÒ»´ÎÖ´ÐÐ»á³öÏÖÑÓ³Ù¶ÔÏó½âÎö,µÚ¶þ´ÎÖ´ÐÐÔò»áÖØÓÃ¼Æ»®»º´æ,ÐÞ¸ÄÁË´æ´¢¹ý³Ì£¬²»¹ÜÓÐÃ»ÓÐ±ä£¬ÔÙ´ÎÖ´ÐÐ¶¼»á·¢ÉúÖØ±àÒë
+
 
 --±í±äÁ¿
 /*
