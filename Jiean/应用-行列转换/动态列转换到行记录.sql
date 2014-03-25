@@ -1,6 +1,13 @@
+/*
+1,基本的行转列写法和动态行转列写法
+2,同时转换两行或者计算列(pivot只能转一列)
+3,动态pivot行转列
+4,行转列并产生合计列和合计行
+5,非固定列的行转列
+6,非固定列且非必须对应的行转列
+*/
 
-
-
+--(1)---
 IF OBJECT_ID('[#tb]') IS NOT NULL DROP TABLE [tb]
 GO
 create table #tb(姓名 varchar(10) , 课程 varchar(10) , 分数 int)
@@ -32,7 +39,7 @@ set @sql = @sql + ' , cast(avg(分数*1.0) as decimal(18,2)) 平均分 , sum(分数) 总
 exec(@sql)
 
 
---=====================================================================================
+--(2)=====================================================================================
 
 CREATE TABLE #tb1(
 	Year int,
@@ -51,8 +58,9 @@ UNION ALL SELECT 1991, 2, 2.2, 5.0
 UNION ALL SELECT 1991, 1, 2.3, 5.5
 UNION ALL SELECT 1991, 1, 2.4, 6.0
 GO
-
+--select * from #tb1
 -- 查询处理
+select * from #tb1
 DECLARE
 	@s nvarchar(4000)
 -- a. 交叉报表处理代码头
@@ -116,7 +124,7 @@ DROP TABLE #tb1
 --GROUP BY Year
 
 
-------------------------------------------------------------------------------------
+-----(3)-------------------------------------------------------------------------------
 --SQL SERVER 2005 动态SQL。
 declare @sql varchar(8000)
 select @sql = isnull(@sql + '],[' , '') + 课程 from #tb group by 课程
@@ -126,7 +134,7 @@ exec ('select * from #tb a pivot (max(分数) for 课程 in (' + @sql + ')) b')
 select * from #tb pivot (max(分数) for 课程 in (语文,数学,物理)) b 
 
 
--------牛------------------------------------------------------------------------------------------------
+-------(4)------------------------------------------------------------------------------------------------
 --> 生成测试数据表: [#tb2]
 IF OBJECT_ID('[#tb2]') IS NOT NULL
     DROP TABLE [#tb2]
@@ -146,9 +154,17 @@ SELECT @s=ISNULL(@s+',','')+QUOTENAME(name),
 FROM #tb2 
 GROUP BY name
 ORDER BY MIN(date)
---SELECT @s,@s1
+SELECT @s,@s1
 EXEC('
-    SELECT ISNULL(CONVERT(VARCHAR(10), date, 23),''合计'') 日期,'+@s1+',MAX(合计) 合计
+select *
+FROM (
+        SELECT *,SUM(price)OVER(PARTITION BY date) 合计 
+        FROM #tb2
+        ) a 
+        PIVOT(SUM(price) FOR name IN('+@s+'))b
+')
+EXEC('
+    SELECT case when grouping(CONVERT(VARCHAR(10), date, 23))=1 then ''合计'' else CONVERT(VARCHAR(10), date, 23) end  日期,'+@s1+',MAX(合计) 合计
     FROM (
         SELECT *,SUM(price)OVER(PARTITION BY date) 合计 
         FROM #tb2
@@ -168,8 +184,8 @@ EXEC('
 */
 
 
-
-if object_id('#tb12') is not null drop table #tb12
+-------(5)-----------------------------------------------------------
+if object_id('tempdb..#tb12') is not null drop table #tb12
 go
 CREATE table #tb12 --数据表
 (
@@ -191,7 +207,7 @@ INSERT INTO #tb12 values('T503','x1',44)
 INSERT INTO #tb12 values('T503','x1',50)
 INSERT INTO #tb12 values('T503','x1',23)
 
-
+select * from #tb12
 
 --在sqlserver2000里需要用自增辅助
 alter table #tb12 add id int identity
@@ -203,10 +219,20 @@ from (select distinct rn from (select rn=(select count(1) from #tb12 where cpici
 set @s=@s+' from (select rn=(select count(1) from #tb12 where cpici=t.cpici and id<=t.id),* from #tb12 t
 ) t group by cpici'
 
+print @s
 exec(@s)
 go
 alter table #tb12 drop column id
 
+/*
+select cpici ,
+max(case when rn=1 then cvalue end) as cvlue1,
+max(case when rn=2 then cvalue end) as cvlue2,
+max(case when rn=3 then cvalue end) as cvlue3,
+max(case when rn=4 then cvalue end) as cvlue4 
+from (select rn=(select count(1) from #tb12 where cpici=t.cpici and id<=t.id),* from #tb12 t
+) t group by cpici
+*/
 --再2005就可以用row_number
 declare @s varchar(8000)
 set @s='select cpici '
@@ -214,8 +240,19 @@ select @s=@s+',max(case when rn='+ltrim(rn)+' then cvalue end) as cvlue'+ltrim(r
 from (select distinct rn from (select rn=row_number()over(partition by cpici order by getdate()) from #tb12)a)t
 set @s=@s+' from (select rn=row_number()over(partition by cpici order by getdate()),* from #tb12
 ) t group by cpici'
-
+print @s
 exec(@s)
+
+select cpici ,
+max(case when rn=1 then cvalue end) as cvlue1,
+max(case when rn=2 then cvalue end) as cvlue2,
+max(case when rn=3 then cvalue end) as cvlue3,
+max(case when rn=4 then cvalue end) as cvlue4 
+from (
+	select rn=row_number()over(partition by cpici order by getdate()),* 
+	from #tb12
+) t 
+group by cpici
 
 ---结果
 /*
@@ -231,7 +268,7 @@ T503       53          44          50          23
 */
 
 
---测试用
+-----(6)------------------
 IF OBJECT_ID('[tb]') IS NOT NULL DROP TABLE [tb]
 GO
 create table tb(电话号码 varchar(15), 通话时长 int ,行业 varchar(10))
@@ -246,6 +283,7 @@ select '18689704236', 20 ,'汽车' union all
 select '13883633601', 50 ,'餐饮'
 go
 
+select * from tb
 declare @sql varchar(8000)
 set @sql='select 电话号码,sum(通话时长) 通话总和'
 select @sql=@sql+',max(case when rowid='+ltrim(rowid)+' then 行业 else '''' end) as [行业'+ltrim(rowid)+']'
@@ -253,7 +291,25 @@ from (select distinct rowid from (select (select count(distinct 行业) from tb wh
 from tb t) a) b
 set @sql=@sql+' from ( select * , (select count(distinct 行业) from tb where 电话号码=t.电话号码 and 行业<=t.行业) rowid
 from tb t ) t group by 电话号码'
+print @sql
 exec(@sql)
+
+
+select 电话号码,
+sum(通话时长) 通话总和,
+max(case when rowid=1 then 行业 else '' end) as [行业1],
+max(case when rowid=2 then 行业 else '' end) as [行业2],
+max(case when rowid=3 then 行业 else '' end) as [行业3],
+max(case when rowid=4 then 行业 else '' end) as [行业4] 
+from ( 
+	select * , (
+		select count(distinct 行业) 
+		from tb 
+		where 电话号码=t.电话号码 and 行业<=t.行业
+		) rowid
+from tb t 
+) t 
+group by 电话号码
 
 --结果
 /*
