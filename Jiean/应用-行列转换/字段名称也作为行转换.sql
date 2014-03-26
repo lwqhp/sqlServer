@@ -13,7 +13,7 @@ UNION ALL SELECT 'Chair', 'Yellow', 131
 UNION ALL SELECT 'Chair', 'Red',    90
 UNION ALL SELECT 'Chair', 'White',  55
 GO
-
+select * from tb
 -- a. 生成分组信息临时表
 SELECT 
 	Item, Color,
@@ -21,7 +21,7 @@ SELECT
 INTO # FROM tb
 GROUP BY Item, Color
 ORDER BY Item, Color
-
+select * from tb
 select * from #
 
 -- b. 生成各组 Item 的 Color 序号
@@ -54,7 +54,7 @@ SELECT
 	@No = MAX(No) --转列数
 FROM #
 GROUP BY Item
-
+select @sql_Color,@sql_Quantity,@fd,@No
 WHILE @No > 0
 	SELECT 
 		@fd = N', '
@@ -71,6 +71,38 @@ WHILE @No > 0
 								WHEN ' + @No + N' THEN A.Quantity
 							END))',
 		@No = @No - 1
+
+select @fd,@sql_Color,@sql_Quantity
+/*
+, [col1] = [1], [col2] = [2], [col3] = [3]
+,
+	[3] = MAX(
+							CASE No 
+								WHEN 3 THEN Color
+							END),
+	[2] = MAX(
+							CASE No 
+								WHEN 2 THEN Color
+							END),
+	[1] = MAX(
+							CASE No 
+								WHEN 1 THEN Color
+							END)
+
+,
+	[3] = CONVERT(varchar, SUM(
+							CASE B.No
+								WHEN 3 THEN A.Quantity
+							END)),
+	[2] = CONVERT(varchar, SUM(
+							CASE B.No
+								WHEN 2 THEN A.Quantity
+							END)),
+	[1] = CONVERT(varchar, SUM(
+							CASE B.No
+								WHEN 1 THEN A.Quantity
+							END))
+*/
 
 
 EXEC(N'

@@ -32,14 +32,15 @@ FROM #tb GROUP BY 姓名
 --动态sql
 
 declare @sql varchar(8000)
-set @sql = 'select 姓名 '
+set @sql = ''
 select @sql = @sql + ' , sum(case 课程 when ''' + 课程 + ''' then 分数 else 0 end) [' + 课程 + ']'
 from (select distinct 课程 from #tb) as a
-set @sql = @sql + ' , cast(avg(分数*1.0) as decimal(18,2)) 平均分 , sum(分数) 总分 from #tb group by 姓名'
+set @sql = 'select 姓名 '+ @sql + ' , cast(avg(分数*1.0) as decimal(18,2)) 平均分 , sum(分数) 总分 from #tb group by 姓名'
 exec(@sql)
 
 
 --(2)=====================================================================================
+--是指用于确定列转为行的条件字段只有一个，根据这个条件转换为行记录的列有多个，处理方法是为第一个要志换为行的字段，使用相同的条件做处理
 
 CREATE TABLE #tb1(
 	Year int,
