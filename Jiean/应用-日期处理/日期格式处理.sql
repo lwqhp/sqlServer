@@ -22,13 +22,7 @@ b.日期格式是固定长度的，所以在转换成字符型时用char
 --日期增减函数
 dateadd(datepart,number,date)
 
---日期信息获取函数:获取日期指定部分
-DATENAME(datepart,date)--返回nvarchar,与 SET DATEFIRST 和 SET DATELANGUAGE选项的设置有关。
-DATEPART(datepart,date)--返回int
-DATEPART(weekday,date)--返回星期计算方式，以星期日为一周的第一天，与SET DATEFIRST选项有关
-year(date)--返回int
-month(date)--返回int
-day(date)--返回int
+
 
 --日期差值计算函数:计算两个给定日期指定部分的边界数
 DATEDIFF(datepart,startdate,enddate)--返回integer

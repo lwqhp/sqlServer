@@ -1,8 +1,10 @@
 
 /*
-在生成日期列表时，使用了解“FROM sysobjects a,sysobjects b”,这个主要是用来快速生成多条记录用的，这里的sysobjects为处理中用到的辅助表，可以是任意有足够记录的表。
+在生成日期列表时，使用了解“FROM sysobjects a,sysobjects b”,这个主要是用来快速生成多条记录用的，
+这里的sysobjects为处理中用到的辅助表，可以是任意有足够记录的表。
 使用辅助表一次性插入多条记录，而不是使用循环，其意义在于:SQl server需要通过事务来保证处理要么成功，要么失败,
-对于每条SQL语句，sql 都会开启一个内部事务（对用户不可见），所以在sql的处理中，同样的处理，处理过程中的语句越少，一般也就意味着处理效率可能越高.
+对于每条SQL语句，sql 都会开启一个内部事务（对用户不可见），所以在sql的处理中，同样的处理，处理过程中的语句越少，
+一般也就意味着处理效率可能越高.
 */
 
 --syscolumns 表使用
@@ -31,12 +33,3 @@ DROP TABLE #t
 cast(date_start +'00:00:00' AS datetime) <= '2009-09-09 9:9:9'
 AND cast(date_end +'23:59:59' AS datetime) >= '2009-9-09 9:9:9'
 
---in 运算符
-
-filed IN(1,2,3,4)
-filed IN('1','2','3','4')
---程序中拼接 str = "'"+filed.Replace(",","','")+"'";
-
---串连列匹配
-SELECT * FROM office_missive_template
-WHERE CHARINDEX(','+mt_class+',',',人资类,资讯类,')>0

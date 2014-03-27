@@ -1,12 +1,19 @@
 
+--日期格式类型转换
+/*
+dateadd返回的是smalldatetime格式
+保存到datetime类型变量中，全部保存，没有转换
+保存到smallDatetime类型变量中，因sdt只精确到分钟，会对秒部份作四舍五入处理
+保存到字符类型中，没有显示的类型转换的话，sql会按系统默认日期格式隐式转成字符，比如这样：02 28 2014 11:59PM
+*/
+declare @dt datetime,@dt1 smalldatetime,@dt2 varchar(30)
+
+ SELECT @dt=DATEADD(ms,-3,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)),
+	@dt1=DATEADD(ms,-3,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)),
+	@dt2=DATEADD(ms,-3,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0))
+select @dt,@dt1,@dt2
 
 
---（1）日期格式
-
---DMY,MDY,YMD
-D--日
-M--月
-Y--年
 
 --（2）日期环境设定
 

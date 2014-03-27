@@ -28,8 +28,12 @@ select day(getdate())
 
 --返回日期指定部份
 /*
-	datepart 函数返回 int 型
-	datename 函数返回 nvarchar 型
+DATENAME(datepart,date)--返回nvarchar,与 SET DATEFIRST 和 SET DATELANGUAGE选项的设置有关。
+DATEPART(datepart,date)--返回int
+DATEPART(weekday,date)--返回星期计算方式，以星期日为一周的第一天，与SET DATEFIRST选项有关
+year(date)--返回int
+month(date)--返回int
+day(date)--返回int
 */
 select datename(year,getdate())
 select datename(month,getdate())--'01'
@@ -56,7 +60,7 @@ select datepart(minute,getdate())
 /*-------------------日期运算------------------*/
 
 --日期增减函数
-select dateAdd(day,+2,getdate())
+select dateAdd(day,2,getdate())
 
 --两个日期间的差值
 select dateDiff(day,getdate(),'2012-2-1')
@@ -68,7 +72,7 @@ select dateDiff(day,getdate(),'2012-2-1')
  -------==========================================================================================
  
 --日期
---利用系统默认1900-01-01，通过月份的差减，而得到当月1号,时间是00.减-3毫秒，可以得到上个月最后一天最后秒
+--利用系统默认1900-01-01，通过月份的减加(因为忽略日期部份)，而得到当月1号,时间是00.减-3毫秒，可以得到上个月最后一天最后秒
 
 SELECT DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)
 SELECT DATEADD(ms,-3,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0))
@@ -80,3 +84,4 @@ select dateAdd(month,1,dateAdd(day,1-datepart(day,GETDATE()),GETDATE()))-1
 SELECT DATEADD(day,1-datepart(day,GETDATE()),GETDATE())-1
 
 select dateadd(mm,1,dateadd(day,-day('2013-08-31'),'2013-08-31'))
+
