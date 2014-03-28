@@ -1,4 +1,5 @@
 -- 图书销售数据表
+
 CREATE TABLE tb(
 	Books nvarchar(30), -- 书名
 	Date datetime,      -- 销售日期

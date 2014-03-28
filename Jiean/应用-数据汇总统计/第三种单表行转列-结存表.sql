@@ -1,8 +1,8 @@
 -- 结存表
 CREATE TABLE Stocks(
-	Item varchar(10),
-	YearMonth int,
-	Quantity int)
+	Item varchar(10),--项目
+	YearMonth int,		--年月
+	Quantity int)		--数量
 INSERT Stocks SELECT 'aa', 200501, 100
 UNION  ALL    SELECT 'cc', 200501, 100
 
@@ -45,7 +45,7 @@ DECLARE
 SELECT
 	@YearMonth = CONVERT(CHAR(6),DATEADD(Month, - 1, @date_start), 112),
 	@date = DATEADD(Day, 1 - Day(@date_start), @date_start)
-
+	select @YearMonth,@date
 -- b. 结果查询
 SELECT
 	产品 = ISNULL(A.Item, B.Item),

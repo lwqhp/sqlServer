@@ -1,3 +1,9 @@
+/*
+数据的两种合并方式：
+1)层墙union all合并
+2)栅栏left join cross join 合并
+*/
+
 --期初数据
 DECLARE @stock TABLE(
 	id int,

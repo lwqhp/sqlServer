@@ -134,7 +134,14 @@ select datepart(week,@date)
 	-datepart(week,dateadd(day,1-datepart(day,@date),@date))
 	+1 
 
+-- 查询日期所在周的第一天
+SELECT	@date_begin = DATEADD(Day, - (DATEPART(Weekday, @Date) + @@DATEFIRST - 2) % 7, @Date),
+	@Date = DATEADD(Week, 1, @date_begin),
+	@date_begin_previous = DATEADD(Week, - 1, @date_begin)
 
 ---(5)天的最后一个时间点--------------------------------------------------------------
 SELECT DATEADD(ms,-3,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0))
 SELECT DATEADD(dd,DATEDIFF(dd,0,getdate()), 0)
+
+-- 去掉日期中的时间部分
+SET @Date = DATEDIFF(Day, 0, ISNULL(@Date, GETDATE()))
