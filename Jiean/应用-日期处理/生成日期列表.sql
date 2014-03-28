@@ -7,7 +7,7 @@
 一般也就意味着处理效率可能越高.
 */
 
---syscolumns 表使用
+--syscolumns 表使用（测试时间用的）
 CREATE TABLE #t(col int)
 DECLARE @i int,@dt datetime
 SELECT @i=0,@dt=getdate()
@@ -28,8 +28,5 @@ SELECT datediff(ms,@dt,getdate())
 DROP TABLE #t
 
 
---短日期格式字符型字段
 
-cast(date_start +'00:00:00' AS datetime) <= '2009-09-09 9:9:9'
-AND cast(date_end +'23:59:59' AS datetime) >= '2009-9-09 9:9:9'
 

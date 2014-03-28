@@ -46,3 +46,10 @@ ID         Name       Birthday
 1           aa         1999-01-01 00:00:00.000
 7           bb         1989-12-11 00:00:00.000
 --*/
+
+SELECT @dt1 ='2003-12-05',@dt2 ='2004-02-28'
+SELECT * FROM @t
+WHERE dateadd(year,datediff(year,birthday,@dt1),birthday)
+	BETWEEN @dt1 AND @dt2
+OR dateadd(year,datediff(year,birthday,@dt2),birthday)
+	BETWEEN @dt1 AND @dt2

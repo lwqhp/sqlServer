@@ -21,6 +21,11 @@ SELECT getdate()
 --输入表达式是否为有效日期
 isdate(expression)
 
+--由于直接提供的日期均是以日期格式的字符串提供，所以在使用convert进行日期格式转换时，
+--要先把日期格式的字符串转换为日期型，然后才能利用convert进行日期格式转换。
+CONVERT(data_type,expression,style)
+cast(expression)
+
 --取日期部份
 select year(getdate())
 select Month(getdate())
@@ -62,26 +67,24 @@ select datepart(minute,getdate())
 --日期增减函数
 select dateAdd(day,2,getdate())
 
---两个日期间的差值
-select dateDiff(day,getdate(),'2012-2-1')
+--日期差值计算函数:计算两个给定日期指定部分的边界数
+SELECT DATEDIFF(datepart,startdate,enddate)--返回integer
 
 --取日期范围
  between '2010-9-9' and '2012-9-9'
 
 
- -------==========================================================================================
+ ---日期格式化------------------------------------------------------------------------------
  
---日期
---利用系统默认1900-01-01，通过月份的减加(因为忽略日期部份)，而得到当月1号,时间是00.减-3毫秒，可以得到上个月最后一天最后秒
+--短日期格式： yyyy-m-d
+select replace(CONVERT(nvarchar(10),getdate(),120),N'-0','-')
 
-SELECT DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0)
-SELECT DATEADD(ms,-3,DATEADD(mm,DATEDIFF(mm,0,GETDATE()),0))
-select dateadd(mm,datediff(mm,-1,getdate()),-1)
+--长日期格式：yyyy年mm月dd日[stuff删除指定长度的字符并在指定的起始点插入另一组字符]
+SELECT stuff(stuff(CONVERT(char(8),getdate(),112),5,0,N'年'),8,0,N'月')+N'日'
+SELECT datename(year,getdate())+N'年'+datename(month,getdate())+N'月'+datename(day,getdate())+N'日'--set language设置对此方法有影响
 
-SELECT DATEADD(dd,DATEDIFF(dd,0,getdate()), 0)
---获取本月的第一天，然后加一个月，然后用下一个月的第一天减去1天即可。
-select dateAdd(month,1,dateAdd(day,1-datepart(day,GETDATE()),GETDATE()))-1
-SELECT DATEADD(day,1-datepart(day,GETDATE()),GETDATE())-1
+--长日期格式：yyyy年m月d日
+SELECT datename(year,getdate())+N'年'+cast(datepart(month,getdate()) as varchar)+N'月'+datename(day,getdate())+N'日'
 
-select dateadd(mm,1,dateadd(day,-day('2013-08-31'),'2013-08-31'))
-
+--完整日期+时间格式：yyyy-mm-dd hh:mi:ss:mmm [了解convert的样式即可]
+SELECT CONVERT(char(11),getdate(),120) + CONVERT(char(12),getdate(),114)
