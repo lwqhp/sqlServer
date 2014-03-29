@@ -1,8 +1,28 @@
 
+/*
+利用序列表的数值递增及表关系，产生一个源表的递增数据集。
+
+源表有递增数值的范围，在与序列表cross join时要做条件判断
+id	shopName	cardtype	startCard	endCard	preCard	digit
+1	G080		芭迪八折	8801456		8801466			7
+2	G080		芭迪八折	8801601		8801620			7
+
+--输出结果
+1	G080	芭迪八折	8801463
+1	G080	芭迪八折	8801464
+1	G080	芭迪八折	8801465
+1	G080	芭迪八折	8801466
+
+2	G080	芭迪八折	8801601
+2	G080	芭迪八折	8801602
+2	G080	芭迪八折	8801603
+
+
+*/
 
 --编号补足--双列
 --drop table #cardCode
-
+IF object_id('tempdb.dbo.#cardCode') IS NOT NULL DROP TABLE #cardCode
 create table #cardCode(
 	shopName varchar(50),
 	cardtype varchar(50),
@@ -10,7 +30,8 @@ create table #cardCode(
 )
 go
 insert into #cardCode
-select 'G080','芭迪八折','8801456——8801505' 
+select 'G080','芭迪八折','8801456——8801466' UNION ALL
+select 'G080','芭迪八折','8801601——8801620' 
 
 
 --统一分隔符
@@ -32,34 +53,13 @@ digit = len(stuff(endCard,1, patindex('%[0-9]%',endCard)-1,''))
 into #
 from tmp
 
-
---drop table #
 --select * from #
---drop table #result
 
---循环处理每一个区间
-create table #result(
-	shopName varchar(50),
-	cardtype varchar(50),
-	cardCode varchar(100)
-	)
-go
-declare @id tinyint 
-select top 1 @id=id from #
-
-while @@ROWCOUNT>0
-begin
-	insert into #result
-	select shopName,cardtype, 
+select id,shopName,cardtype, 
 	newcard= case when len(startCard+number)<digit
 					then preCard+right(replicate('0',digit)+cast(startCard+number as varchar),digit)
 					else preCard+cast(startCard+number as varchar)
 					end 
-	from #,master..spt_values where type = 'P' and id=@id and startCard+number<=endCard
-	delete from # where id = @id
-	select top 1 @id=id from # 
-end
-
-select *,'select '''+shopName+''','''+cardtype+''','''+cardCode+''' union all' from #result
+	from #,master..spt_values where type = 'P' and startCard+number<=endCard
 
 

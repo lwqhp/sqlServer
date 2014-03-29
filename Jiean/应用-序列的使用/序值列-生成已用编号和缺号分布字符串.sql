@@ -84,6 +84,7 @@ UNION ALL SELECT 'b', 5
 UNION ALL SELECT 'b', 6
 UNION ALL SELECT 'b', 7
 
+SELECT * FROM dbo.tb
 --≤È—Ø
 SELECT 
 	col1,

@@ -1,4 +1,6 @@
-
+/*
+尺码转成数值序列，再做判断
+*/
 create table sd_mat_size(sizeCode varchar(20))
 insert into sd_mat_size
 select 'M' union all
@@ -29,8 +31,8 @@ from sd_mat_size
 --生成中间对应表
 select materialid,id 
 into #temp_mat
-from sd_mat_material a left join #sd_mat_size b
-on a.sizeid = b.sizecode
+from sd_mat_material a 
+left join #sd_mat_size b on a.sizeid = b.sizecode
 group by materialid,id
 
 --select * from #temp_mat
