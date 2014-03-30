@@ -1,8 +1,17 @@
 
 /*
 要求统主计列COL中每个数据项的出现的个数和出现过记录的记录数。
+aa,bb,cc
+aa,aa,bb
+==> aa 3
+	bb 2
+	cc 1
+
+此需求需要拆分记录中的字符串到行，然后进行分组合计
+字符串拆分到行可利用“序列表”作为拆分刻度
 */
 -- 测试数据
+--DROP TABLE tb
 CREATE TABLE tb(
 	ID int,
 	col varchar(50),
@@ -32,9 +41,7 @@ SET ROWCOUNT @len
 SELECT
 	ID = IDENTITY(int, 1, 1)
 INTO # FROM dbo.syscolumns A, dbo.syscolumns B
-ALTER TABLE # ADD
-	PRIMARY KEY(
-		ID)
+ALTER TABLE # ADD PRIMARY KEY(ID)
 SET ROWCOUNT 0
 
 select * from #

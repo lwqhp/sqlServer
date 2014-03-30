@@ -35,3 +35,50 @@ UPDATE tb SET
 	No = @No,
 	@Notem = Item
 
+
+--------------------------------
+--更新的向下传递技巧
+--DROP TABLE tb
+CREATE TABLE tb(
+	col1 varchar(10),
+	col2 int)
+INSERT tb SELECT 'a',1
+UNION ALL SELECT 'a',2
+UNION ALL SELECT 'b',1
+UNION ALL SELECT 'b',2
+UNION ALL SELECT 'b',3
+/*
+a	1
+a	1,2
+b	1
+b	1,2
+b	1,2,3
+*/
+--合并处理
+-- a. 排序数据并存储结果到临时表
+SELECT
+	col1,
+	col2 = CAST(col2 as varchar(100)) 
+INTO #t FROM tb
+ORDER BY col1,col2
+
+DECLARE
+	@col1 varchar(10),
+	@col2 varchar(100)
+
+-- b. 通过更新累计每组 col1 的 col2 列值
+UPDATE #t SET 
+	@col2 = CASE
+				WHEN @col1 = col1 THEN @col2 + ',' + col2
+				ELSE col2
+			END,
+	@col1 = col1,
+	col2 = @col2
+
+SELECT * FROM #t
+
+SELECT 
+	col1,
+	col2 = MAX(col2)
+FROM #t
+GROUP BY col1

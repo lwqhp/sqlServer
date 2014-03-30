@@ -1,6 +1,6 @@
 
 /*
-根据理ID分组，将每组ID的列COL中的第条记录都共有的数据项提取出来，重新组合为一条记录。
+根据列ID分组，将每组ID列COL中的数据项去掉重复项后，重新组合为一条记录.
 */
 -- 示例数据
 CREATE TABLE tb(
@@ -13,7 +13,13 @@ UNION ALL SELECT 2,'11,3,4'
 UNION ALL SELECT 2,'1,33,4'
 UNION ALL SELECT 3,'1,3,4'
 GO
-select * from tb
+
+/*
+1	1,2,3,4
+2	1,11,3,33,4
+3	1,3,4
+*/
+DROP FUNCTION f_mergSTR
 -- 合并数据项的处理函数
 CREATE FUNCTION dbo.f_mergSTR(
 	@ID int
@@ -34,30 +40,27 @@ BEGIN
 		@r varchar(50)
 	SET @r = ''
 	SELECT
-		-- 合并处理后的数据项
+		-- 合并去掉重复后的数据项
 		@r = @r + ',' + s
 	FROM(
-		-- 分拆字符串
-		SELECT
+		-- 分拆字符串, 并且去掉重复的数据项
+		SELECT DISTINCT
 			s = SUBSTRING(A.col, B.ID, CHARINDEX(',', A.col + ',', B.ID) - B.ID)
 		FROM tb A, @t B
-		WHERE a.ID = @ID
-			AND b.ID <= LEN(A.col) 
+		WHERE A.ID = @ID
+			AND B.ID <= LEN(A.col) 
 			AND SUBSTRING(',' + A.col, B.ID, 1) = ','
-		GROUP BY SUBSTRING(A.col, B.ID, CHARINDEX(',', A.col + ',', B.ID) - B.ID)
-		-- 如果分拆后的数据项的个数与该组记录数相同, 则数据数据项在该组的所有记录中存在, 则保留此记录
-		HAVING COUNT(*) = (SELECT COUNT(*) FROM tb WHERE ID = @ID) --这个有约定，单条记录里不会出现重复值
 	)A
-	ORDER BY s -- 排序生成的结果中的数据项位置(如果要按数字排序, 则需要做数据类型转换)
+	ORDER BY s  -- 排序生成的结果中的数据项位置(如果要按数字排序, 则需要做数据类型转换)
 
 	RETURN(STUFF(@r, 1, 1, ''))
 END
 GO
 
---调用用户定义实现交交集查询
+--调用用户定义实现交并集查询
 SELECT
 	ID,
-	col = dbo.f_mergStr(ID)
+	col = dbo.f_mergSTR(ID)
 FROM tb
 GROUP BY ID
 GO

@@ -18,7 +18,8 @@ begin
 end
 
 declare @text varchar(100) ='TOM 2013-11-19 Data'
-select [TOM] as val1,[2013-11-19] as val2,[Data] as val3 from Fn_splitVal(@text,' ') pivot(max(val) for val in([TOM],[2013-11-19],[Data])) a
+select [TOM] as val1,[2013-11-19] as val2,[Data] as val3 
+from Fn_splitVal(@text,' ') pivot(max(val) for val in([TOM],[2013-11-19],[Data])) a
 /*
 val1                                               val2                                               val3
 -------------------------------------------------- -------------------------------------------------- --------------------------------------------------

@@ -14,7 +14,7 @@ BEGIN
 	DECLARE
 		@splitlen int
 	SELECT
-		@splitlen = LEN(@split + 'a') - 2
+		@splitlen = LEN(@split + ' a') - 2
 	WHILE @pos > 1 AND CHARINDEX(@split, @s + @split) > 0
 		SELECT
 			@pos = @pos - 1,
