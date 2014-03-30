@@ -1,4 +1,4 @@
-
+/*
 字符类型一般用char和varchar数据类型(短字符型)，最长为8000字节，超过8000个字节的文本就要使用ntext或者text数据类型来存储； 
 
 二进制类型一般用binary、varbinary ，最长为8 KB，储超过 8 KB 的可变长度的二进制数据，
@@ -11,7 +11,9 @@ Text字段类型不能直接用replace函数来替换，必须用updatetext；
 
 字段比较不能用　where 字段 = ‘某数据’,可以用like来代替； 
 
-updatetext时，若dest_text_ptr值为NULL时会报错，需注意。错误信息：向UpdateText 函数传递了 NULL textptr（text、ntext 或 image 指针）；
+updatetext时，若dest_text_ptr值为NULL时会报错，需注意。
+错误信息：向UpdateText 函数传递了 NULL textptr（text、ntext 或 image 指针）；
+
 注意，BLOB列为NULL而所在行不为空时，dest_text_prt为NOT NULL，若BOLB所在行为空，
 则dest_text_prt为NULL。delete_length必须小于等于字段总长度，否则报错：
 删除长度  不在可用的 text、ntext 或 image 数据范围内。 
@@ -26,7 +28,7 @@ PATINDEX / CHARINDEX 函数都返回指定模式的开始位置。PATINDEX 可使用通配符，
 
 LEN只对短字符型有效，对于text/ntext/image类型，则使用DATALENGTH来得到数据长度
 
-/*
+
 Ntext,text,image数据类型：用于存储大型非 Unicode 字符、Unicode 字符及二进制数据的固定长度和可变长度数据类型。
 							Unicode 数据使用 UNICODE UCS-2 字符集
 							
@@ -164,12 +166,13 @@ GO
 --显示处理结果
 SELECT datalength(col),* FROM tb
 DROP TABLE tb
+/*
 上面说的是针对ntext字段的替换处理，如果要处理text字段，只需要先转换成ntext字段然后保存在临时表里面，
 处理完以后再从临时表写回text就行了。
 其实一般象text，ntext字段这些都是抓到程序里面去处理的。
 
-
-1、替换
+*/
+--1、替换
 
 --创建数据测试环境
 create table #tb(aa text)
@@ -196,7 +199,7 @@ select * from #tb
 --删除数据测试环境
 drop table #tb
 
-2、全部替换
+--2、全部替换
 
 DECLARE @ptrval binary(16)
 DECLARE @ptrvld int
@@ -205,7 +208,7 @@ SELECT @ptrval = TEXTPTR(aa), @ptrvld = TEXTVALID('#tb.aa', TEXTPTR(AA))  FROM  
 if @ptrval is not null and  @ptrvld = 1
    UPDATETEXT #tb.aa @ptrval 0 null '数据3'
 
-3、在字段尾添加
+--3、在字段尾添加
 
 
 --定义添加的的字符串
