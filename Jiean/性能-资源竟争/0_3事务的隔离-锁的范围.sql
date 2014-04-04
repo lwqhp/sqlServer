@@ -53,7 +53,9 @@ SELECT DB_NAME(14) --resource_database_id 数据库名
 --键锁，又叫索引锁
 /*
 对于聚集索引，表的数据页面和聚集索引的叶子页面相同，因为表和聚集索引的行相同，从表或聚集索引中访问行时，在
-该聚集索引行或有限范围的行中只能获得一个关键字锁
+该聚集索引行或有限范围的行中只能获得一个关键字锁。
+
+如果表具有聚集索引，那么数据行就在聚集索引的叶级别并且是被键锁而不是行锁锁定的。
 */
 --查看键锁的特定资源
 SELECT resource_description FROM sys.dm_tran_locks
@@ -95,3 +97,18 @@ SELECT resource_description FROM sys.dm_tran_locks
 或者恢复数据库。
 */
 
+--锁对象的实例需要从sys.partitions视图获取
+SELECT 
+request_session_id AS spid,
+DB_NAME(resource_database_id) AS dbname,
+CASE WHEN resource_type = 'object' THEN OBJECT_NAME(resource_associated_entity_id)
+	WHEN resource_associated_entity_id = 0 THEN 'n/a'
+	ELSE OBJECT_NAME(p.object_id) END AS entity_name,
+	index_id,
+	resource_type AS RESOURCE,
+	resource_description AS DESCRIPTION,
+	request_mode AS mode,
+	request_status AS status
+ FROM sys.dm_tran_locks t 
+LEFT JOIN sys.partitions p ON p.partition_id = t.resource_associated_entity_id
+WHERE resource_database_id = DB_ID()
