@@ -19,7 +19,8 @@
 return ·µ»ØÖµ£º±ØĞëÎªÕûÊı£¬Ä¬ÈÏ·µ»Ø0,±íÊ¾´æ´¢¹ı³ÌÖ´ĞĞ³É¹¦£¬return´¦·µ»Ø
 ·µ»ØÖµ¿ÉÓÃÓÚÊµ¼ÊµØ·µ»ØÊı¾İ£¬±ÈÈç±êÊ¶Öµ»òÊÇ´æ´¢¹ı³ÌÓ°ÏìµÄĞĞÊı£¬Ò»°ãÖ÷ÒªÓÃÓÚÈ·¶¨´æ´¢¹ı³ÌµÄÖ´ĞĞ×´Ì¬¡£
 */
---·µ»ØÖµ´æ±äÁ¿
+
+--·µ»ØÖµ´æ±äÁ¿----------------------------------------
 DECLARE @RetVal INT
 EXEC @RetVal = Sp_TestReturns;
 SELECT @RetVal
@@ -106,7 +107,7 @@ END
 
 --Êı¾İ¿âÓïÑÔÑ¡Ôñ
 Set NoCount On 
-Declare @Lang Varchar(30) --Ôİ´æÔ­ÓïÖÖ
+Declare @Lang nVarchar(30) --Ôİ´æÔ­ÓïÖÖ
 Set @Lang = @@Language
 --ÉèÖÃÎª¿Í»§¶ËÑ¡ÓÃÓïÖÖ
 If Upper(@FormLang) = 'CN' 
@@ -146,31 +147,14 @@ EXEC sys.sp_procoption  @ProcName = N'sqlStartupLog', -- nvarchar(776) ÒªÖ´ĞĞµÄ´
 SELECT * FROM sys.sql_modules
 
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-	
-ÓÃÓÚ¿ØÖÆÌõ¼ş·ÖÖ§£¬Ñ¡ÔñµÄ·½·¨
 
-@@ERROR
-´íÎóÌø×ª£¬¶àÔÚÊÂÎñÖĞ£¬Ã»´íÎó¾Í¼ÌĞøÍùÏÂÖ´ĞĞ£¬ÓĞ´íÎó¾ÍÌø×ªµ½´íÎóÅĞ¶ÏÓï¾ä£¬»Ø¹ö»òÌá½»
+	
+--ÓÃÓÚ¿ØÖÆÌõ¼ş·ÖÖ§£¬Ñ¡ÔñµÄ·½·¨
+SELECT @@ERROR
+--´íÎóÌø×ª£¬¶àÔÚÊÂÎñÖĞ£¬Ã»´íÎó¾Í¼ÌĞøÍùÏÂÖ´ĞĞ£¬ÓĞ´íÎó¾ÍÌø×ªµ½´íÎóÅĞ¶ÏÓï¾ä£¬»Ø¹ö»òÌá½»
+	DECLARE @error	int
 	SET @ERROR = 0
-	Ö´ĞĞÒ»ÌõÓï¾ä
+	--Ö´ĞĞÒ»ÌõÓï¾ä
 	SET @ERROR = @@ERROR
 		IF(@ERROR <> 0)
 		GOTO ERROR
@@ -180,42 +164,57 @@ SELECT * FROM sys.sql_modules
 		IF(@ERROR <> 0)
 		BEGIN
 			ROLLBACK TRANSACTION
-			INSERT INTO nn_sys_returnerp_log([office_missive_id]
-		  ,[type]
-		  ,[log_datetime]
-		  ,[desc])
-			VALUES(@office_missive_id,2,getdate(),Convert(varchar(30),@ERROR)+'ÒÆ×ªµ½°ì½á±í³ö´í!');
+			--Ğ´ÈÕÖ¾
 		END
 		ELSE
 		BEGIN
 			COMMIT TRANSACTION
-			/*Ö»ÓĞ°ì½áµÄµ¥²Å×Ô¶¯¼ÓÇ©Ãû£¬ÖĞÖ¹µÄµ¥²»Ó¦¸ÃÔö¼Ó×Ô¶¯Ç©Ãû?*/	
-			IF EXISTS(SELECT 0 FROM office_missive_search WHERE office_missive_id =	@office_missive_id 
-AND m_isback = 0 AND m_status=2)	
-			--×Ô¶¯¼ÓÇ©ÃûÒâ¼û
-			EXECUTE sp_auto_addsign_tosearch @office_missive_id
+			--Ö´ĞĞºóĞøÓï¾ä
 		END	
-		
-	--================================	
-		
-		*É¾³ıÄ£°å±í*/
-declare @template_name varchar(50)
- 
-declare cur_missive_delete  cursor for 
- select [name] from sysobjects where xtype='U' and [name] like 'office_missive_template_%'
-   OPEN cur_missive_delete  
-   FETCH NEXT FROM cur_missive_delete  INTO @template_name 
 
- 
-   WHILE @@FETCH_STATUS = 0
-   BEGIN      
-     exec('delete from '+@template_name +' from #A where '+@template_name +'.sys_work_id=#A.office_missive_id')
-    --print ('delete from '+@template_name +' from #A where '+@template_name +'.sys_work_id=#A.office_missive_id')
-    FETCH NEXT FROM cur_missive_delete  INTO  @template_name 
-   
-   END
+-------------------------------------------------------------------------------------------
+----´æ´¢¹ı³ÌµÄÆğÊÖÎåÊ½£º-------------------------------------------------------------------
 
-   CLOSE cur_missive_delete  
-   DEALLOCATE cur_missive_delete
-drop table #A
+--1£¬ÅĞ¶Ï´æ´¢¹ı³Ì²ÎÊı£¬²¢³õÊ¼»¯--------------------------------------------------
 
+IF @objectId IS NULL -- ÅĞ¶Ï¶ÔÏóÊÇ·ñ´æÔÚ
+    BEGIN
+        PRINT 'The object not exists'
+        RETURN
+    END	
+    
+IF ISNULL(@var,'') =''
+	SET @var = '³õÊ¼Öµ'   
+	
+--2£¬»ñÈ¡»ù×¼Êı¾İ£¬´¦Àí¼°×ª»»Êı¾İ¸ñÊ½--------------------------------------------------
+
+	--·Ö¸î×Ö·û´®ĞÎ³ÉÁÙÊ±±í
+	 Create Table #CardTypeList (CardTypeID varchar(20) )	
+		if IsNull(@CardTypeID,'') <> ''
+		begin
+			insert into #CardTypeList(CardTypeID) Select * From dbo.fnSys_SplitString(@CardTypeID,',')
+		end
+		else
+			set @CardTypeID =Null;  
+			
+	--ÌáÈ¡Ğ¡²¿·İ²ÎÓë¹ØÁªµÄÊı¾İ´æÁÙÊ±±í		  	
+	 Select StateFixFlag, StateId, StateType,
+	  Into #TmpVIPOperState
+		From Sys_State 
+		Where StateFixFlag = 'VIPOperState'	
+
+--3£¬´¦ÀíÒµÎñÂß¼­--------------------------------------------------------------------------
+/*
+¸ù¾İ»ù×¼Êı¾İ£¬°´ÒµÎñÒªÇó¶ÔÊı¾İ½øĞĞ¼Ó¹¤£¬¹ØÁª£¬´¦Àí,¹¹½¨ÊÂÊµ±í
+±ÈÈçÑ­»·£¬·ÖÖ§Ìõ¼ş£¬µ÷ÓÃµÈ
+*/
+
+--4£¬Êı¾İºÏ²¢----------------------------------------------------------------------
+/*
+¶Ô´¦ÀíÍêµÄÒµÎñÊı¾İ¸ù¾İ×îÖÕÏÔÊ¾ÒªÇó½øĞĞÊı¾İºÏ²¢,¹¹½¨Î¬¶È±íÓë²¢ÊÂÊµ±í¹ØÁª
+*/
+
+--5£¬Çå³ıÁÙÊ±±í----------------------------------------------------------------------
+
+If OBJECT_ID('tempdb.dbo.#StateList') Is Not Null 
+	Drop Table #StateList	
