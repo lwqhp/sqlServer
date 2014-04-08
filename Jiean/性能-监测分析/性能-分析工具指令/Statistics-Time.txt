@@ -1,4 +1,0 @@
-
-
-cpu time =其它工具的cpu时间
-elapsed time = 其它工具的duration值
